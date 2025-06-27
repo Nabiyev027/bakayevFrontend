@@ -1,0 +1,195 @@
+/* Base Page Styles */
+.payment-page {
+  font-family: "NotoSerif", sans-serif;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: scroll;
+}
+.payment-page h1 {
+  color: #f96000;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.payment-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.payment-box {
+  width: 100%;
+  height: 500px;
+  background: #fff;
+  border: 2px solid #f96000;
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-shadow: 0 4px 6px rgba(249, 96, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.payment-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(249, 96, 0, 0.3);
+}
+.payment-box h2 {
+  margin-bottom: 1rem;
+  color: #f96000;
+  font-size: 1.8rem;
+}
+.payment-box .history-list {
+  width: 100%;
+  max-height: 450px;
+  overflow-y: auto;
+}
+.payment-box .history-list .history-item {
+  background: #fff;
+  border: 2px solid #f96000;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  padding: 0.7rem;
+  transition: transform 0.3s ease;
+}
+.payment-box .history-list .history-item:hover {
+  transform: scale(1.02);
+}
+.payment-box .history-list .history-item .history-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.payment-box .history-list .history-item .history-item-header .month {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #f96000;
+}
+.payment-box .history-list .history-item .history-item-header .badge {
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #fff;
+}
+.payment-box .history-list .history-item .history-item-header .current {
+  background: #f96000;
+}
+.payment-box .history-list .history-item .history-item-header .next {
+  background: #ff7f50;
+}
+.payment-box .history-list .history-item .history-item-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.payment-box .history-list .history-item .history-item-body .status {
+  text-transform: capitalize;
+  font-size: 1.1rem;
+}
+.payment-box .history-list .history-item .history-item-body .status.paid {
+  color: #008000;
+}
+.payment-box .history-list .history-item .history-item-body .status.unpaid {
+  color: #f96000;
+}
+.payment-box .history-list .history-item .history-item-body .amount {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #f96000;
+}
+
+.pay-btn {
+  background: #f96000;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background 0.3s ease;
+}
+.pay-btn:hover {
+  background: #d94e00;
+}
+
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.custom-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 400px;
+  box-shadow: 0 0 10px rgba(249, 96, 0, 0.5);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.custom-modal h2 {
+  margin-bottom: 1rem;
+  color: #f96000;
+}
+.custom-modal .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.custom-modal .card-drawing {
+  background: linear-gradient(135deg, #f96000, #ffae73);
+  color: white;
+  width: 100%;
+  border-radius: 15px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.custom-modal .go-click-btn {
+  background: #f96000;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  padding: 0.2rem 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+.custom-modal .go-click-btn:hover {
+  background: #d94e00;
+}
+.custom-modal .go-click-btn .click-icon {
+  width: 54px;
+  height: 54px;
+}/*# sourceMappingURL=PaymentS.css.map */

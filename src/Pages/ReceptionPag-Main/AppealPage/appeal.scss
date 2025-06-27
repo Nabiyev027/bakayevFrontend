@@ -1,0 +1,354 @@
+.appeal-page {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 12px 3px gray;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  padding: 2rem;
+  overflow-y: hidden;
+
+  .wrap-appeals {
+    margin-top: 2rem;
+    width: 100%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+
+    .box {
+      border: 1px solid #f96000;
+      width: 50%;
+      height: 100%;
+      border-radius: 20px;
+
+      .header {
+        text-align: center;
+        background-color: #f96000;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        padding: 10px;
+        color: white;
+      }
+
+      .cards-wrap {
+        height: 90%;
+        display: flex;
+        justify-content: start;
+        align-items: start;
+        flex-wrap: wrap;
+        padding: 2rem 1rem;
+        gap: 1rem;
+        overflow-y: scroll;
+
+        .refer-card {
+          width: 250px;
+          height: 260px;
+          padding: 1rem;
+          border-radius: 15px;
+          box-shadow: 2px 2px 8px 3px rgb(174, 174, 174);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .ref-box-1 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 130px;
+
+            h3 {
+              width: 50px;
+              background-color: #f9b03a;
+              color: white;
+              height: 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50px;
+              padding: 0 1rem;
+            }
+
+            h2 {
+              margin: 0.5rem auto;
+              text-align: center;
+            }
+
+            .phone {
+              text-align: center;
+              font-size: 20px;
+              font-weight: bold;
+              color: orangered;
+            }
+
+            .rec {
+              font-size: 18px;
+            }
+          }
+
+          .ref-box-2 {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 10px;
+
+            .telegram-btn {
+              width: 100%;
+              height: 40px;
+              margin: 0 auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background-color: deepskyblue;
+              color: white;
+              border-radius: 10px;
+              gap: 5px;
+
+              .ico {
+                font-size: 20px;
+              }
+
+              a {
+                text-decoration: none;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+              }
+            }
+
+            .wrap-btn {
+              width: 100%;
+              display: flex;
+              gap: 1rem;
+              justify-content: center;
+
+              .btn {
+                width: 100px;
+                height: 40px;
+                cursor: pointer;
+                border: none;
+                color: white;
+                border-radius: 10px;
+                font-size: 20px;
+                font-weight: bold;
+              }
+              .btn-a {
+                background-color: greenyellow;
+              }
+
+              .btn-d {
+                background-color: red;
+              }
+            }
+          }
+        }
+
+        .ref-card-2 {
+          width: 250px;
+          height: 300px;
+          padding: 1rem;
+          border-radius: 15px;
+          box-shadow: 2px 2px 8px 3px rgb(174, 174, 174);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .ref-box-1 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            height: 100%;
+
+            h3 {
+              width: 50px;
+              background-color: #f9b03a;
+              color: white;
+              height: 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50px;
+              padding: 0 1rem;
+            }
+
+            h2 {
+              margin: 0.5rem auto;
+              text-align: center;
+            }
+
+            .phone {
+              text-align: center;
+              font-size: 20px;
+              font-weight: bold;
+              color: orangered;
+            }
+
+            .rec {
+              font-size: 18px;
+            }
+
+            .time {
+              font-size: 19px;
+            }
+          }
+
+          .ref-box-2 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 10px;
+
+            .telegram-btn {
+              width: 100%;
+              height: 40px;
+              margin: 0 auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background-color: deepskyblue;
+              color: white;
+              border-radius: 10px;
+              gap: 5px;
+
+              .ico {
+                font-size: 20px;
+              }
+
+              a {
+                text-decoration: none;
+                color: white;
+                font-weight: bold;
+                font-size: 20px;
+              }
+            }
+
+            .wrap-btn {
+              width: 100%;
+              display: flex;
+              gap: 1rem;
+              justify-content: center;
+
+              .btn {
+                width: 100px;
+                height: 40px;
+                cursor: pointer;
+                border: none;
+                color: white;
+                border-radius: 10px;
+                font-size: 20px;
+                font-weight: bold;
+              }
+              .btn-a {
+                background-color: greenyellow;
+              }
+
+              .btn-d {
+                background-color: red;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// 1) Juda kichik telefonlar (< 360px)
+@media (max-width: 359px) {
+  .wrap-appeals {
+    flex-direction: column;
+    gap: 1rem;
+    height: auto;
+  }
+  .wrap-appeals .box {
+    width: 100%;
+    .cards-wrap {
+      flex-direction: column;
+      overflow-y: scroll;
+      max-height: 300px;
+    }
+  }
+}
+
+// 2) Telefonlar (360px–480px)
+@media (min-width: 360px) and (max-width: 480px) {
+  .wrap-appeals {
+    flex-direction: column;
+    gap: 1.5rem;
+    height: auto;
+  }
+  .wrap-appeals .box {
+    width: 100% !important;
+    .cards-wrap {
+      overflow-y: scroll;
+      max-height: 350px;
+
+    }
+  }
+}
+
+// 3) Tabletlar (481px–768px)
+@media (min-width: 481px) and (max-width: 768px) {
+  .wrap-appeals {
+    flex-direction: column;
+    gap: 2rem;
+    height: auto;
+  }
+  .wrap-appeals .box {
+    width: 100% !important;
+    .cards-wrap {
+      overflow-y: auto;
+      max-height: 400px;
+    }
+  }
+}
+
+// 4) Kichik noutbuklar (769px–1024px)
+@media (min-width: 769px) and (max-width: 1024px) {
+  .wrap-appeals {
+    flex-direction: row;
+    gap: 1.5rem;
+    height: calc(100vh - 6rem);
+  }
+  .wrap-appeals .box {
+    width: 48%;
+    .cards-wrap {
+      overflow-y: auto;
+      max-height: calc(100% - 3rem);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr) !important;
+
+        .refer-card{
+          width: 100% !important;
+        }
+
+    }
+  }
+}
+
+// 5) Desktop (> 1025px)
+@media (min-width: 1025px) {
+  .wrap-appeals {
+    flex-direction: row;
+    gap: 2rem;
+    height: calc(100vh - 6rem);
+  }
+
+  .wrap-appeals .box {
+    width: 48%;
+    .cards-wrap {
+      overflow-y: auto;
+    }
+  }
+}

@@ -1,0 +1,231 @@
+.lessonsS-page {
+  font-family: "NotoSerif", sans-serif;
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 12px 3px gray;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  overflow-y: auto;
+  /* Filter Buttons */
+  /* Marks Section - horizontal scroll */
+  /* Lessons Section */
+}
+.lessonsS-page .section-title {
+  width: 100%;
+  text-align: start;
+  color: #f96000;
+  margin-bottom: 20px;
+}
+.lessonsS-page .filter-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.lessonsS-page .filter-buttons button {
+  padding: 8px 16px;
+  font-size: 18px;
+  border: 2px solid #f96000;
+  border-radius: 10px;
+  background-color: #fff;
+  color: #f96000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.lessonsS-page .filter-buttons button:hover {
+  background-color: #f96000;
+  color: #fff;
+}
+.lessonsS-page .filter-buttons button.active {
+  background-color: #f96000;
+  color: #fff;
+}
+.lessonsS-page .mark-box {
+  width: 100%;
+  min-height: 200px;
+  border: 2px solid #f96000;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  overflow-x: scroll;
+  flex-wrap: nowrap;
+}
+.lessonsS-page .mark-box .mark-item {
+  background-color: #fffbe6;
+  border: 2px solid #f96000;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 150px;
+  transition: transform 0.3s ease;
+}
+.lessonsS-page .mark-box .mark-item:hover {
+  transform: scale(1.05);
+}
+.lessonsS-page .mark-box .mark-item .mark-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #f96000; /* mark rangini avvalgidek */
+}
+.lessonsS-page .lessons-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 2px solid #f96000;
+  padding: 20px;
+  border-radius: 20px;
+}
+.lessonsS-page .lesson-item {
+  background: linear-gradient(135deg, #f96000, #e55000);
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  font-size: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lessonsS-page .lesson-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+.lessonsS-page .lesson-item h2 {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+.lessonsS-page .lesson-item .lesson-time {
+  font-size: 20px;
+  margin: 0;
+}
+.lessonsS-page .lesson-item .lesson-info {
+  font-size: 18px;
+  margin: 0;
+}
+
+.mark-box {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+}
+.mark-box .mark-item {
+  min-width: 150px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+.mark-box .mark-item.listening {
+  background: #4a90e2;
+}
+.mark-box .mark-item.speaking {
+  background: #50e3c2;
+}
+.mark-box .mark-item.writing {
+  background: #f5a623;
+}
+.mark-box .mark-item.reading {
+  background: #9013fe;
+}
+.mark-box .mark-item .type-title {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+.mark-box .mark-item .mark-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.todays-lessons-box {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.lesson-card {
+  background: #fff;
+  border: 1px solid #f96000;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  min-width: 200px;
+  transition: transform 0.2s;
+}
+.lesson-card:hover {
+  transform: translateY(-4px);
+}
+.lesson-card .lesson-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.lesson-card .lesson-header .lesson-type {
+  font-weight: bold;
+}
+.lesson-card .lesson-header .lesson-group {
+  font-style: italic;
+}
+.lesson-card .lesson-time,
+.lesson-card .lesson-teacher {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+/* Only responsive overrides; desktop uses existing styles unchanged */
+/* Mobile: up to 768px */
+@media (max-width: 768px) {
+  .lessonsS-page {
+    padding: 1rem;
+  }
+  /* Filter Buttons: full width, wrap */
+  .filter-buttons {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter-buttons button {
+    flex: 1 1 45%;
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+  /* Marks Section: smaller items, pinch scroll */
+  .mark-box {
+    padding: 12px;
+    gap: 12px;
+  }
+  .mark-box .mark-item {
+    min-width: 100px;
+    padding: 10px;
+  }
+  .mark-box .mark-item .type-title {
+    font-size: 14px;
+  }
+  .mark-box .mark-item .mark-value {
+    font-size: 22px;
+  }
+  /* Today's Lessons: vertical list */
+  .todays-lessons-box {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+  }
+  .lesson-card {
+    width: 48%;
+    padding: 12px;
+    min-width: auto;
+  }
+}
+/* Desktop: from 769px up, leave default styles intact */
+@media (min-width: 769px) {
+  /* No overrides needed; desktop uses original grid and sizes */
+}/*# sourceMappingURL=lessonsS.css.map */

@@ -1,0 +1,275 @@
+@charset "UTF-8";
+.register-page {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 12px 3px gray;
+  border-radius: 20px;
+  overflow-y: hidden;
+}
+.register-page .form {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 2rem;
+  gap: 2rem;
+}
+.register-page .form .sect-reg {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  align-items: flex-start;
+}
+.register-page .form .sect-reg .upload-card {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  height: 460px;
+}
+.register-page .form .sect-reg .upload-card .image-card {
+  width: 100%;
+  height: 420px;
+  border-radius: 20px;
+  border: 3px solid #f96000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.register-page .form .sect-reg .upload-card .image-card .icon {
+  width: 120px;
+  height: 120px;
+  color: gray;
+}
+.register-page .form .sect-reg .upload-card .image-card img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.register-page .form .sect-reg .upload-card .btn-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.register-page .form .sect-reg .upload-card .btn-group .btn {
+  width: 350px;
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f96000;
+  color: white;
+  gap: 5px;
+  font-weight: bold;
+  border: none;
+  border-radius: 15px;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+}
+.register-page .form .sect-reg .upload-card .btn-group .btn .ico {
+  font-size: 40px;
+}
+.register-page .form .sect-reg .upload-card .btn-group .btn:active {
+  scale: 0.9;
+}
+.register-page .form .sect-reg .info-card {
+  width: 70%;
+  display: flex;
+  align-items: stretch;
+  gap: 1rem;
+}
+.register-page .form .sect-reg .info-card .box1,
+.register-page .form .sect-reg .info-card .box2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+.register-page .form .sect-reg .info-card .box1 label,
+.register-page .form .sect-reg .info-card .box2 label {
+  width: 100%;
+}
+.register-page .form .sect-reg .info-card .box1 label h4,
+.register-page .form .sect-reg .info-card .box2 label h4 {
+  margin: 0 0 0 10px;
+  color: #f96000;
+}
+.register-page .form .sect-reg .info-card .box1 label input,
+.register-page .form .sect-reg .info-card .box1 label select,
+.register-page .form .sect-reg .info-card .box2 label input,
+.register-page .form .sect-reg .info-card .box2 label select {
+  width: 300px;
+  height: 50px;
+  border: 2px solid #f96000;
+  border-radius: 15px;
+  padding: 0.5rem;
+  color: orange;
+  font-size: 20px;
+  outline: none;
+}
+.register-page .form .sect-reg .info-card .box1 label .error,
+.register-page .form .sect-reg .info-card .box2 label .error {
+  color: red;
+  margin-top: 5px;
+  font-size: 14px;
+  margin-left: 10px;
+  font-family: "NotoSerif", sans-serif;
+}
+.register-page .form .sect-reg .info-card .btn-save {
+  top: 95%;
+  position: absolute;
+  align-self: center;
+  background-color: black;
+  color: #f96000;
+  font-weight: bold;
+  font-size: 32px;
+  padding: 0.5rem 0.8rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.register-page .form .sect-reg .info-card .btn-save:active {
+  scale: 0.95;
+  color: white;
+}
+.register-page .form .sect-reg .info-card .box2 {
+  position: relative;
+}
+.register-page .form .sect-reg .info-card .box2 .discount-container {
+  position: absolute;
+  width: 100%;
+  top: 95%;
+  left: 4%;
+  padding-top: 1rem;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+.register-page .form .sect-reg .info-card .box2 .discount-container.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.register-page .form .sect-reg .info-card .box2 .discount-container label {
+  margin-bottom: 0.5rem;
+}
+
+.register-page {
+  padding: 0; /* remove extra padding if you want truly full-width */
+}
+
+.form {
+  width: 100% !important; /* force full width */
+  max-width: 1500px !important; /* disable any max-width constraint */
+  margin: 0 auto; /* remove centering margin if you want flush edges */
+  box-shadow: none; /* optional: remove shadow if it looks odd at full width */
+}
+
+/* === Responsive Overrides === */
+@media (max-width: 992px) {
+  .register-page {
+    padding: 20px !important;
+    overflow-y: scroll;
+  }
+  /* Stack the two sections vertically */
+  .register-page .form .sect-reg {
+    height: 850px !important;
+    flex-direction: column !important;
+    align-items: center;
+    gap: 1rem;
+  }
+  /* Make upload-card and info-card full‐width */
+  .register-page .form .sect-reg .upload-card,
+  .register-page .form .sect-reg .info-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1rem !important;
+    box-sizing: border-box;
+    height: auto !important;
+  }
+  /* Ensure box1 and box2 inside info-card are full‐width columns */
+  .register-page .form .sect-reg .info-card .box1,
+  .register-page .form .sect-reg .info-card .box2 {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 1rem !important;
+    padding: 0 !important;
+  }
+  /* Make every input, select and button full‐width */
+  .register-page .form .sect-reg input,
+  .register-page .form .sect-reg select,
+  .register-page .form .sect-reg .btn-group .btn,
+  .register-page .form .sect-reg .info-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  /* Resize the image preview */
+  .register-page .form .sect-reg .upload-card .image-card {
+    height: 250px !important;
+  }
+  .btn-save {
+    width: 100% !important;
+    max-width: 200px !important;
+    top: 95% !important;
+    margin-bottom: 30px;
+  }
+  .discount-container {
+    top: 100% !important;
+  }
+}
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 576px) {
+  .register-page {
+    padding: 0 !important;
+    overflow-y: scroll;
+  }
+  .register-page .form {
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+  .register-page .form h1 {
+    font-size: 1.8rem !important;
+  }
+  .register-page .form .sect-reg {
+    padding: 0 !important;
+    height: 800px !important;
+  }
+  .register-page .form .sect-reg .upload-card .image-card {
+    height: 200px !important;
+  }
+  .register-page .form .sect-reg .btn-group .btn,
+  .register-page .form .sect-reg .info-card .btn-save {
+    font-size: 1.2rem !important;
+    padding: 0.5rem !important;
+  }
+  .register-page .form .sect-reg input,
+  .register-page .form .sect-reg select {
+    height: 40px !important;
+  }
+  .register-page {
+    padding: 20px !important;
+    overflow-y: scroll;
+  }
+  .btn-save {
+    height: 40px;
+    width: 130px !important;
+    max-width: 200px !important;
+    top: 96% !important;
+    margin-bottom: 30px;
+  }
+}/*# sourceMappingURL=register.css.map */

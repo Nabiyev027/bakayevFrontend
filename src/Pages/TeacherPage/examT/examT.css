@@ -1,0 +1,278 @@
+.exam-page {
+  font-family: "Noto Serif", serif;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f9f9f9;
+  position: relative;
+  height: 100%;
+  overflow: hidden; /* hide overflow for form panel */
+}
+.exam-page .top-bar {
+  border-radius: 10px;
+  width: 97%;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* center group & button */
+  gap: 1rem;
+  padding: 1rem;
+  background: #fff;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+.exam-page .top-bar h1 {
+  flex: 1;
+  text-align: left;
+  margin: 0;
+}
+.exam-page .top-bar .group-select {
+  width: 150px;
+  padding: 0.4rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: #f96000;
+  outline: none;
+  border: solid 1px #f96000;
+}
+.exam-page .top-bar .btn-add {
+  background: #f96000;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.exam-page .top-bar .btn-add.active,
+.exam-page .top-bar .btn-add:hover {
+  background: #e14a00;
+}
+.exam-page .form-panel {
+  z-index: 999;
+  border: 1px solid #f96000;
+  border-radius: 8px;
+  background: #fff;
+  padding: 1rem;
+  position: absolute;
+  top: 20%;
+  right: 2rem;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.exam-page .form-panel .input-full {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.exam-page .form-panel .datetime-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.exam-page .form-panel .datetime-row .input-date,
+.exam-page .form-panel .datetime-row .input-time {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.exam-page .form-panel .types-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.exam-page .form-panel .types-list .type-tag {
+  background: #f96000;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+.exam-page .form-panel .add-type {
+  display: flex;
+  gap: 0.5rem;
+}
+.exam-page .form-panel .add-type .input-type {
+  flex: 1;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px 0 0 4px;
+}
+.exam-page .form-panel .add-type .btn-type {
+  background: #f96000;
+  border: none;
+  color: #fff;
+  padding: 0 1rem;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+.exam-page .form-panel .btn-save {
+  align-self: flex-end;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.exam-page .form-panel .btn-save:hover {
+  background: #208f3f;
+}
+.exam-page .panels {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+.exam-page .panels .panel {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.exam-page .panels .panel h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+.exam-page .panels .panel .empty {
+  color: #777;
+  margin: auto;
+}
+.exam-page .panels .panel .exam-item {
+  position: relative;
+  padding: 1rem;
+  padding-right: 2.5rem; /* room for edit button */
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s, transform 0.2s;
+}
+.exam-page .panels .panel .exam-item:hover {
+  background: #fafafa;
+  transform: translateY(-1px);
+}
+.exam-page .panels .panel .edit-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #f96000;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+.exam-page .panels .panel .edit-btn:hover {
+  color: #e14a00;
+}
+.exam-page .panels .panel .exam-header {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.exam-page .panels .panel .exam-meta {
+  font-size: 0.85rem;
+  color: #555;
+}
+.exam-page .panels .panel .exam-meta .dot {
+  margin: 0 0.3rem;
+}
+.exam-page .panels .panel .exam-types-small {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.3rem;
+}
+.exam-page .panels .panel .exam-types-small .type-tag {
+  background: #f96000;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+  .exam-page .top-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .exam-page .form-panel {
+    width: 90%;
+    right: 5%;
+    top: 15%;
+  }
+  .exam-page .panels {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+}
+@media (max-width: 768px) {
+  .exam-page {
+    padding: 0.5rem;
+  }
+  .exam-page .top-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .exam-page .group-select,
+  .exam-page .btn-add {
+    width: 100%;
+  }
+  .exam-page .form-panel {
+    position: static;
+    transform: none;
+    margin: 0.5rem 0;
+    width: 100%;
+  }
+  .exam-page .panels .panel {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .exam-page .panels .panel:first-child,
+  .exam-page .panels .panel:last-child {
+    padding: 0.75rem;
+  }
+}
+@media (max-width: 480px) {
+  .exam-page .top-bar h1 {
+    font-size: 1.25rem;
+  }
+  .exam-page .form-panel {
+    padding: 0.75rem;
+  }
+  .exam-page .form-panel .input-full,
+  .exam-page .form-panel .input-date,
+  .exam-page .form-panel .input-time,
+  .exam-page .form-panel .input-type {
+    font-size: 0.9rem;
+    padding: 0.4rem;
+  }
+  .exam-page .form-panel .btn-type,
+  .exam-page .form-panel .btn-save {
+    width: 100%;
+    padding: 0.5rem;
+  }
+  .exam-page .panels {
+    gap: 0.5rem;
+  }
+  .exam-page .panels .panel {
+    padding: 0.5rem;
+  }
+  .exam-page .panels .panel .exam-item {
+    padding: 0.75rem;
+  }
+  .exam-page .panels .panel .exam-meta {
+    font-size: 0.75rem;
+  }
+  .exam-page .panels .panel .exam-types-small .type-tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}/*# sourceMappingURL=examT.css.map */

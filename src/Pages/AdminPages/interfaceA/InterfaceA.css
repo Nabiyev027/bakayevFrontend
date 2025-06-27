@@ -1,0 +1,293 @@
+/* InterfaceA.scss */
+.interfaceA {
+  font-family: "NotoSerif", sans-serif;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 12px 3px gray;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  overflow: scroll;
+}
+.interfaceA .section-buttons {
+  margin-bottom: 1rem;
+}
+.interfaceA .section-buttons button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.interfaceA .section-buttons button.active {
+  background-color: #f96000;
+  color: white;
+}
+.interfaceA .section-content {
+  width: 100%;
+  max-width: 600px;
+  /* Image upload dropzone */
+  /* Saved filename text */
+}
+.interfaceA .section-content .section {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.interfaceA .section-content .section label {
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+.interfaceA .section-content .section label input,
+.interfaceA .section-content .section label textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  border: 2px solid #f96000;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.interfaceA .section-content .section label input::-moz-placeholder, .interfaceA .section-content .section label textarea::-moz-placeholder {
+  color: #f96000;
+}
+.interfaceA .section-content .section label input::placeholder,
+.interfaceA .section-content .section label textarea::placeholder {
+  color: #f96000;
+}
+.interfaceA .section-content .section label input:focus,
+.interfaceA .section-content .section label textarea:focus {
+  outline: none;
+  border-color: #f96000;
+  box-shadow: 0 0 5px rgba(249, 96, 0, 0.5);
+}
+.interfaceA .section-content .section label textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+.interfaceA .section-content .section .save-button {
+  width: 30%;
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background-color: #f96000;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.interfaceA .section-content .section .save-button:hover {
+  background-color: #e05500;
+  transform: translateY(-2px);
+}
+.interfaceA .section-content .image-upload {
+  margin-bottom: 1rem;
+}
+.interfaceA .section-content .image-upload .upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #f96000;
+  border-radius: 8px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.interfaceA .section-content .image-upload .upload-label:hover {
+  background-color: rgba(249, 96, 0, 0.1);
+  transform: scale(1.02);
+  box-shadow: 0 0 10px rgba(249, 96, 0, 0.5);
+}
+.interfaceA .section-content .image-upload .upload-label .upload-icon {
+  width: 48px;
+  height: 48px;
+  color: #f96000;
+  margin-bottom: 0.5rem;
+  transition: transform 0.2s;
+}
+.interfaceA .section-content .image-upload .upload-label:hover .upload-icon {
+  transform: scale(1.2);
+}
+.interfaceA .section-content .image-upload .upload-label .preview-img {
+  max-width: 100%;
+  max-height: 150px;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.interfaceA .section-content .image-upload .upload-label span {
+  font-size: 0.9rem;
+  color: #555;
+}
+.interfaceA .section-content .saved-text {
+  font-size: 0.85rem;
+  color: #333;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.language-selector {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1rem;
+}
+.language-selector select {
+  position: absolute;
+  top: 14%;
+  right: 1.7rem;
+  width: 130px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #f96000;
+  background-color: #fff;
+  color: #333;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.language-selector select:hover {
+  border-color: #f9b03a;
+}
+.language-selector select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+@media (max-width: 1024px) {
+  .language-selector select {
+    top: 12.5% !important;
+    right: 2rem;
+    width: 100px;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+  .interfaceA {
+    padding: 1.5rem;
+  }
+  .interfaceA .section-buttons {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+  .interfaceA .section-content {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+  .interfaceA .section label input,
+  .interfaceA .section label textarea {
+    font-size: 0.95rem;
+  }
+  .interfaceA .section .save-button {
+    width: 50%;
+  }
+  .interfaceA .image-upload .upload-label {
+    padding: 1.5rem;
+  }
+}
+@media (max-width: 768px) {
+  .interfaceA {
+    padding: 1rem;
+  }
+  .interfaceA .section-buttons {
+    flex-direction: column;
+  }
+  .interfaceA .section-buttons button {
+    width: 100%;
+  }
+  .interfaceA .section-content {
+    width: 100%;
+    padding: 0;
+  }
+  .interfaceA .section {
+    margin-bottom: 1rem;
+  }
+  .interfaceA .section label {
+    margin-bottom: 0.75rem;
+  }
+  .interfaceA .section label input,
+  .interfaceA .section label textarea {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+  }
+  .interfaceA .section .save-button {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+  .interfaceA .image-upload .upload-label {
+    padding: 1rem;
+  }
+  .interfaceA .image-upload .upload-label .upload-icon {
+    width: 40px;
+    height: 40px;
+  }
+  .interfaceA .image-upload .upload-label .preview-img {
+    max-height: 120px;
+  }
+}
+@media (max-width: 480px) {
+  .interfaceA {
+    padding: 0.75rem;
+  }
+  .interfaceA .section-buttons button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+  .interfaceA .section-content {
+    padding: 0;
+  }
+  .interfaceA .section label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  .interfaceA .section label input,
+  .interfaceA .section label textarea {
+    padding: 0.35rem;
+    font-size: 0.85rem;
+  }
+  .interfaceA .section .save-button {
+    width: 100%;
+    padding: 0.45rem;
+    font-size: 0.85rem;
+  }
+  .interfaceA .image-upload .upload-label {
+    padding: 0.75rem;
+  }
+  .interfaceA .image-upload .upload-label .upload-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .interfaceA .image-upload .upload-label .preview-img {
+    max-height: 100px;
+  }
+  .interfaceA .image-upload .upload-label span {
+    font-size: 0.8rem;
+  }
+  .interfaceA .saved-text {
+    font-size: 0.8rem;
+  }
+  .interfaceA .language-selector select {
+    top: 13% !important;
+    right: 2rem;
+    width: 100px;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+}/*# sourceMappingURL=InterfaceA.css.map */

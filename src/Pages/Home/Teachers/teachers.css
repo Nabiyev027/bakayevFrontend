@@ -1,0 +1,270 @@
+.wrap-teachers {
+  width: 100%;
+}
+.wrap-teachers .container {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.wrap-teachers .container .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+.wrap-teachers .container .header h1 {
+  font-size: 40px;
+  height: 80px;
+  border-bottom: 2px solid;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 10rem;
+  color: black;
+}
+.wrap-teachers .container .teachers-covered .wrap-title {
+  width: -moz-max-content;
+  width: max-content;
+  padding: 0 1rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  background-color: #f9b03a;
+  border-radius: 70px;
+  height: 110px;
+}
+.wrap-teachers .container .teachers-covered .wrap-title .title-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+.wrap-teachers .container .teachers-covered .wrap-title .title-box img {
+  width: 70px;
+  height: 70px;
+  background-color: white;
+  -o-object-fit: contain;
+     object-fit: contain;
+  border-radius: 50px;
+}
+.wrap-teachers .container .teachers-covered .wrap-title .title-box .box-t {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-width 0.8s ease-in-out, opacity 0.1s ease-out;
+}
+.wrap-teachers .container .teachers-covered .wrap-title .active-teach {
+  background-color: white;
+  height: -moz-max-content;
+  height: max-content;
+  padding: 7px;
+  border-radius: 50px;
+  box-shadow: 0px 0px 10px 2px;
+  width: -moz-max-content;
+  width: max-content;
+}
+.wrap-teachers .container .teachers-covered .wrap-title .active-teach img {
+  background-color: orange;
+}
+.wrap-teachers .container .teachers-covered .wrap-title .active-teach .box-t {
+  max-width: 150px;
+  opacity: 1;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes {
+  display: flex;
+  justify-content: space-evenly;
+  height: 600px;
+  margin-top: 3rem;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .img-box {
+  width: 30%;
+  background-color: #f9b03a;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0px 0px 15px 3px;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .img-box img {
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box {
+  width: 60%;
+  font-family: "Monsserat", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes {
+  color: #f9b03a;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  height: 50%;
+  gap: 2rem;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box {
+  border: 2px solid #f9b03a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h1 {
+  font-size: 62px;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h3 {
+  font-size: 25px;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text {
+  height: 45%;
+  background-color: #f9b03a;
+  color: black;
+  padding: 1.5rem;
+  border-radius: 20px;
+}
+.wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text p {
+  font-size: 27px;
+}
+
+/* Responsive Styles for Teachers Component */
+@media (max-width: 1200px) {
+  .wrap-teachers .container {
+    padding: 0 1rem;
+  }
+  .wrap-teachers .container .header h1 {
+    font-size: 32px;
+    padding: 1.5rem 2rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title {
+    gap: 0.8rem;
+    height: 90px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .title-box img {
+    width: 60px;
+    height: 60px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .active-teach .box-t {
+    max-width: 120px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    margin-top: 2rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .img-box {
+    width: 80%;
+    margin-bottom: 2rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .img-box img {
+    height: auto;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box {
+    width: 100%;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h1 {
+    font-size: 48px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h3 {
+    font-size: 20px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text {
+    padding: 1rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text p {
+    font-size: 22px;
+  }
+}
+@media (max-width: 768px) {
+  .wrap-teachers .container .header h1 {
+    font-size: 28px;
+    padding: 1rem 1.5rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title {
+    width: 100%;
+    padding: 0 0.5rem;
+    overflow-x: auto;
+    gap: 0.6rem;
+    height: 80px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .title-box img {
+    width: 50px;
+    height: 50px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .active-teach {
+    padding: 5px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .active-teach .box-t {
+    max-width: 100px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .img-box {
+    width: 100%;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h1 {
+    font-size: 40px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h3 {
+    font-size: 18px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text {
+    margin-top: 20px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text p {
+    font-size: 18px;
+  }
+}
+@media (max-width: 480px) {
+  .wrap-teachers .container .header h1 {
+    font-size: 22px;
+    padding: 0.5rem 1rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title {
+    height: 60px;
+    gap: 0.4rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .title-box img {
+    width: 40px;
+    height: 40px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-title .box-t {
+    display: none;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes {
+    flex-direction: column;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .img-box {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box {
+    width: 100%;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h1 {
+    font-size: 32px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .boxes .mini-box h3 {
+    font-size: 16px;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text {
+    padding: 0.8rem;
+  }
+  .wrap-teachers .container .teachers-covered .wrap-boxes .text-box .text p {
+    font-size: 16px;
+  }
+}/*# sourceMappingURL=teachers.css.map */

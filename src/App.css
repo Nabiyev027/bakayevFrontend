@@ -1,0 +1,43 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #282828 rgba(0, 0, 0, 0.1); /* For Firefox */
+}
+
+#root::-webkit-scrollbar {
+    width: 12px; /* Adjust scrollbar width */
+    height: 12px; /* Adjust scrollbar height */
+}
+
+#root::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1); /* Track color */
+    border-radius: 50px;
+}
+
+#root::-webkit-scrollbar-thumb {
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, 0.5); /* Thumb color */
+    border: 3px solid rgba(0, 0, 0, 0.1); /* Padding around thumb */
+}
+
+
+@font-face {
+    font-family: 'Monsserat';
+    src: url("./fonts/Montserrat-Regular.ttf") format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NotoSerif';
+    src: url("./fonts/NotoSerif-Regular.ttf") format('ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-family: 'Monsserat', sans-serif;
+}

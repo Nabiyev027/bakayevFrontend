@@ -1,0 +1,272 @@
+.attendance-page {
+  font-family: "NotoSerif", sans-serif;
+  font-size: 22px;
+  color: #333;
+  background: #fff;
+  box-shadow: 0 0 12px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  padding: 10px;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.headerT {
+  padding: 1.5rem;
+  padding-bottom: 10px;
+  border-radius: 16px;
+  animation: headerPulse 3s infinite;
+}
+
+.headerT h1 {
+  width: 100%;
+  height: 50px;
+  margin: 0;
+  color: #f96000;
+  font-size: 2.5rem;
+  text-align: center;
+  font-weight: 600;
+  transition: letter-spacing 0.3s;
+}
+
+.layout {
+  display: flex;
+  flex: 1;
+  margin-top: -15px;
+}
+
+.table-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-right: 1rem;
+}
+
+.table-boxx {
+  flex: 1;
+  overflow-y: scroll;
+  border-radius: 12px;
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+.student-table thead tr th {
+  background: #f96000;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.student-table tbody tr {
+  background: #fff;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.student-table tbody tr.present {
+  background: rgba(40, 167, 69, 0.15);
+}
+
+.student-table td {
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.student-table td:first-child {
+  width: 50px;
+}
+
+.student-table td:nth-child(2) {
+  width: auto;
+}
+
+.student-table td:nth-child(3) {
+  width: 140px;
+}
+
+.student-table td:nth-child(4) {
+  width: 80px;
+  text-align: center;
+}
+
+.student-table td:nth-child(5) {
+  width: 200px;
+}
+
+.student-table input[type=checkbox] {
+  transform: scale(1.3);
+  cursor: pointer;
+  accent-color: green;
+}
+
+.student-table .note-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.student-table .note-input:focus {
+  outline: none;
+  border-color: #f96000;
+  box-shadow: 0 0 5px rgba(249, 96, 0, 0.4);
+}
+
+.controls {
+  margin-top: 1rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.save-btn,
+.edit-btn {
+  background: #f96000;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.save-btn:hover,
+.edit-btn:hover {
+  background: #e05600;
+  transform: translateY(-2px);
+}
+
+.group-panel {
+  width: 240px;
+  background: #fff;
+  border-left: 1px solid #e0e0e0;
+  overflow-y: auto;
+  padding: 1.5rem 1rem;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.03);
+  border-radius: 0 20px 20px 0;
+}
+
+.group-panel h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  color: #f96000;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.group-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.group-panel li {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.group-panel li.active-group {
+  background: #fff;
+  border: 1px solid #000;
+  color: #000;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  transform: translateX(-5px);
+}
+
+@media (max-width: 1024px) {
+  .student-table th:nth-child(5),
+  .student-table td:nth-child(5) {
+    display: block !important;
+  }
+  .student-table th {
+    width: auto;
+  }
+  .layout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .table-container,
+  .group-panel {
+    width: 100%;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .group-panel {
+    order: -1;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    border-radius: 20px 20px 0 0;
+    padding: 1rem;
+  }
+  .table-boxx {
+    overflow: scroll;
+    max-height: 400px;
+  }
+}
+@media (max-width: 768px) {
+  /* Make checkbox and text input line up nicely in mobile cards */
+  .student-table td[data-label=Present] {
+    padding-bottom: 0.25rem;
+  }
+  .student-table td[data-label=Present] input[type=checkbox] {
+    transform: scale(1.4);
+    margin-left: auto;
+  }
+  .student-table td[data-label=Sabab] {
+    padding-top: 0.25rem;
+  }
+  .student-table td[data-label=Sabab] .note-input {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #f96000;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 480px) {
+  /* Slightly smaller inputs on very small screens */
+  .student-table td[data-label=Present] input[type=checkbox] {
+    transform: scale(1.2);
+  }
+  .student-table td[data-label=Sabab] .note-input {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 4px;
+  }
+}
+.group-select-wrapper {
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
+}
+.group-select-wrapper label {
+  margin-right: 0.5rem;
+  font-weight: 300;
+}
+.group-select-wrapper select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 8px;
+}/*# sourceMappingURL=groupT.css.map */

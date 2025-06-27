@@ -1,0 +1,281 @@
+.students-wrapper {
+  width: 100%;
+}
+.students-wrapper .container {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+.students-wrapper .container .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+.students-wrapper .container .header h1 {
+  font-size: 40px;
+  border-bottom: 2px solid;
+  height: 80px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 10rem;
+  color: black;
+}
+.students-wrapper .container .sect-wrap {
+  width: 100%;
+  border-radius: 30px;
+  padding: 0 3rem;
+}
+.students-wrapper .container .sect-wrap .head-card .wrap-students {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  border-radius: 50px;
+}
+.students-wrapper .container .sect-wrap .head-card .wrap-students .circle {
+  width: 100px;
+  height: 100px;
+  border: 1px solid;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f9b03a;
+}
+.students-wrapper .container .sect-wrap .head-card .wrap-students .circle .img {
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.students-wrapper .container .sect-wrap .head-card .wrap-students .active {
+  border: 3px solid orangered;
+  box-shadow: 0px 0px 15px 3px orange;
+}
+.students-wrapper .container .sect-wrap .head-card .wrap-students .circle:hover {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.students-wrapper .container .sect-wrap .head-card .wrap-students .circle:hover .img {
+  scale: 0.8;
+}
+.students-wrapper .container .sect-wrap .body-card {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-card {
+  display: flex;
+  gap: 1rem;
+  width: 300px;
+  height: 80px;
+  border-radius: 50px;
+  justify-content: center;
+  align-items: center;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-1 {
+  box-shadow: 0px 0px 20px 5px greenyellow inset;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-2 {
+  box-shadow: 0px 0px 20px 5px yellow inset;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-3 {
+  box-shadow: 0px 0px 20px 5px orange inset;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-4 {
+  box-shadow: 0px 0px 20px 5px red inset;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-5 {
+  box-shadow: 0px 0px 20px 5px deepskyblue inset;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-6 {
+  box-shadow: 0px 0px 20px 5px rgb(234, 0, 255) inset;
+}
+.students-wrapper .container .sect-wrap .body-card .result-text .res-6 h1 {
+  font-size: 25px;
+}
+.students-wrapper .container .sect-wrap .body-card .result-img {
+  width: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.students-wrapper .container .sect-wrap .body-card .result-img img {
+  width: 500px;
+  height: 650px;
+  -o-object-fit: fill;
+     object-fit: fill;
+  box-shadow: 0px 0px 20px 5px #f9b03a;
+}
+
+/* Responsive Styles for Students Component */
+/* Responsive Styles for Students Component */
+@media (max-width: 1200px) {
+  .students-wrapper .container {
+    padding: 0 1rem;
+  }
+  .students-wrapper .container .header h1 {
+    font-size: 32px;
+    padding: 1.5rem 2rem;
+  }
+  .students-wrapper .container .sect-wrap {
+    padding: 0 2rem;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students {
+    gap: 20px;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students .circle {
+    width: 80px;
+    height: 80px;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students .circle .img {
+    scale: 0.9;
+  }
+  .students-wrapper .container .sect-wrap .body-card {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text {
+    width: 100%;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card {
+    width: 90%;
+    height: 70px;
+    margin-bottom: 1rem; /* Added margin-bottom */
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-6 h1 {
+    font-size: 22px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-1 h2,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-2 h2,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-3 h2,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-4 h2,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-5 h2 {
+    font-size: 16px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-1 h1,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-2 h1,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-3 h1,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-4 h1,
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-5 h1 {
+    font-size: 28px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-img {
+    width: 80%;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-img img {
+    width: 100%;
+    height: auto;
+  }
+}
+@media (max-width: 768px) {
+  .students-wrapper .container .header h1 {
+    font-size: 28px;
+    padding: 1rem 1.5rem;
+  }
+  .students-wrapper .container .sect-wrap {
+    padding: 0 1.5rem;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students {
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students .circle {
+    width: 60px;
+    height: 60px;
+    border-width: 2px;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students .circle .img {
+    scale: 0.8;
+  }
+  .students-wrapper .container .sect-wrap .body-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text {
+    width: 100%;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 0.8rem; /* Added margin-bottom */
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-6 h1 {
+    font-size: 20px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card h2 {
+    font-size: 14px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card h1 {
+    font-size: 24px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-img {
+    width: 100%;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-img img {
+    height: auto;
+  }
+}
+@media (max-width: 480px) {
+  .students-wrapper .container .header h1 {
+    font-size: 22px;
+    padding: 0.5rem 1rem;
+  }
+  .students-wrapper .container .sect-wrap {
+    padding: 0 1rem;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students {
+    gap: 10px;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students .circle {
+    width: 50px;
+    height: 50px;
+    border-width: 2px;
+    background-color: #f9b03a;
+  }
+  .students-wrapper .container .sect-wrap .head-card .wrap-students .circle .img {
+    scale: 0.7;
+  }
+  .students-wrapper .container .sect-wrap .body-card {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text {
+    width: 100%;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card {
+    width: 100%;
+    height: 50px;
+    border-radius: 40px;
+    margin-bottom: 0.5rem; /* Added margin-bottom */
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-6 h1 {
+    font-size: 18px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card h2 {
+    font-size: 12px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-text .res-card h1 {
+    font-size: 20px;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-img {
+    width: 100%;
+  }
+  .students-wrapper .container .sect-wrap .body-card .result-img img {
+    width: 100%;
+    box-shadow: 0px 0px 15px 3px #f9b03a;
+  }
+}/*# sourceMappingURL=students.css.map */

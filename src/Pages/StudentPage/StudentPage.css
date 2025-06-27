@@ -1,0 +1,169 @@
+/* StudentPage.scss */
+.wrapper-reception {
+  width: 100%;
+  height: 100vh;
+}
+.wrapper-reception .nav-rec {
+  background-color: black;
+  color: #f96000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 10vh;
+}
+.wrapper-reception .nav-rec .wrap-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.wrapper-reception .nav-rec .wrap-logo img {
+  width: 120px;
+  padding: 0.8rem;
+}
+.wrapper-reception .nav-rec .wrap-name .circle {
+  display: none !important;
+}
+.wrapper-reception .nav-rec .burger {
+  display: none;
+  font-size: 2rem;
+  color: #f96000;
+  cursor: pointer;
+  padding: 0 1rem;
+}
+@media (max-width: 768px) {
+  .wrapper-reception .nav-rec .burger {
+    display: block;
+  }
+}
+.wrapper-reception .nav-rec .wrap-logo h1 {
+  font-size: 24px;
+  width: 100px;
+}
+.wrapper-reception .nav-rec .wrap-name {
+  display: block;
+  align-items: center;
+  gap: 1rem;
+  padding-right: 1rem;
+}
+.wrapper-reception .nav-rec .wrap-name h2 {
+  color: #f96000;
+}
+.wrapper-reception .nav-rec .wrap-name .circle {
+  background-color: white;
+  color: #f96000;
+  font-size: 40px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50px;
+}
+.wrapper-reception .wrap-page {
+  display: flex;
+  height: 90vh;
+  /* Ensure sidebar always visible on desktop */
+}
+.wrapper-reception .wrap-page .sidebar {
+  width: 140px !important;
+  background-color: black;
+  display: block;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem 0.5rem;
+}
+.wrapper-reception .wrap-page .sidebar .wrap-bars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.wrapper-reception .wrap-page .sidebar .wrap-bars .box {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 40px;
+  color: #f96000;
+  gap: 10px;
+}
+.wrapper-reception .wrap-page .sidebar .wrap-bars .box h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+.wrapper-reception .wrap-page .sidebar .wrap-bars .box:hover {
+  color: white;
+  cursor: pointer;
+}
+.wrapper-reception .wrap-page .sidebar .box-2 {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 40px;
+  color: white;
+  gap: 10px;
+  margin-top: 1rem;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.wrapper-reception .wrap-page .sidebar .box-2 h3 {
+  font-size: 18px;
+}
+.wrapper-reception .wrap-page .sidebar .box-2:hover {
+  cursor: pointer;
+  color: #f96000;
+}
+.wrapper-reception .wrap-page .sidebar .box-2:active {
+  border-radius: 15px;
+  box-shadow: 0 0 20px 3px white inset;
+  transform: scale(0.9);
+}
+.wrapper-reception .wrap-page .sidebar .wrap-logo {
+  display: none !important;
+}
+@media (max-width: 768px) {
+  .wrapper-reception .wrap-page .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+    transform: translateX(-100%);
+  }
+}
+.wrapper-reception .wrap-page .content-bar {
+  width: 100%;
+  padding: 1rem;
+  background-color: #f9b03a;
+  overflow-x: hidden;
+}
+.wrapper-reception .wrap-page .wrap-logo {
+  display: none !important;
+}
+@media (min-width: 769px) {
+  .wrapper-reception .wrap-page .sidebar {
+    transform: translateX(0) !important;
+    position: relative !important;
+  }
+  .wrapper-reception .wrap-page .burger {
+    display: none !important;
+  }
+  .wrapper-reception .wrap-page .wrap-page.active-overlay .content-bar::before {
+    display: none;
+  }
+  .wrapper-reception .wrap-page .wrap-logo {
+    display: none !important;
+  }
+}/*# sourceMappingURL=StudentPage.css.map */

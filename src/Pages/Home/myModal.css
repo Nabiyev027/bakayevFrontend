@@ -1,0 +1,72 @@
+.ReactModal__Overlay {
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.ReactModal__Content {
+  background: white;
+  padding: 20px;
+  border-radius: 30px !important;
+  border: 3px solid orange !important;
+  width: 600px;
+  max-width: 90%;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.ReactModal__Content h1 {
+  color: orange;
+}
+.ReactModal__Content .inp-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+  margin: 1rem auto;
+}
+.ReactModal__Content .inp-container label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.ReactModal__Content .inp-container label h3 {
+  margin-left: 10px;
+}
+.ReactModal__Content .inp-container input {
+  width: 320px;
+  padding: 12px;
+  font-size: 18px;
+  border: 2px solid orange;
+  border-radius: 50px;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow: 0px 0px 10px 2px orange inset;
+}
+.ReactModal__Content .buttons {
+  display: flex;
+  gap: 10px;
+  margin: 1rem auto;
+}
+.ReactModal__Content .b-1 {
+  background-color: red;
+  border: none;
+  width: 130px;
+  height: 40px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+.ReactModal__Content .b-2 {
+  background-color: greenyellow;
+  border: none;
+  width: 130px;
+  height: 40px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}/*# sourceMappingURL=myModal.css.map */

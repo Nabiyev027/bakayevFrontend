@@ -1,0 +1,142 @@
+.setting-page {
+  font-family: "NotoSerif", sans-serif;
+
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 12px 3px gray;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  padding: 2rem;
+  overflow-y: hidden;
+}
+.setting-title {
+  color: #f96000;
+}
+.setting-card {
+  width: 750px;
+  height: 700px;
+  border-radius: 20px;
+  margin-top: 20px;
+  border: solid 3px #f96000;
+}
+
+.avatar {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: solid 3px #f96000;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 20px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .avatar-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 14px;
+    padding: 5px 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover .avatar-overlay {
+    opacity: 1;
+  }
+}
+
+.setting-page {
+  .setting-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 2rem;
+  }
+
+  .setting-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 2rem;
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+
+      .label {
+        text-align: center;
+        font-weight: bold;
+        font-size: 22px;
+        margin-right: 10px;
+        width: 100px;
+        text-align: right;
+      }
+
+      .value {
+        font-size: 32px;
+        margin-right: 10px;
+        flex-grow: 1;
+        text-align: center;
+      }
+
+      .input-edit {
+        padding: 8px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        width: 180px;
+      }
+
+      .action-btn {
+        padding: 8px 12px;
+        background-color: #f96000;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-left: 5px;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+          background-color: #f98000;
+        }
+
+        &.cancel {
+          background-color: #6c757d;
+          &:hover {
+            background-color: #5a6268;
+          }
+        }
+      }
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 14px;
+      text-align: center;
+    }
+  }
+}
+
+.password-inputs {
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
