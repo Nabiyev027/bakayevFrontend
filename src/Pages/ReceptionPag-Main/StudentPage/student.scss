@@ -14,16 +14,17 @@
   justify-content: start;
   align-items: center;
   padding: 2rem;
-  overflow-y: hidden;
+  overflow-y: scroll;
 
   .student-header {
     width: 100%;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 1rem;
 
-    .search-input,
+    .filial-select,
     .group-select {
       padding: 8px 12px;
       border: 1px solid #ccc;
@@ -40,42 +41,12 @@
     }
   }
 
-  .branch-select {
-    width: 200px;
-    margin-left: 250px;
-    position: absolute;
-    top: 30px;
-    left: 5%;
-    z-index: 1000;
-
-    label {
-      font-size: 16px;
-      font-weight: 500;
-      color: #333;
-    }
-
-    .select-box {
-      width: 150px;
-      padding: 0.4rem 0.8rem;
-      font-size: 15px;
-      border-radius: 8px;
-      border: 2px solid #f96000;
-      background-color: white;
-      outline: none;
-      transition: 0.3s;
-
-      &:hover,
-      &:focus {
-        border-color: #d94e00;
-        background-color: #fff2e6;
-      }
-    }
-  }
 }
 
 .table-boxx {
   height: 600px;
-  overflow-y: auto;
+  border: 1px solid red;
+  overflow-y: scroll;
   width: 100%;
   margin-top: 1rem;
   border-radius: 12px;
@@ -139,6 +110,14 @@
 
   tr:hover {
     background-color: #fff5ec;
+  }
+
+  .change-p-btn{
+    background-color: darkblue;
+    padding: 6px 10px;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
   }
 
   .actions {

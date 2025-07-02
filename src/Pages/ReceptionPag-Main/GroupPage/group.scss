@@ -20,7 +20,6 @@
 }
 
 .groupTitle {
-  color: #f96000;
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 1rem;
@@ -56,16 +55,11 @@
   font-size: 14px;
 
   thead {
-    background-color: #ffffff;
-    color: #f96000;
-    border-bottom: 2px solid #f96000;
 
     th {
       font-weight: 600;
-      font-size: 14px;
+      font-size: 20px;
       text-align: center;
-      border-right: 1px solid #f96000;
-
     }
 
     th:first-child{
@@ -105,23 +99,52 @@
 
       td {
         text-align: center;
-        font-size: 14px;
-        color: #222;
+        font-size: 18px;
         border-bottom: 1px solid #f0f0f0;
         overflow: hidden;
         white-space: nowrap;
 
         .inp-g{
-          width: 200px;
+          width: 100%;
+          border-radius: 5px;
+          padding: 4px;
           height: 40px;
           border: 2px solid #f96000;
           font-size: 16px;
         }
 
+        .table-teacher-checkboxes{
+          border:  2px solid #f96000;
+          border-radius: 5px;
+          display: flex;
+          flex-direction: column;
+          justify-content: start;
+          height: 80px;
+          gap: 5px;
+          overflow-y: scroll;
+          padding: 5px;
+
+          label{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 30px;
+            font-size: 20px;
+            padding: 0.5px 0.8px;
+            border-radius: 4px;
+            background-color: white;
+
+
+            .inp-check{
+              width: 20px;
+              height: 20px;
+            }
+
+          }
+
+        }
+
       }
-
-
-
 
       .actions-g{
         width: 100%;
@@ -168,17 +191,6 @@
 
       }
     }
-  }
-
-  input[type="text"],
-  input[type="time"],
-  select {
-    width: 90%;
-    max-width: 80px;
-    padding: 4px;
-    font-size: 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
   }
 
   .actions {
@@ -230,7 +242,7 @@
   background-color: #f96000;
   color: white;
   padding: 8px 12px;
-  font-size: 14px;
+  font-size: 20px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -347,52 +359,45 @@
   width: 100%;
 }
 
-.teacher-checkboxes{
-  background-color: #f96000;
+/* Enhanced teacher checkbox container styling */
+.teacher-checkboxes {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  max-height: 160px;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: #fcfcfc;
   width: 100%;
-  min-height: 140px;
 }
 
-///* Enhanced teacher checkbox container styling */
-//.teacher-checkboxes {
-//  border: 1px solid #ccc;
-//  border-radius: 6px;
-//  padding: 8px;
-//  max-height: 160px;
-//  overflow-y: scroll;
-//  display: flex;
-//  flex-direction: column;
-//  gap: 6px;
-//  background-color: #fcfcfc;
-//  width: 100%;
-//}
-//
-//.teacher-checkboxes label {
-//  display: flex;
-//  align-items: center;
-//  padding: 2px 4px;
-//  border-radius: 4px;
-//  transition: background 0.2s;
-//}
-//
-//.teacher-checkboxes label:hover {
-//  background-color: #fff0e6;
-//}
-//
-//.teacher-checkboxes input[type="checkbox"] {
-//  margin-right: 8px;
-//  width: 16px;
-//  height: 16px;
-//}
-//
-///* Scrollbar for teacher list */
-//.teacher-checkboxes::-webkit-scrollbar {
-//  width: 6px;
-//}
-//.teacher-checkboxes::-webkit-scrollbar-thumb {
-//  background-color: #f96000;
-//  border-radius: 3px;
-//}
+.teacher-checkboxes label {
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.teacher-checkboxes label:hover {
+  background-color: #f9b03a;
+}
+
+.teacher-checkboxes input[type="checkbox"] {
+  margin-right: 8px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Scrollbar for teacher list */
+.teacher-checkboxes::-webkit-scrollbar {
+  width: 6px;
+}
+.teacher-checkboxes::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+}
 /* === Group Page Responsive Styles === */
 
 /* Large tablets / small desktops */

@@ -8,9 +8,11 @@ import {IoIosUndo} from "react-icons/io";
 
 function Group_Main() {
     const [teachers, setTeachers] = useState([]);
+    const [rooms, setRooms] = useState([]);
     const [branches, setBranches] = useState([]);
-    const [branchRooms,setBranchRooms] = useState([]);
+    const [branchRooms, setBranchRooms] = useState([]);
     const [groups, setGroups] = useState([]);
+    const [filteredGroups, setFilteredGroups] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editedGroup, setEditedGroup] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,16 +28,27 @@ function Group_Main() {
     });
 
     useEffect(() => {
-        getGroups()
+        getRooms()
         getTeachers()
         getBranches()
+        getGroups()
     }, [])
+
+
+    async function getRooms() {
+        try {
+            const res = await ApiCall("/room/getAll", {method: "GET"})
+            setRooms(res.data)
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
 
     async function getGroups() {
         try {
             const res = await ApiCall("/group/getAll", {method: "GET"})
-            console.log(res.data)
             setGroups(res.data)
+            setFilteredGroups(res.data)
         } catch (err) {
             console.log(err.message);
         }
@@ -61,7 +74,7 @@ function Group_Main() {
 
     function validateGroupForm(group) {
         const newErrors = {};
-        const { name, degree, roomId, teacherIds, startTime, endTime, branchId } = group;
+        const {name, degree, roomId, teacherIds, startTime, endTime, branchId} = group;
 
         if (!name.trim()) newErrors.name = "Guruh nomi majburiy.";
         if (!degree.trim()) newErrors.degree = "Daraja majburiy.";
@@ -77,20 +90,7 @@ function Group_Main() {
         return newErrors;
     }
 
-    const handleEdit = (idx) => {
-        const group = groups[idx];
 
-        const teacherIds = group.teacherNameDtos.map(t => t.id); // id larni ajratib olamiz
-
-        setEditingIndex(idx);
-        setEditedGroup({
-            ...group,
-            teacherIds: teacherIds,
-            roomId: group.roomDto?.id || "",
-            branchId: group.branchId || "", // mavjud bo‘lsa
-        });
-        setIsModalOpen(false);
-    };
 
     const handleCheckboxChange = (e, isEditing = false) => {
         const {value, checked} = e.target;
@@ -117,27 +117,72 @@ function Group_Main() {
         setEditedGroup({...editedGroup, [name]: value});
     };
 
-    const handleSave = () => {
-        const updated = [...groups];
-        updated[editingIndex] = editedGroup;
-        setGroups(updated);
-        setEditingIndex(null);
-        setEditedGroup({});
+    const handleSave = async () => {
+        if (editedGroup.name === "" || editedGroup.degree === "" || editedGroup.roomId === "" || editedGroup.branchId === "") {
+            alert("Please fill all blanks")
+        }
+
+        try {
+            const res = await ApiCall(`/group/${editedGroup.id}`, {method: "PUT"}, {
+                name: editedGroup.name,
+                degree: editedGroup.degree,
+                roomId: editedGroup.roomId,
+                filialId: editedGroup.branchId,
+                startTime: editedGroup.startTime,
+                endTime: editedGroup.endTime,
+                teacherIds: editedGroup.teacherIds,
+            });
+
+            console.log(res.data)
+            await getGroups();          // yangilangan ro‘yxatni olib kelamiz
+            setEditingIndex(null);
+            setEditedGroup({});
+        } catch (err) {
+            console.log(err.message);
+        }
     };
+
 
     const handleCancel = () => {
         setEditingIndex(null);
         setEditedGroup({});
     };
 
-    const handleDelete = (idx) => {
-        const updated = [...groups];
-        updated.splice(idx, 1);
-        setGroups(updated);
+    const handleEdit = (idx) => {
+        const group = groups[idx];
+
+        // Guruhga biriktirilgan o‘qituvchilar ID‑lar ro‘yxati
+        const teacherIds = (group.teacherNameDtos || []).map(t => t.id);
+
+        setEditingIndex(idx);
+        setEditedGroup({
+            ...group,
+            teacherIds,              // checkboxlar uchun ['id1', 'id2', …]
+
+            // select uchun hozirgi filial va xona ID‑larini ham kiritib qo‘yish foydali
+            branchId: group.filialNameDto?.id || "",
+            roomId:   group.roomDto?.id        || "",
+        });
+    };
+
+    const handleDelete = async (g) => {
+        if (window.confirm(`Are you confirm delete ${g.name}`)) {
+            // o‘chirish funksiyasi
+
+            try {
+                const res = await ApiCall(`/group/${g.id}`, {method: "DELETE"});
+                console.log(res.data)
+                getGroups()
+            } catch (err) {
+                console.log(err);
+            }
+
+        }
+
+
     };
 
     async function AddGroup() {
-
         const formErrors = validateGroupForm(newGroup);
         if (Object.keys(formErrors).length > 0) {
             setErrors(formErrors);
@@ -145,7 +190,7 @@ function Group_Main() {
         }
 
         try {
-            const res = await ApiCall("/group/add", {method: "POST"},{
+            const res = await ApiCall("/group/add", {method: "POST"}, {
                 name: newGroup.name,
                 degree: newGroup.degree,
                 roomId: newGroup.roomId,
@@ -188,23 +233,36 @@ function Group_Main() {
 
     const formatTime = (timeStr) => {
         const date = new Date(`1970-01-01T${timeStr}`);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
     };
+
+    function selectBranchGroups(e) {
+        const branchId = e.target.value;
+
+        if (branchId === "all") {
+            setFilteredGroups(groups); // hamma guruhlarni ko‘rsat
+        } else {
+            const filtered = groups.filter(group => group.filialNameDto.id === branchId);
+            setFilteredGroups(filtered); // faqat tanlangan filialdagi guruhlar
+        }
+    }
 
     return (
         <div className="group-page">
             {/* Branch Selector for Main User */}
-                <div className="branch-selectG">
-                    <select id="branch" className="select-box">
-                        <option value="1">Filial 1</option>
-                        <option value="2">Filial 2</option>
-                    </select>
-                </div>
+            <div className="branch-selectG">
+                <select id="branch" className="select-box" onChange={selectBranchGroups}>
+                    <option value="all">All Groups</option>
+                    {
+                        branches?.map((branch) => (<option value={branch.id} key={branch.id}>{branch.name}</option>))
+                    }
+                </select>
+            </div>
 
             <h1 className="groupTitle">Groups</h1>
-                <button className="addBtn" onClick={() => setIsModalOpen(true)}>
-                    + Add Group
-                </button>
+            <button className="addBtn" onClick={() => setIsModalOpen(true)}>
+                + Add Group
+            </button>
 
 
             {/* Add Group Modal */}
@@ -217,7 +275,7 @@ function Group_Main() {
                             name="name"
                             placeholder="Group Name"
                             value={newGroup.name}
-                            onChange={(e)=>setNewGroup({...newGroup, name: e.target.value})}
+                            onChange={(e) => setNewGroup({...newGroup, name: e.target.value})}
                         />
                         {errors.name && <p className="error-msg">{errors.name}</p>}
 
@@ -226,29 +284,30 @@ function Group_Main() {
                             name="degree"
                             placeholder="Group degree"
                             value={newGroup.degree}
-                            onChange={(e)=>setNewGroup({...newGroup, degree: e.target.value})}/>
+                            onChange={(e) => setNewGroup({...newGroup, degree: e.target.value})}/>
                         {errors.degree && <p className="error-msg">{errors.degree}</p>}
 
-                            <select
-                                name="branch"
-                                value={newGroup.branchId || ""}
-                                onChange={(e)=>selectBranch(e)}
-                            >
-                                <option value="">Select Branch</option>
-                                {
-                                    branches.map((branch) => <option value={branch.id}  key={branch.id} >{branch.name}</option>)
-                                }
-                            </select>
+                        <select
+                            name="branch"
+                            value={newGroup.branchId || ""}
+                            onChange={(e) => selectBranch(e)}
+                        >
+                            <option value="">Select Branch</option>
+                            {
+                                branches.map((branch) => <option value={branch.id}
+                                                                 key={branch.id}>{branch.name}</option>)
+                            }
+                        </select>
                         {errors.branchId && <p className="error-msg">{errors.branchId}</p>}
 
                         <select
                             name="roomId"
                             value={newGroup.roomId}
-                            onChange={(e)=>selectRoom(e)}
+                            onChange={(e) => selectRoom(e)}
                         >
                             <option value="">Select Room</option>
                             {
-                                branchRooms && branchRooms.map((room) => <option value={room.id} key={room.id} >
+                                branchRooms && branchRooms.map((room) => <option value={room.id} key={room.id}>
                                     {room.number}-{room.name}
                                 </option>)
                             }
@@ -275,14 +334,14 @@ function Group_Main() {
                                 type="time"
                                 name="startTime"
                                 value={newGroup.startTime}
-                                onChange={(e)=>setNewGroup({...newGroup, startTime: e.target.value})}
+                                onChange={(e) => setNewGroup({...newGroup, startTime: e.target.value})}
                             />
                             <span>-</span>
                             <input
                                 type="time"
                                 name="endTime"
                                 value={newGroup.endTime}
-                                onChange={(e)=>setNewGroup({...newGroup, endTime: e.target.value})}
+                                onChange={(e) => setNewGroup({...newGroup, endTime: e.target.value})}
                             />
                         </div>
                         {errors.startTime && <p className="error-msg">{errors.startTime}</p>}
@@ -306,7 +365,7 @@ function Group_Main() {
 
             {/* Groups Table */}
             <div className="table-boxx">
-                <table className="GroupTable" border={1}>
+                <table className="GroupTable">
                     <thead>
                     <tr>
                         <th>No</th>
@@ -321,16 +380,16 @@ function Group_Main() {
                     </tr>
                     </thead>
                     <tbody>
-                    {groups.map((g, i) => (
-                        <tr key={i}>
+                    {filteredGroups.map((g, i) => (
+                        <tr key={g.id}>
                             <td>{i + 1}</td>
                             <td>
                                 {editingIndex === i ? (
                                     <input className={"inp-g"}
-                                        type="text"
-                                        name="name"
-                                        value={editedGroup.name}
-                                        onChange={handleInputChange}
+                                           type="text"
+                                           name="name"
+                                           value={editedGroup.name}
+                                           onChange={handleInputChange}
                                     />
                                 ) : (
                                     g.name
@@ -338,18 +397,12 @@ function Group_Main() {
                             </td>
                             <td>
                                 {editingIndex === i ? (
-                                    <select
-                                        name="degree"
-                                        value={editedGroup.degree}
-                                        onChange={handleInputChange}
-                                    >
-                                        {Array.from({length: 4}, (_, idx) => (
-                                            <option
-                                                key={idx}
-                                                value={`Degree ${idx + 1}`}
-                                            >{`Degree ${idx + 1}`}</option>
-                                        ))}
-                                    </select>
+                                    <input className={"inp-g"}
+                                           type="text"
+                                           name="degree"
+                                           value={editedGroup.degree}
+                                           onChange={handleInputChange}
+                                    />
                                 ) : (
                                     g.degree
                                 )}
@@ -357,28 +410,29 @@ function Group_Main() {
                             <td>
                                 {editingIndex === i ? (
                                     <select
-                                        name="RoomId"
-                                        value={editedGroup.RoomId}
+                                        name="roomId"
+                                        className={"select-g"}
+                                        value={editedGroup.roomId}
                                         onChange={handleInputChange}
                                     >
-                                        {Array.from({length: 4}, (_, idx) => (
-                                            <option key={idx} value={`Room ${idx + 1}`}>{`Room ${
-                                                idx + 1
-                                            }`}</option>
-                                        ))}
+                                        {
+                                            rooms&&rooms.map((r) => <option key={r.id} value={r.id}>
+                                                {`No${r.number}`} {r.name}
+                                            </option>)
+                                        }
                                     </select>
-                                ) : (
-                                    `${"№" + g.roomDto.number +" "+ g.roomDto.name}`
-                                )}
+                                    ) : (
+                                    "№" + g.roomDto.number + " " + g.roomDto.name
+                                    )}
                             </td>
 
                             <td>
                                 {editingIndex === i ? (
-                                    <div className="teacher-checkboxes">
-                                        {g.teacherNameDtos.map((t) => (
+                                    <div className="table-teacher-checkboxes">
+                                        {teachers.map((t) => (
                                             <label key={t.id}>
                                                 <input
-                                                    className={"inp-g"}
+                                                    className="inp-check"
                                                     type="checkbox"
                                                     value={t.id}
                                                     checked={editedGroup.teacherIds.includes(t.id)}
@@ -389,33 +443,27 @@ function Group_Main() {
                                         ))}
                                     </div>
                                 ) : (
-                                    <>
-                                        {
-                                            g.teacherNameDtos.map((t) => (
-                                                <h5 key={t.id}>
-                                                    {t.name}
-                                                </h5>
-                                            ))
-                                        }
-                                    </>
+                                    g.teacherNameDtos.map((t) => <h3 key={t.id}>{t.name}</h3>)
                                 )}
                             </td>
+
                             <td>{g.studentsNumber}</td>
 
                             <td>
-                                    {editingIndex === i ? (
-                                        <select
-                                            name="branch"
-                                            value={editedGroup.branch}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value="1-filial">1-filial</option>
-                                            <option value="2-filial">2-filial</option>
-                                        </select>
-                                    ) : (
-                                        g.filialName
-                                    )}
-                                </td>
+                                {editingIndex === i ? (
+                                    <select
+                                        name="branchId"
+                                        value={editedGroup.branchId}
+                                        onChange={handleInputChange}
+                                    >
+                                        {
+                                            branches&&branches.map((branch) => <option key={branch.id} value={branch.id} >{branch.name}</option>)
+                                        }
+                                    </select>
+                                ) : (
+                                    g.filialNameDto.name
+                                )}
+                            </td>
 
                             <td>
                                 {editingIndex === i ? (
@@ -447,7 +495,7 @@ function Group_Main() {
                                             <FaCheck/>
                                         </div>
                                         <div className={"g-btn-cancel btn-g"} onClick={handleCancel}>
-                                            <IoIosUndo />
+                                            <IoIosUndo/>
                                         </div>
                                     </div>
                                 ) : (
@@ -455,7 +503,7 @@ function Group_Main() {
                                         <div className={"g-btn-edit btn-g"} onClick={() => handleEdit(i)}>
                                             <MdEdit/>
                                         </div>
-                                        <div className={"g-btn-delete btn-g"} onClick={() => handleDelete(i)}>
+                                        <div className={"g-btn-delete btn-g"} onClick={() => handleDelete(g)}>
                                             <RiDeleteBin5Fill/>
                                         </div>
                                     </div>

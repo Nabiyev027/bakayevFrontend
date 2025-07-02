@@ -15,19 +15,35 @@ export default function AddReception() {
     username: "",
     password: "",
     role: "",
-    branch: "",
+    branchId: "",
+    groupId:""
   });
 
   const [errors, setErrors] = useState({});
   const [branch,setBranch] = useState([]);
+  const [groups,setGroups] = useState([]);
 
   useEffect(() => {
     getFilials()
+    getGroups()
   }, []);
+
+  async function getGroups() {
+    try {
+      try {
+        const res = await ApiCall("/group/getNames", { method: "GET" });
+        setGroups(res.data);
+      } catch (error) {
+        console.error("Gruppalarni olishda xatolik:", error);
+      }
+    }catch(error) {
+      console.log(error.message);
+    }
+  }
 
   async function getFilials() {
     try {
-      const res = await ApiCall("/filial/get", { method: "GET" });
+      const res = await ApiCall("/filial/getAll", { method: "GET" });
       setBranch(res.data);
     }catch (error) {
       console.log(error.message);
@@ -70,7 +86,7 @@ export default function AddReception() {
     if (!formData.username) e.username = "Username kiriting";
     if (!formData.password) e.password = "Parol kiriting";
     if (!formData.role) e.role = "Rolni tanlang";
-    if (!formData.branch) e.branch = "Filialni tanlang";
+    if (!formData.branchId) e.branch = "Filialni tanlang";
     return e;
   };
 
@@ -81,6 +97,7 @@ export default function AddReception() {
       setErrors(ve);
     } else {
       try {
+        console.log(formData)
         const formDataToSend = new FormData();
         formDataToSend.append("firstName", formData.name);
         formDataToSend.append("lastName", formData.lastname);
@@ -88,7 +105,8 @@ export default function AddReception() {
         formDataToSend.append("username", formData.username);
         formDataToSend.append("password", formData.password);
         formDataToSend.append("role", formData.role);
-        formDataToSend.append("filialId", formData.branch);
+        formDataToSend.append("filialId", formData.branchId);
+        formDataToSend.append("groupId", formData.groupId);
 
         if (formData.photo) {
           formDataToSend.append("image", formData.photo);
@@ -110,7 +128,8 @@ export default function AddReception() {
           username: "",
           password: "",
           role: "",
-          branch: "",
+          branchId: "",
+          groupId: "",
         });
         fileInputRef.current.value = null;
       } catch (err) {
@@ -217,18 +236,18 @@ export default function AddReception() {
               <div className="form-group">
                 <label>Filial</label>
                 <select
-                    name="branch"
-                    value={formData.branch}
+                    name="branchId"
+                    value={formData.branchId}
                     onChange={handleChange}
                 >
-                  <option value="">Tanlang...</option>
+                  <option value="">Choose...</option>
                   {
                     branch&&branch.map((item) =>
                       <option value={item.id}>{item.name}</option>)
                   }
                 </select>
-                {errors.branch && (
-                    <span className="error">{errors.branch}</span>
+                {errors.branchId && (
+                    <span className="error">{errors.branchId}</span>
                 )}
               </div>
 
@@ -237,8 +256,8 @@ export default function AddReception() {
                   <input
                       type="radio"
                       name="role"
-                      value="reception"
-                      checked={formData.role === "reception"}
+                      value="ROLE_RECEPTION"
+                      checked={formData.role === "ROLE_RECEPTION"}
                       onChange={handleChange}
                   />
                   Reception
@@ -248,8 +267,8 @@ export default function AddReception() {
                   <input
                       type="radio"
                       name="role"
-                      value="teacher"
-                      checked={formData.role === "teacher"}
+                      value="ROLE_TEACHER"
+                      checked={formData.role === "ROLE_TEACHER"}
                       onChange={handleChange}
                   />
                   Teacher
@@ -257,6 +276,22 @@ export default function AddReception() {
 
                 {errors.role && <span className="error">{errors.role}</span>}
               </div>
+              {
+                formData.role==="ROLE_TEACHER" ? <div className="form-group">
+                  <label>Select Group</label>
+                  <select name={"groupId"} value={formData.groupId} onChange={handleChange}>
+                    <option value="">
+                      Choose...
+                    </option>
+                    {
+                      groups?.map((item) => <option key={item.id} value={item.id} >
+                        {item.name}
+                      </option>)
+                    }
+                  </select>
+                </div> : null
+              }
+
 
               <button type="submit" className="submit-btn">
                 Save
