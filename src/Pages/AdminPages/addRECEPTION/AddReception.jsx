@@ -1,8 +1,7 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./AddReception.scss";
 import { FaFileUpload } from "react-icons/fa";
 import ApiCall from "../../../Utils/ApiCall";
-import {form} from "framer-motion/m";
 
 export default function AddReception() {
   const fileInputRef = useRef(null);
@@ -10,34 +9,30 @@ export default function AddReception() {
   const [formData, setFormData] = useState({
     name: "",
     lastname: "",
-    number: "+998 ",
+    phone: "",           // faqat 9 ta raqam (prefiksiz)
     photo: null,
     username: "",
     password: "",
     role: "",
     branchId: "",
-    groupId:""
+    groupId: ""
   });
 
   const [errors, setErrors] = useState({});
-  const [branch,setBranch] = useState([]);
-  const [groups,setGroups] = useState([]);
+  const [branch, setBranch] = useState([]);
+  const [groups, setGroups] = useState([]);
 
   useEffect(() => {
-    getFilials()
-    getGroups()
+    getFilials();
+    getGroups();
   }, []);
 
   async function getGroups() {
     try {
-      try {
-        const res = await ApiCall("/group/getNames", { method: "GET" });
-        setGroups(res.data);
-      } catch (error) {
-        console.error("Gruppalarni olishda xatolik:", error);
-      }
-    }catch(error) {
-      console.log(error.message);
+      const res = await ApiCall("/group/getNames", { method: "GET" });
+      setGroups(res.data);
+    } catch (error) {
+      console.error("Gruppalarni olishda xatolik:", error);
     }
   }
 
@@ -45,48 +40,55 @@ export default function AddReception() {
     try {
       const res = await ApiCall("/filial/getAll", { method: "GET" });
       setBranch(res.data);
-    }catch (error) {
+    } catch (error) {
       console.log(error.message);
     }
   }
 
+  /* ---------- Telefon raqamini formatlash va o‘zgartirish ---------- */
+  const formatPhone = (digits) => {
+    // 99 999 99 99
+    const parts = [
+      digits.slice(0, 2),
+      digits.slice(2, 5),
+      digits.slice(5, 7),
+      digits.slice(7, 9)
+    ].filter(Boolean);
+    return "+998 " + parts.join(" ");
+  };
+
+  const handlePhoneChange = (e) => {
+    let digits = e.target.value.replace(/\D/g, ""); // faqat raqam
+    if (digits.startsWith("998")) digits = digits.slice(3); // foydalanuvchi 998 yozib yuborsa
+    if (digits.length > 9) digits = digits.slice(0, 9);     // 9 tadan oshmasin
+
+    setFormData((prev) => ({ ...prev, phone: digits }));
+    setErrors((prev) => ({
+      ...prev,
+      phone: digits.length === 9 ? null : "9 ta raqam kiriting"
+    }));
+  };
+  /* --------------------------------------------------------------- */
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "number") {
-      let digits = value.replace(/\D/g, "").slice(0, 12);
-      if (!digits.startsWith("998"))
-        digits = "998" + digits.replace(/^998/, "");
-      const parts = [
-        digits.slice(0, 3),
-        digits.slice(3, 5),
-        digits.slice(5, 8),
-        digits.slice(8, 10),
-        digits.slice(10, 12),
-      ].filter((p) => p);
-      setFormData((f) => ({ ...f, number: "+" + parts.join(" ") }));
-    } else {
-      setFormData((f) => ({ ...f, [name]: value }));
-    }
+    setFormData((f) => ({ ...f, [name]: value }));
   };
 
   const handleFile = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-    setFormData((f) => ({ ...f, photo: file }));
+    if (file) setFormData((f) => ({ ...f, photo: file }));
   };
 
   const validate = () => {
     const e = {};
     if (!formData.name) e.name = "Ism kiriting";
     if (!formData.lastname) e.lastname = "Familiya kiriting";
-    if (!/^\+998 \d{2} \d{3} \d{2} \d{2}$/.test(formData.number))
-      e.number = "Telefon +998 99 999 99 99 formatida bo‘lsin";
+    if (formData.phone.length !== 9) e.phone = "Telefon 9 ta raqam bo‘lsin";
     if (!formData.username) e.username = "Username kiriting";
     if (!formData.password) e.password = "Parol kiriting";
     if (!formData.role) e.role = "Rolni tanlang";
-    if (!formData.branchId) e.branch = "Filialni tanlang";
+    if (!formData.branchId) e.branchId = "Filialni tanlang";
     return e;
   };
 
@@ -95,47 +97,41 @@ export default function AddReception() {
     const ve = validate();
     if (Object.keys(ve).length) {
       setErrors(ve);
-    } else {
-      try {
-        console.log(formData)
-        const formDataToSend = new FormData();
-        formDataToSend.append("firstName", formData.name);
-        formDataToSend.append("lastName", formData.lastname);
-        formDataToSend.append("phone", formData.number);
-        formDataToSend.append("username", formData.username);
-        formDataToSend.append("password", formData.password);
-        formDataToSend.append("role", formData.role);
-        formDataToSend.append("filialId", formData.branchId);
-        formDataToSend.append("groupId", formData.groupId);
+      return;
+    }
 
-        if (formData.photo) {
-          formDataToSend.append("image", formData.photo);
-        }
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("firstName", formData.name);
+      formDataToSend.append("lastName", formData.lastname);
+      formDataToSend.append("phone", "+998" + formData.phone); // <— prefiks qo‘shildi
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("role", formData.role);
+      formDataToSend.append("filialId", formData.branchId);
+      formDataToSend.append("groupId", formData.groupId);
+      if (formData.photo) formDataToSend.append("image", formData.photo);
 
-        const res = await ApiCall(
-            "/auth/registerA",
-            { method: "POST" },
-            formDataToSend
-        );
+      await ApiCall("/auth/registerA", { method: "POST" }, formDataToSend);
 
-        alert("Foydalanuvchi muvaffaqiyatli qo‘shildi!");
-        console.log("Server javobi:", res.data);
-        setFormData({
-          name: "",
-          lastname: "",
-          number: "+998 ",
-          photo: null,
-          username: "",
-          password: "",
-          role: "",
-          branchId: "",
-          groupId: "",
-        });
-        fileInputRef.current.value = null;
-      } catch (err) {
-        console.error("Xatolik:", err);
-        alert("Ro‘yxatdan o‘tishda xatolik yuz berdi!");
-      }
+      alert("Foydalanuvchi muvaffaqiyatli qo‘shildi!");
+      // forma tozalash
+      setFormData({
+        name: "",
+        lastname: "",
+        phone: "",
+        photo: null,
+        username: "",
+        password: "",
+        role: "",
+        branchId: "",
+        groupId: ""
+      });
+      fileInputRef.current.value = null;
+      setErrors({});
+    } catch (err) {
+      console.error("Xatolik:", err);
+      alert("Ro‘yxatdan o‘tishda xatolik yuz berdi!");
     }
   };
 
@@ -143,6 +139,7 @@ export default function AddReception() {
       <div className="rec-page">
         <h1>Add Reception</h1>
         <div className="content">
+          {/* ------ Rasm yuklash bo‘limi ------ */}
           <div className="image-section">
             <div className="preview-box">
               {formData.photo ? (
@@ -169,8 +166,10 @@ export default function AddReception() {
             />
           </div>
 
+          {/* -------------- Forma -------------- */}
           <div className="form-container">
             <form className="form-grid" onSubmit={handleSubmit}>
+              {/* Firstname */}
               <div className="form-group">
                 <label>Firstname</label>
                 <input
@@ -182,6 +181,7 @@ export default function AddReception() {
                 {errors.name && <span className="error">{errors.name}</span>}
               </div>
 
+              {/* Lastname */}
               <div className="form-group">
                 <label>Lastname</label>
                 <input
@@ -195,17 +195,20 @@ export default function AddReception() {
                 )}
               </div>
 
+              {/* Telefon */}
               <div className="form-group">
                 <label>Telefon raqami</label>
                 <input
-                    name="number"
-                    placeholder="+998 99 999 99 99"
-                    value={formData.number}
-                    onChange={handleChange}
+                    type="text"
+                    placeholder="+998 __ ___ __ __"
+                    value={formatPhone(formData.phone)}
+                    onChange={handlePhoneChange}
+                    maxLength={17}
                 />
-                {errors.number && <span className="error">{errors.number}</span>}
+                {errors.phone && <span className="error">{errors.phone}</span>}
               </div>
 
+              {/* Username */}
               <div className="form-group">
                 <label>Username</label>
                 <input
@@ -219,6 +222,7 @@ export default function AddReception() {
                 )}
               </div>
 
+              {/* Password */}
               <div className="form-group">
                 <label>Password</label>
                 <input
@@ -233,6 +237,7 @@ export default function AddReception() {
                 )}
               </div>
 
+              {/* Filial tanlash */}
               <div className="form-group">
                 <label>Filial</label>
                 <select
@@ -241,16 +246,18 @@ export default function AddReception() {
                     onChange={handleChange}
                 >
                   <option value="">Choose...</option>
-                  {
-                    branch&&branch.map((item) =>
-                      <option value={item.id}>{item.name}</option>)
-                  }
+                  {branch.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                  ))}
                 </select>
                 {errors.branchId && (
                     <span className="error">{errors.branchId}</span>
                 )}
               </div>
 
+              {/* Role tanlash */}
               <div className="form-group roles">
                 <label>
                   <input
@@ -273,25 +280,27 @@ export default function AddReception() {
                   />
                   Teacher
                 </label>
-
                 {errors.role && <span className="error">{errors.role}</span>}
               </div>
-              {
-                formData.role==="ROLE_TEACHER" ? <div className="form-group">
-                  <label>Select Group</label>
-                  <select name={"groupId"} value={formData.groupId} onChange={handleChange}>
-                    <option value="">
-                      Choose...
-                    </option>
-                    {
-                      groups?.map((item) => <option key={item.id} value={item.id} >
-                        {item.name}
-                      </option>)
-                    }
-                  </select>
-                </div> : null
-              }
 
+              {/* Grup tanlash (faqat o‘qituvchi bo‘lsa) */}
+              {formData.role === "ROLE_TEACHER" && (
+                  <div className="form-group">
+                    <label>Select Group</label>
+                    <select
+                        name="groupId"
+                        value={formData.groupId}
+                        onChange={handleChange}
+                    >
+                      <option value="">Choose...</option>
+                      {groups.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name}
+                          </option>
+                      ))}
+                    </select>
+                  </div>
+              )}
 
               <button type="submit" className="submit-btn">
                 Save

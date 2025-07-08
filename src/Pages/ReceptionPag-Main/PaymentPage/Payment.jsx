@@ -4,7 +4,7 @@ import { GrInProgress } from "react-icons/gr";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
 import { FaCreditCard, FaMoneyBillWave } from "react-icons/fa";
 
-export default function Payment_Main() {
+export default function Payment() {
   const [payments, setPayments] = useState([
     {
       id: 1,

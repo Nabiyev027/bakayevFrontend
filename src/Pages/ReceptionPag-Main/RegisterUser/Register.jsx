@@ -8,7 +8,7 @@ import ApiCall from "../../../Utils/ApiCall";
 import heic2any from "heic2any";
 import imageCompression from "browser-image-compression";
 
-function Register_Main() {
+function Register() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const fileInputRef = useRef(null);
@@ -158,8 +158,8 @@ function Register_Main() {
       const formData = new FormData();
       formData.append("firstName", user.firstName);
       formData.append("lastName", user.lastName);
-      formData.append("phone", user.phoneLocal);
-      formData.append("parentPhone", user.parentPhoneLocal);
+      formData.append("phone", user.phoneLocal ? "+998"+ user.phoneLocal : "");
+      formData.append("parentPhone", user.parentPhoneLocal ? "+998" + user.parentPhoneLocal : "");
       formData.append("username", user.username);
       formData.append("password", user.password);
       if (user.groupId) {
@@ -255,9 +255,8 @@ function Register_Main() {
                         branches && branches.map((item, index) => <option value={item.id} >{item.name}</option>)
                     }
                   </select>
+                  {errors.filialId && <p className="error">{errors.filialId}</p>}
                 </label>
-
-
 
               </div>
 
@@ -398,4 +397,4 @@ function Register_Main() {
   );
 }
 
-export default Register_Main;
+export default Register;

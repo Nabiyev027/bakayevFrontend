@@ -6,7 +6,7 @@ import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
 import {IoIosUndo} from "react-icons/io";
 
-function Group_Main() {
+function Group() {
     const [teachers, setTeachers] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [branches, setBranches] = useState([]);
@@ -453,6 +453,7 @@ function Group_Main() {
                                 {editingIndex === i ? (
                                     <select
                                         name="branchId"
+                                        className={"select-g"}
                                         value={editedGroup.branchId}
                                         onChange={handleInputChange}
                                     >
@@ -519,5 +520,5 @@ function Group_Main() {
     );
 }
 
-export default Group_Main;
+export default Group;
 

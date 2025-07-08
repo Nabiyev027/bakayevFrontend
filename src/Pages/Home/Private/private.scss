@@ -202,15 +202,27 @@
           }
         }
 
-        .carusel {
+        .carousel-card {
           position: relative;
+          overflow: hidden; // rasmdan tashqariga chiqib ketmasin
+
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+          }
+
         }
 
+        .card-wrap{
+          user-select: none;
+        }
+
+          /* === MAP WRAPPER === */
         .mapswrapper {
           position: absolute;
-          top: 52%;
-          left: 69%;
-          transform: translate(-50%, -50%);
+          right: 0.8rem;
+          bottom: 1rem;
           width: 100%;
           max-width: 500px;
           height: 300px;
@@ -228,17 +240,8 @@
             z-index: 2;
           }
 
-          a {
-            position: absolute;
-            top: 0;
-            left: 0;
-            color: rgba(0, 0, 0, 0);
-            z-index: 1;
-            width: 100%;
-            height: 100%;
-            display: block;
-          }
         }
+
 
         .thumbs-wrapper {
           width: max-content !important;
@@ -282,6 +285,8 @@
           font-size: 40px;
           color: #f9b03a;
         }
+
+
       }
 
       .grid-boxes {
@@ -407,7 +412,7 @@
 
       .wrap-comments {
         width: 100%;
-        padding: 0 2.5rem;
+        padding: 0 1rem;
       }
     }
   }
@@ -441,6 +446,35 @@
           height: 400px;
         }
       }
+
+      .card-wrap{
+        user-select: none;
+      }
+
+      /* === MAP WRAPPER === */
+      .mapswrapper {
+        position: absolute;
+        right: 1.5rem !important;
+        bottom: 0.2rem !important;
+        width: 100%;
+        max-width: 280px !important;
+        height: 220px !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        iframe {
+          border-radius: 15px;
+          border: 3px solid #f9b03a;
+          width: 100%;
+          height: 100%;
+          z-index: 2;
+        }
+
+      }
+
     }
 
     .sect-2 .container-2 {
@@ -509,6 +543,36 @@
           width: 150px !important;
           font-size: 16px !important;
         }
+
+        .card-wrap{
+          user-select: none;
+        }
+
+        /* === MAP WRAPPER === */
+        .mapswrapper {
+          position: absolute;
+          right: 1rem !important;
+          bottom: -0.5rem !important;
+          width: 100%;
+          max-width: 160px !important;
+          height: 120px !important;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          iframe {
+            border-radius: 15px;
+            border: 3px solid #f9b03a;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+          }
+
+        }
+
+
       }
     }
 
@@ -551,9 +615,6 @@
   }
 }
 
-/* private.scss */
-/* …existing base styles above… */
-/* Modal Styles (only) */
 
 // Full-Screen Overlay
 .modal-overlay {
@@ -717,120 +778,9 @@
   border: solid 2px #f9b03a;
 }
 
-/* comments.scss */
-/* Base styles unchanged… */
 
 /* Phone overrides (≤ 576px) */
 @media (max-width: 576px) {
-  .comment-card {
-    width: 95%;
-    max-height: none;
-    margin: 0 auto 1rem;
-    padding: 0.5rem;
-    border-top-width: 3px;
-    border-radius: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-    .comment-title {
-      display: flex;
-      flex-direction: column; /* stack name & rating */
-      align-items: flex-start;
-      gap: 0.25rem;
-      margin-bottom: 0.5rem;
-
-      .wrap-name {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-
-        .circle {
-          width: 1.8rem;
-          height: 1.8rem;
-          font-size: 0.8rem;
-        }
-      }
-
-      h2 {
-        font-size: 1rem;
-        line-height: 1.2;
-      }
-
-      .rating {
-        font-size: 0.8rem;
-
-        .ico {
-          font-size: 0.9rem;
-        }
-      }
-    }
-
-    .comment-desc {
-      font-size: 0.8rem;
-      line-height: 1.3;
-      max-height: 60px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
-
-  .comments-carousel {
-    padding: 0.5rem 0;
-  }
-
-  .comments-item {
-    padding: 0;
-  }
-
-  .react-multi-carousel-dot-list {
-    bottom: -0.5rem;
-
-    .react-multi-carousel-dot {
-      button {
-        width: 10px;
-        height: 10px;
-      }
-      &.react-multi-carousel-dot--active button {
-        width: 12px;
-        height: 12px;
-      }
-    }
-  }
-
-  .react-multiple-carousel__arrow {
-    z-index: 0 !important;
-    width: 24px;
-    height: 24px;
-    &.react-multiple-carousel__arrow--left {
-      left: 0.5rem;
-    }
-    &.react-multiple-carousel__arrow--right {
-      right: 0.5rem;
-    }
-  }
-}
-
-/* private.scss */
-/* …existing base styles above… */
-
-/* Phone overrides (≤ 576px) */
-@media (max-width: 576px) {
-  .sect-1 {
-    .mapswrapper {
-      position: relative;
-      width: 90%;
-      max-width: 320px;
-      height: 200px;
-      margin: 1rem auto 0;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-      iframe {
-        width: 100%;
-        height: 100%;
-        border-radius: 8px;
-        border: 2px solid #f9b03a;
-      }
-    }
-  }
 
   /* Preserve existing small-screen overrides for wrapper-home, container, header… */
 
@@ -858,9 +808,36 @@
     }
 
     .sect-1 .container-2 {
-      .carousel .slide img {
-        height: 250px;
+
+      .carousel-card {
+        position: relative;
+
+        img {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        .map-wrapper {
+          width: 400px;
+          height: 300px;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          border-radius: 10px;
+          overflow: hidden;
+          z-index: 2;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .map {
+          width: 100%;
+          height: 100%;
+          border: 0;
+        }
       }
+
+
     }
 
     .sect-2 .container-2 {
@@ -908,47 +885,4 @@
   }
 }
 
-/* Add these overrides to your existing responsive media queries */
-/* Общие стили для .mapswrapper */
-.sect-1 .mapswrapper,
-.carousel .mapswrapper {
-  position: absolute !important;
-  bottom: 5% !important;
-  right: 5% !important;
-  width: 100% !important;
-  max-width: 500px !important;
-  aspect-ratio: 16 / 9 !important;
-  height: auto !important;
-  margin: 0 !important;
-  transform: none !important;
-}
 
-/* Medium screens */
-@media (max-width: 1000px) {
-  .sect-1 .mapswrapper,
-  .carousel .mapswrapper {
-    top: 170px !important;
-    left: 62% !important;
-    max-width: 400px !important;
-  }
-}
-
-/* Tablets */
-@media (max-width: 768px) {
-  .sect-1 .mapswrapper,
-  .carousel .mapswrapper {
-    top: 220px !important;
-    left: 59% !important;
-    max-width: 300px !important;
-  }
-}
-
-/* Phones */
-@media (max-width: 576px) {
-  .sect-1 .mapswrapper,
-  .carousel .mapswrapper {
-    top: 130px !important;
-    left: 47% !important;
-    max-width: 200px !important;
-  }
-}

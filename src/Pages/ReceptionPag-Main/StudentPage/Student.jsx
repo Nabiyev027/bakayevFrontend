@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import "./student.scss";
 import ApiCall from "../../../Utils/ApiCall";
-import {FaCheck} from "react-icons/fa";
+import {FaCheck, FaImage} from "react-icons/fa";
 import {IoIosUndo} from "react-icons/io";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
 
-function Student_Main() {
+function Student() {
     const [students, setStudents] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editedStudent, setEditedStudent] = useState({});
@@ -88,7 +88,7 @@ function Student_Main() {
             });
 
             if(res.data){
-                await getGroups();          // yangilangan ro‘yxatni olib kelamiz
+                await getStudents();
                 setEditingIndex(null);
                 setEditedStudent({});
             }
@@ -174,7 +174,9 @@ function Student_Main() {
                         <tr key={st.id}>
                             <td>{i + 1}</td>
                             <td>
-                                <img src={`${BaseUrl + st.imgUrl}`} alt={"Img"}/>
+                                {
+                                    st.imgUrl ? <img src={`${BaseUrl + st.imgUrl}`} alt={"Img"}/> : <FaImage/>
+                                }
                             </td>
                             <td>
                                 {editingIndex === i ? (
@@ -283,20 +285,20 @@ function Student_Main() {
                             </td>
                             <td>
                                 {editingIndex === i ? (
-                                    <div className="actions-g">
-                                        <div className={"g-btn-check btn-g"} onClick={handleSave}>
+                                    <div className="actions-s">
+                                        <div className={"s-btn-check btn-s"} onClick={handleSave}>
                                             <FaCheck/>
                                         </div>
-                                        <div className={"g-btn-cancel btn-g"} onClick={handleCancel}>
+                                        <div className={"s-btn-cancel btn-s"} onClick={handleCancel}>
                                             <IoIosUndo/>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className={"actions-g"}>
-                                        <div className={"g-btn-edit btn-g"} onClick={() => handleEdit(i)}>
+                                    <div className={"actions-s"}>
+                                        <div className={"s-btn-edit btn-s"} onClick={() => handleEdit(i)}>
                                             <MdEdit/>
                                         </div>
-                                        <div className={"g-btn-delete btn-g"} onClick={() => handleDelete(st)}>
+                                        <div className={"s-btn-delete btn-s"} onClick={() => handleDelete(st)}>
                                             <RiDeleteBin5Fill/>
                                         </div>
                                     </div>
@@ -342,4 +344,4 @@ function Student_Main() {
     );
 }
 
-export default Student_Main;
+export default Student;

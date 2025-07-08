@@ -12,8 +12,9 @@ import {jwtDecode} from "jwt-decode";
 import ApiCall from "../../Utils/ApiCall";
 import {useEffect, useState} from "react";
 import {LuMessageSquareMore} from "react-icons/lu";
+import {GiTeacher} from "react-icons/gi";
 
-function Reception_Main() {
+function Reception() {
     const [user, setUser] = useState({});
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const navigate = useNavigate();
@@ -89,13 +90,23 @@ function Reception_Main() {
                         </div>
                         <div
                             onClick={() => {
+                                navigate("/reception/teacher");
+                                closeSidebar();
+                            }}
+                            className="box"
+                        >
+                            <GiTeacher />
+                            <h3>Teachers</h3>
+                        </div>
+                        <div
+                            onClick={() => {
                                 navigate("/reception/student");
                                 closeSidebar();
                             }}
                             className="box"
                         >
                             <PiStudentBold/>
-                            <h3>O'quvchilar</h3>
+                            <h3>Students</h3>
                         </div>
                         <div
                             onClick={() => {
@@ -176,4 +187,4 @@ function Reception_Main() {
     );
 }
 
-export default Reception_Main;
+export default Reception;

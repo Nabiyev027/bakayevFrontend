@@ -1,4 +1,4 @@
-.student-page {
+.teacherM-page {
   position: relative;
   font-family: "NotoSerif", sans-serif;
   font-size: 22px;
@@ -16,7 +16,7 @@
   padding: 2rem;
   overflow-y: scroll;
 
-  .student-header {
+  .teacherM-header {
     width: 100%;
     margin-bottom: 1.5rem;
     display: flex;
@@ -52,7 +52,7 @@
   border-radius: 12px;
 }
 
-.student-table {
+.teacherM-table {
   width: 100%;
   border-collapse: collapse;
   background-color: #fff;
@@ -120,7 +120,7 @@
     border-radius: 6px;
   }
 
-  .actions-s{
+  .actions-t{
     width: 100%;
     display: flex;
     justify-content: center;
@@ -129,7 +129,7 @@
     margin: 0 auto;
     gap: 5px;
 
-    .btn-s{
+    .btn-t{
       width: 40px;
       height: 40px;
       display: flex;
@@ -147,19 +147,19 @@
       }
     }
 
-    .s-btn-edit{
+    .t-btn-edit{
       background-color: orange;
     }
 
-    .s-btn-delete{
+    .t-btn-delete{
       background-color: red;
     }
 
-    .s-btn-check{
+    .t-btn-check{
       background-color: greenyellow;
     }
 
-    .s-btn-cancel{
+    .t-btn-cancel{
       background-color: gray;
     }
 

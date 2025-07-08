@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./setting.scss";
 
-function Setting_Main() {
+function Setting() {
   const [user, setUser] = useState({
     name: "John Doe",
     password: "secret123",
@@ -173,4 +173,4 @@ function Setting_Main() {
   );
 }
 
-export default Setting_Main;
+export default Setting;
