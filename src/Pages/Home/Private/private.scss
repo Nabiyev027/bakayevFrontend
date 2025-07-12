@@ -275,7 +275,6 @@
     .container-2 {
       margin: 0 auto;
       max-width: 1528px;
-      padding: 0 2rem;
 
       .head-text {
         width: 100%;
@@ -293,7 +292,7 @@
       .grid-boxes {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        padding: 2rem 4rem;
+        padding: 2rem 0;
         gap: 2rem;
 
         .card-grid {
@@ -331,14 +330,12 @@
     height: max-content;
 
     .container-2 {
-      background-image: none;
       margin: 0 auto;
       max-width: 1528px;
 
+
       .about-us {
-        padding: 1rem 2rem;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        overflow: hidden;
+        padding: 2rem 2rem;
         position: relative;
 
         &::before {
@@ -382,6 +379,7 @@
         }
 
         &__content {
+          height: max-content;
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 60px;
@@ -442,7 +440,7 @@
 
         &__text {
           p {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             line-height: 1.8;
             color: #4a5568;
             margin-bottom: 20px;
@@ -615,11 +613,18 @@
         }
 
         @media (max-width: 480px) {
+          padding: 60px 1rem;
+
+          &__image{
+            height: 240px;
+          }
+
           &__stats {
             grid-template-columns: 1fr;
           }
         }
       }
+
 
       // Animation keyframes
       @keyframes fadeInUp {

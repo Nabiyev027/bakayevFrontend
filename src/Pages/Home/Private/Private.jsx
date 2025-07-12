@@ -201,7 +201,7 @@ function Private() {
             <section className="sect-3">
                 <div className="container-2">
                     <section className="about-us">
-                        <div className="container">
+
                             <div className="about-us__header">
                                 <h2 className="about-us__title">Biz Haqimizda</h2>
                             </div>
@@ -217,10 +217,13 @@ function Private() {
                                         <p>
                                             IELTS imtihoniga tayyorgarlik ko'rish uchun eng zamonaviy va samarali usullardan foydalanamiz. Bizning
                                             tajribali o'qituvchilarimiz sizga yuqori natijaga erishishda yordam beradi.
+                                            IELTS imtihoniga tayyorgarlik ko'rish uchun eng zamonaviy va samarali usullardan foydalanamiz. Bizning
+                                            tajribali o'qituvchilarimiz sizga yuqori natijaga erishishda yordam beradi.
                                         </p>
                                         <p>
                                             Har bir talabaning individual ehtiyojlarini hisobga olib, maxsus dasturlar ishlab chiqamiz va
-                                            muvaffaqiyatli natijalar kafolatlaymiz.
+                                            muvaffaqiyatli natijalar kafolatlaymiz.IELTS imtihoniga tayyorgarlik ko'rish uchun eng zamonaviy va samarali usullardan foydalanamiz. Bizning
+                                            tajribali o'qituvchilarimiz sizga yuqori natijaga erishishda yordam beradi.
                                         </p>
                                     </div>
                                 </div>
@@ -266,7 +269,6 @@ function Private() {
                                     <div className="stat-label">Muvaffaqiyat darajasi</div>
                                 </div>
                             </div>
-                        </div>
                     </section>
                 </div>
             </section>

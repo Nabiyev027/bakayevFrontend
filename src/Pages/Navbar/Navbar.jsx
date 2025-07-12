@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./navbar.scss";
-import Logo from "../../Images/Logos/bakayev1.png";
+import Logo from "../../Images/Logos/bakayev-logo.png";
 import { useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
 
