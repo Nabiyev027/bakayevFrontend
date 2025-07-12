@@ -29,7 +29,7 @@ import Student from "./Pages/ReceptionPag-Main/StudentPage/Student";
 import Group from "./Pages/ReceptionPag-Main/GroupPage/Group";
 import Payment from "./Pages/ReceptionPag-Main/PaymentPage/Payment";
 import Setting from "./Pages/ReceptionPag-Main/SettingPage/Setting";
-import PresentR from "./Pages/ReceptionPag-Main/PresentR/PresentR";
+import PresentR from "./Pages/ReceptionPag-Main/PresentR/AttendanceR";
 import NotFound from "./Pages/NotFound/NotFound";
 import Massage from "./Pages/ReceptionPag-Main/Massage/Massage";
 import SelectRoles from "./Pages/SelectRoles/SelectRoles";

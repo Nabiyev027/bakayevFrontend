@@ -121,7 +121,7 @@ function Private() {
 
     return (
         <div className="wrapper-home">
-            <div className="container">
+            <div className="container-1">
                 <header className="header">
                     <div className="head-box">
                         <h2>{t.header}</h2>
@@ -200,28 +200,74 @@ function Private() {
 
             <section className="sect-3">
                 <div className="container-2">
-                    <div className="head-text">
-                        <h1>{t.sect3}</h1>
-                    </div>
-                    <div className="content">
-                        <div className="cont-box">
-                            <div className="wrap-img">
-                                <img src={IeltsImg} alt="IELTS haqida rasm"/>
+                    <section className="about-us">
+                        <div className="container">
+                            <div className="about-us__header">
+                                <h2 className="about-us__title">Biz Haqimizda</h2>
                             </div>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+
+                            <div className="about-us__content">
+                                <div className="about-us__left">
+                                    <div className="about-us__image-container">
+                                        <img src="/placeholder.svg?height=300&width=400" alt="IELTS wooden blocks" className="about-us__image" />
+                                        <div className="about-us__image-overlay"></div>
+                                    </div>
+
+                                    <div className="about-us__text">
+                                        <p>
+                                            IELTS imtihoniga tayyorgarlik ko'rish uchun eng zamonaviy va samarali usullardan foydalanamiz. Bizning
+                                            tajribali o'qituvchilarimiz sizga yuqori natijaga erishishda yordam beradi.
+                                        </p>
+                                        <p>
+                                            Har bir talabaning individual ehtiyojlarini hisobga olib, maxsus dasturlar ishlab chiqamiz va
+                                            muvaffaqiyatli natijalar kafolatlaymiz.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="about-us__right">
+                                    <div className="about-us__video-container">
+                                        <div className="video-wrapper">
+                                            <iframe
+                                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                                title="About Us Video"
+                                                frameBorder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                className="about-us__video"
+                                            ></iframe>
+                                        </div>
+                                        <div className="video-play-overlay">
+                                            <div className="play-button">
+                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M8 5v14l11-7z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="about-us__stats">
+                                <div className="stat-item">
+                                    <div className="stat-number">500+</div>
+                                    <div className="stat-label">Muvaffaqiyatli talabalar</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-number">7.5</div>
+                                    <div className="stat-label">O'rtacha IELTS natijasi</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-number">5+</div>
+                                    <div className="stat-label">Yillik tajriba</div>
+                                </div>
+                                <div className="stat-item">
+                                    <div className="stat-number">98%</div>
+                                    <div className="stat-label">Muvaffaqiyat darajasi</div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="cont-box">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
-                            <iframe
-                                title="IELTS Video"
-                                className="frame-video"
-                                src="https://www.youtube.com/embed/GX8Hg6kWQYI?autoplay=1&loop=1&rel=0"
-                                frameBorder="0"
-                                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
-                        </div>
-                    </div>
+                    </section>
                 </div>
             </section>
 
