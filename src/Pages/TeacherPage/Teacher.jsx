@@ -8,7 +8,7 @@ import { GiWhiteBook } from "react-icons/gi";
 import { MdEditDocument } from "react-icons/md";
 import { useState } from "react";
 
-export default function Teacher() {
+export default function Teachers() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

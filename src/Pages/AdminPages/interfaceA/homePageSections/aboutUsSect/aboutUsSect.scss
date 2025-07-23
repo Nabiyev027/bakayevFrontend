@@ -1,0 +1,72 @@
+.about-section {
+  height: 95%;
+  padding: 1rem;
+  overflow-y: scroll;
+
+  h1 {
+    text-align: center;
+    color: white;
+    text-shadow: 5px 2px 2px #f96000;
+  }
+
+  .btn-floater {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+
+    .btn-e {
+      border: 2px solid white;
+      border-radius: 8px;
+      background-color: black;
+      color: white;
+      font-size: 18px;
+      padding: 0.4rem 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+
+      &:active {
+        scale: 1.1;
+      }
+
+    }
+  }
+
+  .wrap-media{
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+
+     .img-card{
+       background-color: white;
+       width: 540px;
+       height: 300px;
+       border-radius: 20px;
+       border: 3px solid #ffaa22;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+
+       .icon {
+         width: 120px;
+         height: 120px;
+         color: #f96000;
+       }
+
+     }
+
+    .video-card{
+      max-width: 540px;
+      height: 300px;
+      border-radius: 20px;
+      border: 3px solid #ffaa22;
+    }
+
+  }
+
+  .wrap-desc{
+    display: flex;
+  }
+
+}

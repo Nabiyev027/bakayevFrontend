@@ -87,9 +87,10 @@ function Students() {
 
   return (
     <div className="students-wrapper">
-      <div className="container">
+      <div className="container-s">
         <div className="header">
-          <h1>{header}</h1>
+          <h1 className="main-title">{header}</h1>
+
         </div>
 
         <div className="sect-wrap">

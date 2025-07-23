@@ -1,10 +1,9 @@
-// src/pages/Private/Private.jsx
+
 import "./private.scss";
 import React, {useState, useEffect} from "react";
 import img from "../../../Images/HomePageImages/rasm7.png";
 import BCouncil from "../../../Images/Logos/pngwing.com.png";
 import {Carousel} from "react-responsive-carousel";
-import IeltsImg from "../../../Images/HomePageImages/ielts.webp";
 import Comments from "../Comments/Comments";
 import {useOutletContext} from "react-router-dom";
 

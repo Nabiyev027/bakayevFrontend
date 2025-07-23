@@ -15,6 +15,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import ApiCall from "../../Utils/ApiCall";
 import { useEffect, useState } from "react";
+import {IoIosPeople} from "react-icons/io";
+import {SlPeople} from "react-icons/sl";
 
 function Admin() {
   const [user, setUser] = useState({});
@@ -90,6 +92,16 @@ function Admin() {
             >
               <GrGroup />
               <h3>Guruhlar</h3>
+            </div>
+            <div
+                onClick={() => {
+                  navigate("/admin/");
+                  closeSidebar();
+                }}
+                className="box"
+            >
+              <SlPeople />
+              <h3>Employees</h3>
             </div>
             <div
               onClick={() => {

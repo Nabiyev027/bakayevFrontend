@@ -1,10 +1,8 @@
 import React, {useState} from 'react';
-import "./home.scss"
 import Navbar from "../Navbar/Navbar";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import {Outlet} from "react-router-dom";
-import Modal from "react-modal";
 import MyModal from "./MyModal";
 import Footer from "../Footer/Footer";
 
