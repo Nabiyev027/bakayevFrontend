@@ -94,7 +94,7 @@
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--primary-color);
+  background: #07276a;
   color: white;
   border: none;
   border-radius: var(--spacing-xs);
@@ -104,7 +104,7 @@
 }
 
 .editButton:hover {
-  background: var(--primary-hover);
+  background: #042839;
 }
 
 .editButton.editing {

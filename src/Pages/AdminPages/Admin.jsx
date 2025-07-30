@@ -95,7 +95,7 @@ function Admin() {
             </div>
             <div
                 onClick={() => {
-                  navigate("/admin/");
+                  navigate("/admin/employer");
                   closeSidebar();
                 }}
                 className="box"
@@ -115,7 +115,7 @@ function Admin() {
             </div>
             <div
               onClick={() => {
-                navigate("/admin/coments");
+                navigate("/admin/comments");
                 closeSidebar();
               }}
               className="box"

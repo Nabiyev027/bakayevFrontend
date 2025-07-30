@@ -1,6 +1,7 @@
 .header-section {
   height: 95%;
   padding: 1rem;
+  position: relative;
   overflow-y: scroll;
 
   h1 {
@@ -9,18 +10,21 @@
     text-shadow: 5px 2px 2px #f96000;
   }
 
-  .btn-floater{
-    width: 100%;
+  .btn-wrap{
+    width: max-content;
     display: flex;
-    justify-content: end;
+    position: absolute;
+    gap: 1rem;
+    right: 2%;
+    top: 0;
 
-    .btn-e{
+    .btn{
       border: 2px solid white;
       border-radius: 8px;
       background-color: black;
       color: white;
       font-size: 18px;
-      padding: 0.4rem 0.6rem;
+      padding: 0.6rem 1rem;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -31,12 +35,17 @@
       }
 
     }
+
+    .btn-e{
+      background-color: red;
+    }
+
+
   }
 
-
-
   .sect-box {
-    margin-top: 0.5rem;
+    max-width: 1200px;
+    margin: 0.5rem auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -74,6 +83,11 @@
           height: 100%;
           object-fit: fill;
         }
+      }
+
+      .err{
+        height: max-content;
+        color: red;
       }
 
       .btn {

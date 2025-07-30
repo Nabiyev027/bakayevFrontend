@@ -11,7 +11,6 @@ import {RiDeleteBin5Fill} from "react-icons/ri";
 function DifferenceSect() {
     //Difference Section
     const [activeModal, setActiveModal] = useState(false);
-    const openModal = (id) => setActiveModal(id);
     const [errorsD, setErrorsD] = useState({});
 
     const [editDif, setEditDif] = useState(false);

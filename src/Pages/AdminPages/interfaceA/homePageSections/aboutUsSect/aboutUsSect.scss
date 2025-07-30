@@ -1,7 +1,7 @@
 .about-section {
   height: 95%;
   padding: 1rem;
-  overflow-y: scroll;
+  border: 1px solid green;
 
   h1 {
     text-align: center;
@@ -33,40 +33,94 @@
     }
   }
 
-  .wrap-media{
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
+  .wrap-scroll{
+    padding: 1rem 5rem;
+    max-width: 1300px;
+    height: 88%;
+    margin: 0 auto;
+    overflow-y: scroll;
+    border-top: 3px solid white;
 
-     .img-card{
-       background-color: white;
-       width: 540px;
-       height: 300px;
-       border-radius: 20px;
-       border: 3px solid #ffaa22;
-       display: flex;
-       justify-content: center;
-       align-items: center;
+    .wrap-about-info{
+      height: max-content;
 
-       .icon {
-         width: 120px;
-         height: 120px;
-         color: #f96000;
-       }
+      .wrap-media{
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
 
-     }
+        .img-card{
+          background-color: white;
+          width: 540px;
+          height: 300px;
+          border-radius: 20px;
+          border: 3px solid #ffaa22;
+          display: flex;
+          justify-content: center;
+          align-items: center;
 
-    .video-card{
-      max-width: 540px;
-      height: 300px;
-      border-radius: 20px;
-      border: 3px solid #ffaa22;
+          .icon {
+            width: 120px;
+            height: 120px;
+            color: #f96000;
+          }
+
+        }
+
+        .video-card{
+          max-width: 540px;
+          height: 300px;
+          border-radius: 20px;
+          border: 3px solid #ffaa22;
+        }
+
+      }
+
+      .wrap-text-desc{
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin-top: 2rem;
+
+        label{
+          width: 100%;
+
+          h3{
+            color: white;
+            text-shadow: 5px 2px 2px #f96000;
+            margin-bottom: 5px;
+          }
+
+          .area{
+            width: 100%;
+            max-width: 540px;
+            height: 300px;
+            border-radius: 20px;
+            border: 3px solid #ffaa22;
+            padding: 1rem;
+            font-size: 18px;
+            font-family: 'Monsserat', sans-serif;
+
+            &:focus{
+              outline:none;
+
+            }
+
+          }
+
+        }
+
+
+
+      }
+
     }
 
   }
 
-  .wrap-desc{
-    display: flex;
-  }
+
+
+
 
 }

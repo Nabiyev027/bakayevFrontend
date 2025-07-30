@@ -13,27 +13,38 @@ function AboutUsSect() {
                 <button className={"btn-e"} >Edit <FaEdit /> </button>
             </div>
 
-            <div className={""}>
+            <div className={"wrap-scroll"}>
+                <div className={"wrap-about-info"}>
+                    <div className={"wrap-media"}>
 
-            </div>
+                        {
+                            info.imgUrl ? <img src={info.imgUrl} alt="" /> : <div className={"img-card"}>
+                                <PiImageDuotone className="icon" />
+                            </div>
+                        }
 
-            <div className={"wrap-media"}>
-
-                {
-                    info.imgUrl ? <img src={info.imgUrl} alt="" /> : <div className={"img-card"}>
-                        <PiImageDuotone className="icon" />
+                        <video className={"video-card"} controls>
+                            <source src="video.mp4" type="video/mp4"/>
+                            Sizingiz brauzeringiz videoni qo‘llab-quvvatlamaydi.
+                        </video>
                     </div>
-                }
 
-                <video className={"video-card"} controls>
-                    <source src="video.mp4" type="video/mp4"/>
-                    Sizingiz brauzeringiz videoni qo‘llab-quvvatlamaydi.
-                </video>
+                    <div className={"wrap-text-desc"}>
+                        <label>
+                            <h3>Decription1</h3>
+                            <textarea className={"area"}></textarea>
+                        </label>
+                        <label>
+                            <h3>Decription2</h3>
+                            <textarea className={"area"}></textarea>
+                        </label>
+
+                    </div>
+                </div>
             </div>
 
-            <div className={"wrap-desc"}>
 
-            </div>
+
 
 
         </div>

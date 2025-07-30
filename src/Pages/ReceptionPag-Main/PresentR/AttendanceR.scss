@@ -1,4 +1,4 @@
-.attendanceR-page{
+.attendanceR-page {
   background-color: white;
   width: 100%;
   height: 100%;
@@ -9,5 +9,26 @@
   align-items: center;
   padding: 2rem 0;
   overflow-y: scroll;
+
 }
 
+.white-text {
+  color: #1f2937 !important;
+}
+
+.content-bar {
+  background-color: #f3efe8 !important;
+}
+
+.nav-rec {
+  background-color: #111827 !important;
+  h1{
+    color: #ffbd23 !important;
+  }
+  h2{
+    color: #ffbd23 !important;
+  }
+}
+.sidebar{
+  background-color: #111827 !important;
+}
