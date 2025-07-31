@@ -63,6 +63,7 @@
     }
 
     label{
+      margin: 1rem 0;
 
       h4{
         color: #ffaa22;
@@ -103,6 +104,22 @@
           outline: none;
         }
 
+      }
+
+    }
+
+    .btn{
+      margin-top: 1rem;
+      background-color: black;
+      color: white;
+      font-size: 20px;
+      padding: 0.5rem 0.8rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+
+      &:active{
+        scale: 1.1;
       }
 
     }

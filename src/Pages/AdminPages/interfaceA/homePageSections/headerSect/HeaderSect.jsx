@@ -85,7 +85,6 @@ function HeaderSect() {
     };
 
     async function handleSave() {
-
             try {
                 const formData = new FormData();
                 if (imageFile) {
