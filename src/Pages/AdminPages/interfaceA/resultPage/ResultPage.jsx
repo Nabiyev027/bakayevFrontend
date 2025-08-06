@@ -1,79 +1,49 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import "./resultPage.scss"
 import {IoImage} from "react-icons/io5";
 import heic2any from "heic2any";
 import imageCompression from "browser-image-compression";
 import {MdDelete, MdEdit} from "react-icons/md";
+import {toast, ToastContainer} from "react-toastify";
+import ApiCall from "../../../../Utils/ApiCall";
 
 function ResultPage() {
-    const [results, setResults] = useState([
-        {
-            id: 1,
-            image: "https://images.ctfassets.net/unrdeg6se4ke/1xYhqY3QVFQMD5O2uo8rWU/f120854e1fae82d7b45b7a78f4396b8a/example-of-ielts-test-report-form.jpg?&w=1220",
-            fullName: "Ali Valiyev",
-            listening: 7.5,
-            reading: 8.0,
-            writing: 6.5,
-            speaking: 7.0,
-            overall: 7.25
-        },
-        {
-            id: 2,
-            image: "https://images.ctfassets.net/unrdeg6se4ke/1xYhqY3QVFQMD5O2uo8rWU/f120854e1fae82d7b45b7a78f4396b8a/example-of-ielts-test-report-form.jpg?&w=1220",
-            fullName: "Dilnoza Karimova",
-            listening: 8.0,
-            reading: 7.5,
-            writing: 7.0,
-            speaking: 8.0,
-            overall: 7.625
-        },
-        {
-            id: 3,
-            image: "https://images.ctfassets.net/unrdeg6se4ke/1xYhqY3QVFQMD5O2uo8rWU/f120854e1fae82d7b45b7a78f4396b8a/example-of-ielts-test-report-form.jpg?&w=1220",
-            fullName: "Jasur Akramov",
-            listening: 6.5,
-            reading: 6.0,
-            writing: 6.5,
-            speaking: 6.0,
-            overall: 6.25
-        },
-        {
-            id: 4,
-            image: "https://images.ctfassets.net/unrdeg6se4ke/1xYhqY3QVFQMD5O2uo8rWU/f120854e1fae82d7b45b7a78f4396b8a/example-of-ielts-test-report-form.jpg?&w=1220",
-            fullName: "Gulnora Raximova",
-            listening: 8.5,
-            reading: 9.0,
-            writing: 7.5,
-            speaking: 8.0,
-            overall: 8.25
-        },
-        {
-            id: 5,
-            image: "https://images.ctfassets.net/unrdeg6se4ke/1xYhqY3QVFQMD5O2uo8rWU/f120854e1fae82d7b45b7a78f4396b8a/example-of-ielts-test-report-form.jpg?&w=1220",
-            fullName: "Sherzod Qodirov",
-            listening: 5.5,
-            reading: 6.0,
-            writing: 5.0,
-            speaking: 5.5,
-            overall: 5.5
-        },
-        {
-            id: 6,
-            image: "https://images.ctfassets.net/unrdeg6se4ke/1xYhqY3QVFQMD5O2uo8rWU/f120854e1fae82d7b45b7a78f4396b8a/example-of-ielts-test-report-form.jpg?&w=1220",
-            fullName: "Malika Yunusova",
-            listening: 7.0,
-            reading: 7.0,
-            writing: 6.5,
-            speaking: 7.5,
-            overall: 7.0
-        }
-    ]);
-
-
+    const [results, setResults] = useState([]);
     const [errors, setErrors] = useState({});
     const [selectedImage, setSelectedImage] = useState("");
     const fileInputRef = useRef(null)
     const [imageFile, setImageFile] = useState(null);
+    const [imgUrl, setImgUrl] = useState("");
+    const [newResStudent, setNewResStudent] = useState({
+        name: "",
+        listening: "",
+        writing: "",
+        reading: "",
+        speaking: "",
+        overall: ""
+    });
+    const [selStudentId, setSelStudentId] = useState(null);
+    const [isEdit, setIsEdit] = useState(false);
+
+    const BaseUrl = "http://localhost:8080";
+
+    useEffect(() => {
+        getStudentResults()
+    }, [])
+
+
+
+    async function getStudentResults() {
+        try {
+            const res = await ApiCall("/studentSection", {method: "GET"});
+            toast.success(res.data);
+            setResults(res.data);
+        } catch (err) {
+            const message =
+                err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
 
 
     const handleImageChange = async (e) => {
@@ -117,14 +87,91 @@ function ResultPage() {
         }
     };
 
+
+    function clearInputs() {
+        setSelectedImage("");
+        setImageFile(null);
+        setImgUrl("");
+        setNewResStudent({
+            name: "",
+            listening: "",
+            writing: "",
+            reading: "",
+            speaking: "",
+            overall: "",
+        })
+    }
+
+    async function handleSaveStudent(e) {
+        e.preventDefault();
+
+        if (!imageFile && !isEdit) {
+            setErrors(prev => ({...prev, image: "Rasmni tanlang!"}));
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("img", imageFile)
+        formData.append("name", newResStudent.name);
+        formData.append("listening", newResStudent.listening);
+        formData.append("writing", newResStudent.writing);
+        formData.append("reading", newResStudent.reading);
+        formData.append("speaking", newResStudent.speaking);
+        formData.append("overall", newResStudent.overall);
+
+        try {
+            const res = isEdit
+                ? await ApiCall(`/studentSection/${selStudentId}`, {method: "PUT"}, formData)
+                : await ApiCall(`/studentSection`, {method: "POST"}, formData);
+
+            toast.success(res.data);
+            await getStudentResults()
+            clearInputs()
+            setIsEdit(false);
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+    function editStudentRes(item) {
+        setIsEdit(true);
+        setSelStudentId(item.id)
+        setImgUrl(item.imgUrl)
+        setNewResStudent({
+            name: item.name,
+            listening: item.listening,
+            writing: item.writing,
+            reading: item.reading,
+            speaking: item.speaking,
+            overall: item.overall,
+
+        })
+    }
+
+    async function deleteStudentRes(id) {
+        try {
+            const res = await ApiCall(`/studentSection/${id}`, {method: "DELETE"});
+            toast.success(res.data);
+            await getStudentResults();
+        } catch (err) {
+            const message =
+                err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
     return (
         <div className={"resultPage-Wrap"}>
+            <ToastContainer/>
             <div className={"box b1"}>
                 <div className={"img-box"}>
 
-                    {
-                        selectedImage ? <img src={selectedImage} alt="img"/> : <IoImage className={"icon-d"} />
-                    }
+                    {selectedImage || imgUrl ? (
+                        <img src={selectedImage || (BaseUrl + imgUrl)} alt="img" />
+                    ) : (
+                        <IoImage className={"icon-d"} />
+                    )}
 
                     {errors.image && <span className="error">{errors.image}</span>}
 
@@ -145,45 +192,63 @@ function ResultPage() {
                     </label>
                     <label>
                         <h3>FullName</h3>
-                        <input type="text" placeholder={"Firstname Lastname"} />
+                        <input
+                            onChange={(e) => setNewResStudent({...newResStudent, name: e.target.value})}
+                            value={newResStudent.name}
+                            type="text" placeholder={"Firstname Lastname"}/>
                     </label>
 
-                        <label>
-                            <h3>Listening</h3>
-                            <input type="text" placeholder={"score"}/>
-                        </label>
-                        <label>
-                            <h3>Reading</h3>
-                            <input type="text" placeholder={"score"}/>
-                        </label>
-                        <label>
-                            <h3>Writing</h3>
-                            <input type="text" placeholder={"score"}/>
-                        </label>
-                        <label>
-                            <h3>Speaking</h3>
-                            <input type="text" placeholder={"score"}/>
-                        </label>
-                        <label>
-                            <h3>Overall</h3>
-                            <input type="text" placeholder={"score"}/>
-                        </label>
+                    <label>
+                        <h3>Listening</h3>
+                        <input
+                            onChange={(e) => setNewResStudent({...newResStudent, listening: e.target.value})}
+                            value={newResStudent.listening}
+                            type="number" placeholder={"score"}/>
+                    </label>
+                    <label>
+                        <h3>Reading</h3>
+                        <input
+                            onChange={(e) => setNewResStudent({...newResStudent, reading: e.target.value})}
+                            value={newResStudent.reading}
+                            type="number" placeholder={"score"}/>
+                    </label>
+                    <label>
+                        <h3>Writing</h3>
+                        <input
+                            onChange={(e) => setNewResStudent({...newResStudent, writing: e.target.value})}
+                            value={newResStudent.writing}
+                            type="number" placeholder={"score"}/>
+                    </label>
+                    <label>
+                        <h3>Speaking</h3>
+                        <input
+                            onChange={(e) => setNewResStudent({...newResStudent, speaking: e.target.value})}
+                            value={newResStudent.speaking}
+                            type="number" placeholder={"score"}/>
+                    </label>
+                    <label>
+                        <h3>Overall</h3>
+                        <input
+                            onChange={(e) => setNewResStudent({...newResStudent, overall: e.target.value})}
+                            value={newResStudent.overall}
+                            type="number" placeholder={"score"}/>
+                    </label>
 
-                    <button className={"btn-s"}>Save</button>
+                    <button onClick={handleSaveStudent} className={"btn-s"}>Save</button>
 
                 </div>
             </div>
             <div className={"box b2"}>
                 {
-                    results&&results.map((item, index) => (
-                        <div className={"card-box"} key={index}>
-                            <img src={item.image} alt="img"/>
+                    results && results.map((item, index) => (
+                        <div className={"card-box"} key={item.id}>
+                            <img src={BaseUrl+item.imgUrl} alt="img"/>
                             <div className={"wrap-skills"}>
                                 <div className={"icons-wrap"}>
-                                    <MdEdit className={"icon v1"}/>
-                                    <MdDelete className={"icon v2"}/>
+                                    <MdEdit onClick={()=>editStudentRes(item)} className={"icon v1"}/>
+                                    <MdDelete onClick={()=>deleteStudentRes(item.id)} className={"icon v2"}/>
                                 </div>
-                                <h2>{item.fullName}</h2>
+                                <h2>{item.name}</h2>
                                 <div className={"scores"}>
                                     <h3>Listening: <span>{item.listening}</span></h3>
                                     <h3>Reading: <span>{item.reading}</span></h3>

@@ -142,12 +142,8 @@ export default function AttendanceTable() {
                setStudents(studentsData);
 
                // Fetch attendance data based on current filters
-               const attendanceResponse = await fetch(`/attendance/get?group=${selectedGroup}&viewType=${filterType}&year=${selectedYear}&month=${selectedMonth}&day=${selectedDay}`);
-               console.log(selectedGroup)
-               console.log(selectedYear)
-               console.log(selectedDay)
-               console.log(selectedMonth)
-               const attendanceData = await attendanceResponse.json();
+               const attendanceResponse = await apiCall(`/attendance/get?group=${selectedGroup}&viewType=${filterType}&year=${selectedYear}&month=${selectedMonth}&day=${selectedDay}`, {method:"get"});
+               const attendanceData = await attendanceResponse.data;
                setAttendanceData(attendanceData);
                setEditingData(attendanceData); // Initialize editing data with fetched data
            }
@@ -653,7 +649,7 @@ export default function AttendanceTable() {
                         <table className={styles.table}>
                             <thead className={styles.tableHead}>
                             <tr>
-                                <th className={styles.stickyColumn}>Talaba</th>
+                                <th className={styles.stickyColumn + " "} >Talaba</th>
                                 <th className={styles.center}>Guruh raqami</th>
                                 {filterType === "daily" && <th className={styles.center}>Sabab</th>}
                                 {dataToDisplay.map((day, index) => (
@@ -685,12 +681,12 @@ export default function AttendanceTable() {
                                     <td className={`${styles.studentCell} ${styles.stickyColumn}`}>
                                         <div className={styles.studentInfo}>
                                             <div className={styles.avatar}>
-                                                {student.name
+                                                {student.firstName
                                                     .split(" ")
                                                     .map((n) => n[0])
                                                     .join("")}
                                             </div>
-                                            <span>{student.name}</span>
+                                            <span>{student.firstName + " "+student.lastName}</span>
                                         </div>
                                     </td>
                                     <td className={styles.rollNumber}>{student.rollNo}</td>

@@ -9,7 +9,6 @@ import {RiDeleteBin5Fill} from "react-icons/ri";
 import ApiCall from "../../../../../Utils/ApiCall";
 import {useLang} from "../../langConfig/LangContext";
 import {toast, ToastContainer} from "react-toastify";
-import * as toastr from "react-toastify";
 
 function DifferenceSect() {
     const [activeModal, setActiveModal] = useState(false);
@@ -18,11 +17,20 @@ function DifferenceSect() {
     const [imageFileD, setImageFileD] = useState(null);
     const fileInputRefD = useRef(null);
     const [selectedImageD, setSelectedImageD] = useState("");
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
+    const [titleUz, setTitleUz] = useState("");
+    const [titleRu, setTitleRu] = useState("");
+    const [titleEn, setTitleEn] = useState("");
+    const [descriptionUz, setDescriptionUz] = useState("");
+    const [descriptionRu, setDescriptionRu] = useState("");
+    const [descriptionEn, setDescriptionEn] = useState("");
     const [differences, setDifferences] = useState([]);
+    const [unfilteredDif, setUnfilteredDif] = useState([]);
 
-    const { lang, isReady } = useLang(); // ✅ kontekstdan lang ni olish
+    const [isEdit,setIsEdit] = useState(false);
+    const [selDifId, setSelDifId] = useState("");
+    const [editDifImgUrl, setEditDifImgUrl] = useState("");
+
+    const {lang, isReady} = useLang();
 
     const BaseUrl = "http://localhost:8080";
 
@@ -32,9 +40,20 @@ function DifferenceSect() {
         }
     }, [isReady, lang]);
 
+    useEffect(() => {
+        if (Array.isArray(unfilteredDif) && unfilteredDif.length > 0 && lang) {
+            filterDifferencesByLang(unfilteredDif);
+        }
+    }, [unfilteredDif, lang]);
 
-    function closeModal(){
-        setActiveModal(p=>!p);
+
+    function toggleModal() {
+        setSelectedImageD("");
+        setImageFileD(null);
+        setEditDifImgUrl("")
+        setErrorsD("");
+        clearInputs()
+        setActiveModal(p => !p);
     }
 
     const handleImageChange = async (e) => {
@@ -78,10 +97,30 @@ function DifferenceSect() {
         }
     };
 
+    function filterDifferencesByLang(data) {
+        const filtered = data.map((item) => {
+            const matchedTranslation = item.differenceTranslationResDtos.find(
+                (t) => t.lang === lang
+            );
+
+            return {
+                id: item.id,
+                imgUrl: item.imgUrl,
+                title: matchedTranslation?.title || "",
+                description: matchedTranslation?.description || ""
+            };
+        });
+
+        setDifferences(filtered);
+    }
+
+
     async function getDifferences() {
         try {
+            const res = await ApiCall("/differenceSection/get", {method: "GET"});
+            setUnfilteredDif(res.data)
 
-        }catch(err) {
+        } catch (err) {
             const message =
                 err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
             toast.warn(message); // ✅ Toastify xabari
@@ -90,25 +129,88 @@ function DifferenceSect() {
 
     async function handleSave(e) {
         e.preventDefault();
+
+        // 🟡 Rasm validatsiyasi (faqat yangi qo‘shishda kerak)
+        if (!imageFileD && !isEdit) {
+            setErrorsD(prev => ({ ...prev, image: "Rasmni tanlang!" }));
+            return;
+        }
+
         const formData = new FormData();
         formData.append("img", imageFileD);
-        formData.append("title", title);
-        formData.append("description", description);
-
+        formData.append("titleUz", titleUz);
+        formData.append("descriptionUz", descriptionUz);
+        formData.append("titleRu", titleRu);
+        formData.append("descriptionRu", descriptionRu);
+        formData.append("titleEn", titleEn);
+        formData.append("descriptionEn", descriptionEn);
 
         try {
-          const res = ApiCall(`/differenceSection/post?lang=${lang}`, {method:"POST"}, formData);
-          toast.success(res.data);
-          closeModal()
-          setTitle("")
-          setDescription("")
-          setImageFileD(null)
-          setSelectedImageD(null)
+            const res = isEdit
+                ? await ApiCall(`/differenceSection/update/${selDifId}`, { method: "PUT" }, formData)
+                : await ApiCall(`/differenceSection/post`, { method: "POST" }, formData);
 
-        }catch (err){
+            toast.success(res.data);
+            await getDifferences();
+            toggleModal();
+            setIsEdit(false);
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+
+    function clearInputs() {
+        setTitleUz("");
+        setDescriptionUz("");
+        setTitleRu("")
+        setDescriptionRu("")
+        setTitleEn("");
+        setDescriptionEn("");
+        setImageFileD(null)
+        setSelectedImageD(null)
+    }
+
+    function editDifference(id) {
+        toggleModal()
+        setIsEdit(true)
+        setSelDifId(id)
+        unfilteredDif.forEach((item) => {
+            if(item.id === id){
+                setEditDifImgUrl(item.imgUrl);
+                item.differenceTranslationResDtos.forEach((translation) => {
+                    if(translation.lang === "UZ") {
+                        setTitleUz(translation.title);
+                        setDescriptionUz(translation.description);
+                    }
+                    if (translation.lang === "RU") {
+                        setTitleRu(translation.title);
+                        setDescriptionRu(translation.description);
+                    }
+                    if(translation.lang === "EN") {
+                        setTitleEn(translation.title);
+                        setDescriptionEn(translation.description);
+                    }
+                })
+
+            }
+        })
+
+    }
+
+    async function deleteDif(id) {
+        const confirmed = window.confirm("Bu elementni o'chirishga ishonchingiz komilmi?");
+        if (!confirmed) return;
+
+        try {
+            const res = await ApiCall(`/differenceSection/delete/${id}`,{method: "DELETE"});
+            toast.success(res.data);
+            await getDifferences()
+        }catch(err) {
             const message =
                 err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
-            toast.warn(message); // ✅ Toastify xabari
+            toast.warn(message);
         }
     }
 
@@ -116,20 +218,26 @@ function DifferenceSect() {
         <div className={"dif-section"}>
             <ToastContainer/>
             {
-                activeModal && <div className="custom-modal-overlay" onClick={closeModal}>
+                activeModal && <div className="custom-modal-overlay" onClick={toggleModal}>
                     <div
                         className="custom-modal-content"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <button onClick={closeModal} className="custom-modal-close">
+                        <button onClick={toggleModal} className="custom-modal-close">
                             ×
                         </button>
-                        <h2 className="custom-modal-title">{editDif ? "Edit Difference" : "New Difference" }</h2>
+                        <h2 className="custom-modal-title">{editDif ? "Edit Difference" : "New Difference"}</h2>
                         <div className="custom-modal-body">
                             <div className={"img-box"}>
 
                                 {
-                                    selectedImageD ? <img src={selectedImageD} alt="img"/> : <IoImage className={"icon-d"} />
+                                    selectedImageD ? (
+                                        <img src={selectedImageD} alt="img"/>
+                                    ) : isEdit && editDifImgUrl ? (
+                                        <img src={BaseUrl + editDifImgUrl} alt="img"/>
+                                    ) : (
+                                        <IoImage className={"icon-d"} />
+                                    )
                                 }
 
                                 {errorsD.image && <span className="error">{errorsD.image}</span>}
@@ -152,29 +260,73 @@ function DifferenceSect() {
                             </div>
 
                             <div className={"wrap-info"}>
-                                <label>
-                                    <h4>Title</h4>
-                                    <input
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        value={title}
-                                        className={"title-i"}
-                                        placeholder={"Enter title"}
-                                        type="text"/>
-                                </label>
-
-                                <label>
-                                    <h4>Description</h4>
-                                    <textarea
-                                        onChange={(e) => setDescription(e.target.value)}
-                                        value={description}
-                                        className={"text-area"}
-                                        placeholder={"Enter description"}>
+                                <div className={"wrap-label"}>
+                                    <label>
+                                        <h4>Title UZ</h4>
+                                        <input
+                                            onChange={(e) => setTitleUz(e.target.value)}
+                                            value={titleUz}
+                                            className={"title-i"}
+                                            placeholder={"Sarlavha Uz..."}
+                                            type="text"/>
+                                    </label>
+                                    <label>
+                                        <h4>Description UZ</h4>
+                                        <textarea
+                                            onChange={(e) => setDescriptionUz(e.target.value)}
+                                            value={descriptionUz}
+                                            className={"text-area"}
+                                            placeholder={"Tavsifni kiriting..."}>
 
                                 </textarea>
-                                </label>
+                                    </label>
+                                </div>
+                                <div className={"wrap-label"}>
+                                    <label>
+                                        <h4>Title RU</h4>
+                                        <input
+                                            onChange={(e) => setTitleRu(e.target.value)}
+                                            value={titleRu}
+                                            className={"title-i"}
+                                            placeholder={"Заголовок"}
+                                            type="text"/>
+                                    </label>
+                                    <label>
+                                        <h4>Description RU</h4>
+                                        <textarea
+                                            onChange={(e) => setDescriptionRu(e.target.value)}
+                                            value={descriptionRu}
+                                            className={"text-area"}
+                                            placeholder={"Введите описание..."}>
+
+                                </textarea>
+                                    </label>
+                                </div>
+                                <div className={"wrap-label"}>
+                                    <label>
+                                        <h4>Title EN</h4>
+                                        <input
+                                            onChange={(e) => setTitleEn(e.target.value)}
+                                            value={titleEn}
+                                            className={"title-i"}
+                                            placeholder={"Enter title"}
+                                            type="text"/>
+                                    </label>
+                                    <label>
+                                        <h4>Description EN</h4>
+                                        <textarea
+                                            onChange={(e) => setDescriptionEn(e.target.value)}
+                                            value={descriptionEn}
+                                            className={"text-area"}
+                                            placeholder={"Enter description..."}>
+
+                                </textarea>
+                                    </label>
+                                </div>
+
                             </div>
 
-                            <button className={"btn"} onClick={handleSave} >Save</button>
+                            <button className={"btn"} onClick={handleSave}>Save</button>
                         </div>
                     </div>
                 </div>
@@ -182,19 +334,19 @@ function DifferenceSect() {
 
 
             <h1>Difference</h1>
-            <div   className={"btn-floater"}>
-                <button onClick={()=>setActiveModal(true)}
-                        className={"btn-a"} >Add <IoMdAdd /> </button>
+            <div className={"btn-floater"}>
+                <button onClick={() => setActiveModal(true)}
+                        className={"btn-a"}>Add <IoMdAdd/></button>
             </div>
 
             <div className={"wrap-dif-cards"}>
                 {
-                    differences&&differences.map((d,i)=> <div className={"dif-card"}>
-                        <img src={d.imgUrl} alt="img"/>
+                    differences && differences.map((d, i) => <div  key={d.id} className={"dif-card"}>
+                        <img src={BaseUrl+ d.imgUrl} alt="img"/>
                         <h3>{d.title}</h3>
                         <p>{d.description}</p>
-                        <MdModeEdit className={"icon-e icon"} />
-                        <RiDeleteBin5Fill className={"icon-d icon"} />
+                        <MdModeEdit onClick={()=>editDifference(d.id)} className={"icon-e icon"}/>
+                        <RiDeleteBin5Fill onClick={()=>deleteDif(d.id)} className={"icon-d icon"}/>
                     </div>)
                 }
             </div>

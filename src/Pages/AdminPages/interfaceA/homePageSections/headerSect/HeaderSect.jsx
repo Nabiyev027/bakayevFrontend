@@ -30,7 +30,6 @@ function HeaderSect() {
     async function getHeaderInfo() {
         try {
             const res = await ApiCall(`/headerSection?lang=${lang}`, "GET");
-            // title va rasmni set qilishni unutmayin
             setTitle(res.data.title);
             setImgUrl(res.data.imgUrl);
         } catch (err) {

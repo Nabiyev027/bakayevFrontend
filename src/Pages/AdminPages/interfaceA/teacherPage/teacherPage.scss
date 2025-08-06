@@ -27,7 +27,7 @@
     border: 3px solid #ffaa22;
     padding: 2rem 2.5rem;
     width: 100%;
-    max-width: 500px;
+    max-width: 1200px;
     position: relative;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.06);
     animation: scaleIn 0.3s ease forwards;
@@ -69,22 +69,26 @@
     label{
 
       h4{
+        width: 75%;
+        margin: 0 auto;
+        text-align: start;
         color: #ffaa22;
       }
     }
 
     .wrap-info{
       margin: 0 auto;
-      max-width: 350px;
+      width: 100%;
       text-align: start;
 
       .l-wrap{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
+        text-align: center;
 
         .title-i{
-          width: 100%;
+          width: 75%;
           height: 35px;
           border: 2px solid #ffaa22;
           border-radius: 12px;
@@ -97,24 +101,56 @@
         }
       }
 
+      .wrap-descriptions{
+        margin-top: 1rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
 
+        .lbl{
+          width: 100%;
 
+          h4{
+            width: 100%;
+            text-align: start;
+          }
 
-      .text-area{
-        width: 100%;
-        height: 180px;
-        border: 2px solid #ffaa22;
-        border-radius: 12px;
-        padding: 0.4rem;
-        font-family: 'Monsserat', sans-serif;
-        font-size: 20px;
-        font-weight: 500;
-        resize: none;
+          .text-area{
+            width: 100%;
+            height: 180px;
+            border: 2px solid #ffaa22;
+            border-radius: 12px;
+            padding: 0.4rem;
+            font-family: 'Monsserat', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            resize: none;
 
-        &:focus{
-          outline: none;
+            &:focus{
+              outline: none;
+            }
+
+          }
         }
 
+      }
+
+
+
+    }
+
+    .btn{
+      margin-top: 1rem;
+      background-color: black;
+      color: white;
+      font-size: 20px;
+      padding: 0.5rem 0.8rem;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+
+      &:active{
+        scale: 1.1;
       }
 
     }
@@ -209,6 +245,7 @@
       .c-head{
         display: flex;
         align-items: center;
+        justify-content: space-between;
         position: relative;
 
         .icons-wrap{
@@ -257,6 +294,7 @@
         }
 
         .info{
+          margin-right: 6rem;
           display: flex;
           flex-direction: column;
           align-items: center;
