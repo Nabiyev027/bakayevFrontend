@@ -5,6 +5,7 @@ import {FaCheck, FaImage} from "react-icons/fa";
 import {IoIosUndo} from "react-icons/io";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
+import {toast, ToastContainer} from "react-toastify";
 
 function Student() {
     const [students, setStudents] = useState([]);
@@ -13,6 +14,10 @@ function Student() {
     const [infoStudent, setInfoStudent] = useState(null);
     const [groups, setGroups] = useState([]);
     const [branches, setBranches] = useState([]);
+    const [newPassword, setNewPassword] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selId, setSelId] = useState("");
+    const [selectedEmployerlogin, setSelectedEmployerlogin] = useState("");
     const BaseUrl = "http://localhost:8080";
 
     useEffect(() => {
@@ -134,8 +139,76 @@ function Student() {
         }
     }
 
+    async function changePassword(st){
+        setSelectedEmployerlogin(st.username)
+        setSelId(st.id)
+        setIsModalOpen(true);
+    }
+
+    async function savePassword() {
+        // Frontend tekshiruvlar
+        if (!newPassword || newPassword.trim() === "") {
+            toast.error("Password bo'sh bo'lishi mumkin emas");
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            toast.error("Password kamida 8 belgidan iborat bo'lishi kerak");
+            return;
+        }
+
+
+        // Agar hammasi to'g'ri bo'lsa, backendga yuborish
+        try {
+            const res = await ApiCall(`/user/changePassword/${selId}?newPassword=${newPassword}`, { method: "PUT" });
+            toast.success(res.data);
+            setIsModalOpen(false);
+            setSelId("");
+            setNewPassword("");
+            setSelectedEmployerlogin("")
+        } catch (err) {
+            toast.error(err.response?.data || err.message);
+        }
+    }
+
+    function cancelChangePassword() {
+        setIsModalOpen(false);
+        setSelId("")
+        setNewPassword("")
+        setSelectedEmployerlogin("")
+    }
+
     return (
         <div className="student-page">
+            <ToastContainer />
+
+            {isModalOpen && (
+                <div className="modal-rec-overlay">
+                    <div className="modal-rec">
+                        <h3>Set new password for: {selectedEmployerlogin}</h3>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Enter new Password"
+                            value={newPassword}
+                            onChange={(e)=>setNewPassword(e.target.value)}
+                        />
+
+                        <div className="modal-actions">
+                            <button
+                                className="cancelBtn"
+                                onClick={cancelChangePassword}
+                            >
+                                Cancel
+                            </button>
+                            <button onClick={savePassword} className="saveBtn">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h2>Students</h2>
             <div className="student-header">
                 <select id="branch" className="filial-select">
@@ -281,7 +354,7 @@ function Student() {
                                 }
                             </td>
                             <td>
-                                <button className={"change-p-btn"}>Change</button>
+                                <button onClick={()=>changePassword(st)} className={"change-p-btn"}>Change</button>
                             </td>
                             <td>
                                 {editingIndex === i ? (

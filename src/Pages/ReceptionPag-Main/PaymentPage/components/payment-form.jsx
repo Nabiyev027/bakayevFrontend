@@ -1,46 +1,21 @@
 import { useState, useEffect } from "react"
 import { CreditCard, DollarSign, Plus, Building, Users, User, ChevronDown } from "lucide-react"
 import styles from "./payment-form.module.scss"
+import ApiCall from "../../../../Utils/ApiCall";
+import {toast,ToastContainer} from "react-toastify";
 
-// Mock data for branches, groups, and students
-const branches = [
-    { id: "1", name: "Toshkent filiali" },
-    { id: "2", name: "Samarqand filiali" },
-    { id: "3", name: "Buxoro filiali" },
-    { id: "4", name: "Andijon filiali" },
-]
+export function PaymentForm() {
+    const [branches, setBranches] = useState([]);
+    const [groups, setGroups] = useState([]);
+    const [students, setStudents] = useState([]);
 
-const groups = [
-    { id: "1", name: "Frontend-01", branchId: "1", course: "Frontend Development" },
-    { id: "2", name: "Backend-01", branchId: "1", course: "Backend Development" },
-    { id: "3", name: "Mobile-01", branchId: "1", course: "Mobile Development" },
-    { id: "4", name: "Frontend-02", branchId: "2", course: "Frontend Development" },
-    { id: "5", name: "FullStack-01", branchId: "2", course: "Full Stack Development" },
-    { id: "6", name: "UI/UX-01", branchId: "3", course: "UI/UX Design" },
-    { id: "7", name: "DataScience-01", branchId: "4", course: "Data Science" },
-]
 
-const students = [
-    { id: "1", name: "Alisher Karimov", groupId: "1" },
-    { id: "2", name: "Malika Tosheva", groupId: "1" },
-    { id: "3", name: "Bobur Rahimov", groupId: "1" },
-    { id: "4", name: "Dilnoza Ahmadova", groupId: "2" },
-    { id: "5", name: "Jasur Tursunov", groupId: "2" },
-    { id: "6", name: "Nigora Karimova", groupId: "3" },
-    { id: "7", name: "Sardor Umarov", groupId: "3" },
-    { id: "8", name: "Feruza Nazarova", groupId: "4" },
-    { id: "9", name: "Otabek Salimov", groupId: "5" },
-    { id: "10", name: "Madina Yusupova", groupId: "6" },
-    { id: "11", name: "Bekzod Rahmonov", groupId: "7" },
-]
-
-export function PaymentForm({ onAddPayment }) {
     const [formData, setFormData] = useState({
         branchId: "",
         groupId: "",
         studentId: "",
         amount: "",
-        paymentMethod: "card",
+        paymentMethod: "CARD",
     })
 
     const [filteredGroups, setFilteredGroups] = useState(groups)
@@ -51,33 +26,57 @@ export function PaymentForm({ onAddPayment }) {
         student: false,
     })
 
-    // Filter groups based on selected branch
     useEffect(() => {
-        if (formData.branchId) {
-            const filtered = groups.filter((group) => group.branchId === formData.branchId)
-            setFilteredGroups(filtered)
-            setFormData((prev) => ({ ...prev, groupId: "", studentId: "" }))
-        } else {
-            setFilteredGroups([])
-        }
-    }, [formData.branchId])
+        getFilials()
 
-    // Filter students based on selected group
-    useEffect(() => {
-        if (formData.groupId) {
-            const filtered = students.filter((student) => student.groupId === formData.groupId)
-            setFilteredStudents(filtered)
-            setFormData((prev) => ({ ...prev, studentId: "" }))
-        } else {
-            setFilteredStudents([])
+        if(formData.branchId){
+            getFilialGroups()
         }
-    }, [formData.groupId])
 
-    const handleSubmit = (e) => {
+        if(formData.groupId){
+            getGroupStudents()
+        }
+
+    }, [formData.branchId, formData.groupId]);
+
+
+    async function getFilials() {
+        try {
+            const res = await ApiCall("/filial/getAll",{method:"GET"})
+            setBranches(res.data)
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+    async function getFilialGroups() {
+        try {
+            const res = await ApiCall(`/group?filialId=${formData.branchId}`, {method: "GET"})
+            setGroups(res.data)
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+    async function getGroupStudents() {
+        try {
+            const res = await ApiCall(`/user/student?groupId=${formData.groupId}`, {method: "GET"})
+            setStudents(res.data)
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (!formData.branchId || !formData.groupId || !formData.studentId || !formData.amount) {
-            alert("Iltimos, barcha maydonlarni to'ldiring")
+            toast.warn("Please fill all inputs")
             return
         }
 
@@ -85,21 +84,24 @@ export function PaymentForm({ onAddPayment }) {
         const selectedGroup = groups.find((g) => g.id === formData.groupId)
 
         if (!selectedStudent || !selectedGroup) {
-            alert("Talaba yoki guruh topilmadi")
+            toast.warn("Student or group not found")
             return
         }
 
         const payment = {
-            studentName: selectedStudent.name,
-            courseName: selectedGroup.course,
-            amount: Number.parseInt(formData.amount),
+            studentId: selectedStudent.id,
+            amount: Number(formData.amount),
             paymentMethod: formData.paymentMethod,
-            date: new Date().toISOString().split("T")[0],
-            status: "completed",
         }
 
-        onAddPayment(payment)
-        alert("To'lov muvaffaqiyatli qo'shildi!")
+        try {
+            const res = await ApiCall("/payment/addPayment", { method: "POST" }, payment)
+            toast.success(res.data)
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+
 
         // Reset form
         setFormData({
@@ -129,13 +131,13 @@ export function PaymentForm({ onAddPayment }) {
                 return formData.branchId ? branches.find((b) => b.id === formData.branchId)?.name : "Filialni tanlang"
             case "group":
                 return formData.groupId
-                    ? filteredGroups.find((g) => g.id === formData.groupId)?.name
+                    ? groups.find((g) => g.id === formData.groupId)?.name
                     : formData.branchId
                         ? "Guruhni tanlang"
                         : "Avval filialni tanlang"
             case "student":
                 return formData.studentId
-                    ? filteredStudents.find((s) => s.id === formData.studentId)?.name
+                    ? students.find((s) => s.id === formData.studentId)?.name
                     : formData.groupId
                         ? "Talabani tanlang"
                         : "Avval guruhni tanlang"
@@ -146,6 +148,7 @@ export function PaymentForm({ onAddPayment }) {
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
+            <ToastContainer/>
             {/* Branch, Group, Student Filters */}
             <div className={styles.filtersGrid}>
                 <div className={styles.fieldGroup}>
@@ -191,7 +194,7 @@ export function PaymentForm({ onAddPayment }) {
                         </button>
                         {dropdowns.group && formData.branchId && (
                             <div className={styles.dropdown}>
-                                {filteredGroups.map((group) => (
+                                {groups.map((group) => (
                                     <div
                                         key={group.id}
                                         className={styles.dropdownItem}
@@ -225,7 +228,7 @@ export function PaymentForm({ onAddPayment }) {
                         </button>
                         {dropdowns.student && formData.groupId && (
                             <div className={styles.dropdown}>
-                                {filteredStudents.map((student) => (
+                                {students.map((student) => (
                                     <div
                                         key={student.id}
                                         className={styles.dropdownItem}

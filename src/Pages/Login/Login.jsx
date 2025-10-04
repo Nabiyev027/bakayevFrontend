@@ -14,6 +14,7 @@ const LoginCard = () => {
             axios.post("http://localhost:8080/auth/login", user).then(res => {
                 localStorage.setItem("token", res.data.access_token);
                 localStorage.setItem("refresh_token", res.data.refresh_token)
+
                 const rolesString = res.data.roles; // bu string holatda kelgan
                 const roleNames = [...rolesString.matchAll(/name=(ROLE_[A-Z_]+)/g)].map(match => match[1]);
 

@@ -5,6 +5,7 @@ import {FaCheck, FaImage} from "react-icons/fa";
 import {IoIosUndo} from "react-icons/io";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
+import {toast, ToastContainer} from "react-toastify";
 
 function Employer() {
     const [teachers, setTeachers] = useState([]);
@@ -13,10 +14,19 @@ function Employer() {
     const [infoStudent, setInfoStudent] = useState(null);
     const [roles, setRoles] = useState([]);
     const [branches, setBranches] = useState([]);
+    const [employers, setEmployers] = useState([]);
+    const [selRoleId, setSelRoleId] = useState("");
+    const [selBranchId, setSelBranchId] = useState("");
+    const [filteredEmployers, setFilteredEmployers] = useState([]);
+    const [newPassword, setNewPassword] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selId, setSelId] = useState("");
+    const [selectedEmployerlogin, setSelectedEmployerlogin] = useState("");
+
     const BaseUrl = "http://localhost:8080";
 
     useEffect(() => {
-       getFilials()
+        getFilials()
         getEmpRoles()
         getEmployers()
     },[])
@@ -44,21 +54,25 @@ function Employer() {
         try {
             const res = await ApiCall("/user/employer", {method: "GET"})
             console.log(res.data)
+            setEmployers(res.data)
         }catch(error) {
             console.log(error);
         }
     }
 
-
-    async function getTeachers() {
-        try {
-            const res = await ApiCall("/user/teacherWithData", {method: "GET"});
-            console.log(res.data);
-            setTeachers(res.data);
-        } catch (error) {
-            console.log(error);
+    function filterEmployers(branchId, roleId) {
+        if (branchId === "all" && roleId === "all" ) {
+            setFilteredEmployers(employers)
         }
+        if (branchId === "all" && roleId === selRoleId ) {
+
+        }
+        if(branchId === selBranchId && roleId === "all" ) {
+
+        }
+
     }
+
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -82,32 +96,6 @@ function Employer() {
         }
     };
 
-    async function handleSave() {
-        console.log(editedEmployer);
-        if (editedEmployer.firstName === "" || editedEmployer.lastName === "" || editedEmployer.phone === "" || editedEmployer.branchId === "") {
-            alert("Please fill all blanks")
-        }
-
-        try {
-            const res = await ApiCall(`/user/student/${editedEmployer.id}`, {method: "PUT"}, {
-                firstName: editedEmployer.firstName,
-                lastName: editedEmployer.lastName,
-                phone: editedEmployer.phone,
-                parentPhone: editedEmployer.parentPhone,
-                filialId: editedEmployer.branchId,
-                groupIds: editedEmployer.groupIds,
-                username: editedEmployer.username,
-            });
-
-            if(res.data){
-                await getTeachers();
-                setEditingIndex(null);
-                setEditedEmployer({});
-            }
-        } catch (err) {
-            console.log(err.message);
-        }
-    }
 
     function handleCancel() {
         setEditingIndex(null);
@@ -138,7 +126,6 @@ function Employer() {
             try {
                 const res = await ApiCall(`/user/delete/${st.id}`, {method: "DELETE"});
                 console.log(res.data)
-                await getTeachers()
             } catch (err) {
                 console.log(err);
             }
@@ -146,17 +133,85 @@ function Employer() {
         }
     }
 
+    async function changePassword(t) {
+        setSelectedEmployerlogin(t.username)
+        setSelId(t.id)
+        setIsModalOpen(true);
+    }
+
+    async function savePassword() {
+        // Frontend tekshiruvlar
+        if (!newPassword || newPassword.trim() === "") {
+            toast.error("Password bo'sh bo'lishi mumkin emas");
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            toast.error("Password kamida 8 belgidan iborat bo'lishi kerak");
+            return;
+        }
+
+
+        // Agar hammasi to'g'ri bo'lsa, backendga yuborish
+        try {
+            const res = await ApiCall(`/user/changePassword/${selId}?newPassword=${newPassword}`, { method: "PUT" });
+            toast.success(res.data);
+            setIsModalOpen(false);
+            setSelId("");
+            setNewPassword("");
+            setSelectedEmployerlogin("")
+        } catch (err) {
+            toast.error(err.response?.data || err.message);
+        }
+    }
+
+    function cancelChangePassword() {
+        setIsModalOpen(false);
+        setSelId("")
+        setNewPassword("")
+        setSelectedEmployerlogin("")
+    }
+
     return (
-        <div className="teacherM-page">
+        <div className="employer-page">
+            <ToastContainer />
+
+            {isModalOpen && (
+                <div className="modal-rec-overlay">
+                    <div className="modal-rec">
+                        <h3>Set new password for: {selectedEmployerlogin}</h3>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Enter new Password"
+                            value={newPassword}
+                            onChange={(e)=>setNewPassword(e.target.value)}
+                        />
+
+                        <div className="modal-actions">
+                            <button
+                                className="cancelBtn"
+                                onClick={cancelChangePassword}
+                            >
+                                Cancel
+                            </button>
+                            <button onClick={savePassword} className="saveBtn">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h2>Employers</h2>
-            <div className="teacherM-header">
+            <div className="employer-header">
                 <select id="branch" className="filial-select">
                     <option value="all">Select Branch</option>
                     {
                         branches?.map((b) => <option value={b.id} key={b.id}>{b.name}</option>)
                     }
                 </select>
-                <select className="group-select">
+                <select className="role-select">
                     <option value="all">Select Role</option>
                     {
                         roles?.map((r) => <option value={r.id} key={r.id}>{
@@ -168,8 +223,8 @@ function Employer() {
                 </select>
             </div>
 
-            <div className="table-boxx">
-                <table className="teacherM-table">
+            <div className="table-wrap-box">
+                <table className="employer-table">
                     <thead>
                     <tr>
                         <th>No</th>
@@ -185,7 +240,7 @@ function Employer() {
                     </tr>
                     </thead>
                     <tbody>
-                    {teachers?.map((t, i) => (
+                    {employers?.map((t, i) => (
                         <tr key={t.id}>
                             <td>{i + 1}</td>
                             <td>
@@ -286,12 +341,12 @@ function Employer() {
                                 }
                             </td>
                             <td>
-                                <button className={"change-p-btn"}>Change</button>
+                                <button onClick={()=>changePassword(t)} className={"change-p-btn"}>Change</button>
                             </td>
                             <td>
                                 {editingIndex === i ? (
                                     <div className="actions-t">
-                                        <div className={"t-btn-check btn-t"} onClick={handleSave}>
+                                        <div className={"t-btn-check btn-t"}>
                                             <FaCheck/>
                                         </div>
                                         <div className={"t-btn-cancel btn-t"} onClick={handleCancel}>

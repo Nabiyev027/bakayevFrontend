@@ -1,5 +1,4 @@
-.teacherM-page {
-  position: relative;
+.employer-page {
   font-family: "NotoSerif", sans-serif;
   font-size: 22px;
   font-weight: 400;
@@ -16,21 +15,57 @@
   padding: 2rem;
   overflow-y: scroll;
 
-  .teacherM-header {
+  .modal-rec-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    margin-bottom: 1.5rem;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-rec {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px gray;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 350px;
+    max-width: 90%;
+
+    input{
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+    }
+  }
+
+  .employer-header {
+    width: 100%;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: end;
     gap: 1rem;
 
     .filial-select,
-    .group-select {
+    .role-select {
       padding: 8px 12px;
       border: 1px solid #ccc;
       border-radius: 8px;
       font-size: 14px;
-      width: 200px;
+      width: 150px;
       transition: 0.3s ease;
 
       &:focus {
@@ -41,353 +76,116 @@
     }
   }
 
-}
-
-.table-boxx {
-  height: 600px;
-  border: 1px solid red;
-  overflow-y: scroll;
-  width: 100%;
-  margin-top: 1rem;
-  border-radius: 12px;
-}
-
-.teacherM-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  overflow: hidden;
-  table-layout: fixed;
-
-  th,
-  td {
-    text-align: center;
-    padding: 14px;
-    border-bottom: 1px solid #eee;
-    font-size: 16px;
-    word-wrap: break-word;
-  }
-
-  th {
-    background-color: #f96000;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  td img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #f96000;
-  }
-
-  td input {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 120px;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .input-edit {
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    width: 120px;
-    font-size: 14px;
-    text-align: center;
-
-    &:focus {
-      border-color: #f96000;
-      outline: none;
-      box-shadow: 0 0 5px #f9600073;
-    }
-  }
-
-  tr:hover {
-    background-color: #fff5ec;
-  }
-
-  .change-p-btn{
-    background-color: darkblue;
-    padding: 6px 10px;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-  }
-
-  .actions-t{
+  .table-wrap-box {
+    overflow-y: auto;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin: 0 auto;
-    gap: 5px;
+    max-width: 1400px;
+    height: 100%;
+    margin-top: 1rem;
+    border-radius: 12px;
 
-    .btn-t{
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 10px;
-      font-size: 20px;
-      color: #fff;
+    .employer-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      table-layout: fixed;
 
-
-      &:hover{
-        cursor: pointer;
-        box-shadow: 0px 0px 12px 1px black;
-
+      th{
+        background-color: #1e293b;
+        color: #ffaa22;
+        border: 1px solid white;
       }
-    }
 
-    .t-btn-edit{
-      background-color: orange;
-    }
+      th:first-child{
+        width: 7%;
+      }
 
-    .t-btn-delete{
-      background-color: red;
-    }
+      th,
+      td {
+        text-align: center;
+        padding: 14px;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
+        word-wrap: break-word;
+      }
 
-    .t-btn-check{
-      background-color: greenyellow;
-    }
+      td img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #f96000;
+      }
 
-    .t-btn-cancel{
-      background-color: gray;
-    }
+      .input-edit {
+        padding: 6px 10px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 120px;
+        font-size: 14px;
+        text-align: center;
 
-  }
+        &:focus {
+          border-color: #f96000;
+          outline: none;
+          box-shadow: 0 0 5px #f9600073;
+        }
+      }
 
-  .expanded-row {
-    background-color: #f9f9f9;
+      .change-p-btn {
+        background-color: darkblue;
+        padding: 6px 10px;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+      }
 
-    td {
-      padding: 12px;
-    }
+      .actions-t {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
 
-    .expanded-content {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-
-      p {
-        flex: 1 1 45%;
-        margin: 4px 0;
-
-        img {
+        .btn-t {
           width: 40px;
           height: 40px;
-          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 10px;
+          font-size: 20px;
+          color: #fff;
+
+          &:hover {
+            cursor: pointer;
+            box-shadow: 0px 0px 12px 1px black;
+          }
+        }
+
+        .t-btn-edit {
+          background-color: orange;
+        }
+        .t-btn-delete {
+          background-color: red;
+        }
+        .t-btn-check {
+          background-color: greenyellow;
+        }
+        .t-btn-cancel {
+          background-color: gray;
         }
       }
     }
+
   }
+
+
 }
 
-/* === Responsive Styles === */
 
-/* Large tablets / small desktops */
-@media (max-width: 1200px) {
-  .student-page {
-    padding: 1.5rem !important;
-  }
-  .student-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  .student-header .search-input,
-  .student-header .group-select,
-  .student-header .select-box {
-    width: 100% !important;
-    max-width: 300px;
-  }
-  .group-select {
-    margin-left: 0 !important;
-  }
-  .table-boxx {
-    max-height: 500px;
-  }
-  .student-table th,
-  .student-table td {
-    padding: 12px !important;
-    font-size: 14px !important;
-  }
-  .student-table td img {
-    width: 35px;
-    height: 35px;
-  }
-  .select-box {
-    margin-right: 0 !important;
-    width: 100% !important;
-    max-width: 150px !important;
-  }
-  .branch-select {
-    position: static;
-    width: 120px;
-    margin-bottom: 1rem;
-    left: -10% !important;
-    top: 13px !important;
-  }
-  .editBtn {
-    margin-bottom: 10px;
-  }
-}
-
-/* Tablets */
-@media (max-width: 992px) {
-  .student-page {
-    padding: 1rem !important;
-  }
-  .student-header {
-    .search-input,
-    h2,
-    .branch-select,
-    .group-select {
-      margin-bottom: 0.75rem;
-    }
-  }
-  .table-boxx {
-    max-height: 400px;
-  }
-  .student-table {
-    th:nth-child(5),
-    td:nth-child(5), /* hide phone */
-    th:nth-child(7),
-    td:nth-child(7)  /* hide password */ {
-      display: none;
-    }
-    th,
-    td {
-      padding: 10px !important;
-      font-size: 13px !important;
-    }
-  }
-  .select-box {
-    margin-right: 0 !important;
-    width: 100% !important;
-    max-width: 120px !important;
-  }
-  .branch-select {
-    position: static;
-    margin-bottom: 1rem;
-    left: -29% !important;
-    width: 120px;
-    top: 5px !important;
-  }
-}
-
-/* Landscape phones / small tablets */
-@media (max-width: 768px) {
-  .student-page {
-    padding: 0.8rem !important;
-  }
-  .student-header {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .student-header h2 {
-    font-size: 1.4rem !important;
-  }
-  .table-boxx {
-    max-height: 300px;
-    overflow-x: auto;
-  }
-  .student-table {
-    min-width: 480px;
-
-    /* hide all but Name (3rd) and Actions (last) */
-    th,
-    td {
-      display: none;
-      &:nth-child(3),
-      &:last-child {
-        display: table-cell !important;
-      }
-    }
-    tr:hover {
-      background: none;
-    }
-    .actions .infoBtn {
-      display: inline-block;
-    }
-  }
-
-  .actions button {
-    padding: 4px 6px !important;
-    font-size: 11px !important;
-  }
-
-  .branch-select {
-    margin-right: 20px !important;
-    left: -5% !important;
-    top: 8% !important;
-    height: 20px !important;
-    .select-box {
-      margin-right: 40px !important;
-      width: 100px !important;
-      height: 35px !important;
-    }
-  }
-}
-
-/* Portrait phones */
-@media (max-width: 576px) {
-  .student-page {
-    padding: 0.5rem !important;
-  }
-  .student-header h2 {
-    font-size: 1.2rem !important;
-  }
-  .student-header .search-input,
-  .student-header .group-select {
-    font-size: 12px !important;
-    padding: 6px 8px !important;
-  }
-  .table-boxx {
-    max-height: 250px;
-    overflow-x: auto;
-  }
-  .student-table {
-    min-width: 420px;
-
-    th,
-    td {
-      display: none;
-      &:nth-child(3),
-      &:last-child {
-        display: table-cell !important;
-      }
-    }
-
-    td img {
-      width: 25px;
-      height: 25px;
-    }
-    .actions button {
-      padding: 3px 5px !important;
-      font-size: 10px !important;
-    }
-  }
-  .branch-select {
-    margin-right: 20px !important;
-    left: -61% !important;
-    top: 9% !important;
-    height: 40px !important;
-    .select-box {
-      margin-right: 40px !important;
-      width: 100px !important;
-      height: 32px !important;
-    }
-  }
-}
 /* Modal overlay */
 .modal-overlay {
   position: fixed;

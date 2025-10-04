@@ -1,12 +1,20 @@
-.comments-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+// ===============================
+// COMMENTS STYLES
+// ===============================
 
+.comments-container {
+  font-family: "NotoSerif", sans-serif;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  box-shadow: 0px 0px 12px 3px gray;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+
+  // Title
   .comments-title {
     font-size: 2rem;
     font-weight: 600;
@@ -15,42 +23,45 @@
     text-align: center;
   }
 
+  // List wrapper
   .comments-list {
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-height: 600px;
-    overflow-y: auto;
-    padding-right: 10px;
+    overflow-y: scroll;
 
+    // Scrollbar
     &::-webkit-scrollbar {
       width: 6px;
     }
-
     &::-webkit-scrollbar-track {
       background: #f1f1f1;
       border-radius: 10px;
     }
-
     &::-webkit-scrollbar-thumb {
       background: #c1c1c1;
       border-radius: 10px;
-
       &:hover {
         background: #a8a8a8;
       }
     }
   }
 
+  // ===============================
+  // COMMENT ITEM
+  // ===============================
   .comment-item {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    background: white;
+    background: #fff;
     border-radius: 12px;
     padding: 20px;
     border-left: 4px solid #ff6b35;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.20);
     transition: all 0.3s ease;
 
     &:hover {
@@ -58,20 +69,22 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
+    // Status colors
     &.approved {
       border-left-color: #28a745;
       background: linear-gradient(135deg, #ffffff 0%, #f8fff9 100%);
     }
-
     &.pending {
       border-left-color: #ffc107;
       background: linear-gradient(135deg, #ffffff 0%, #fffdf5 100%);
     }
 
+    // Content
     .comment-content {
       flex: 1;
       margin-right: 20px;
 
+      // Header
       .comment-header {
         display: flex;
         justify-content: space-between;
@@ -90,6 +103,7 @@
           align-items: center;
           gap: 10px;
 
+          // Status badge
           .status-badge {
             padding: 4px 8px;
             border-radius: 12px;
@@ -103,7 +117,6 @@
               color: #155724;
               border: 1px solid #c3e6cb;
             }
-
             &.pending {
               background: #fff3cd;
               color: #856404;
@@ -111,6 +124,7 @@
             }
           }
 
+          // Date
           .comment-date {
             font-size: 0.9rem;
             color: #888;
@@ -119,13 +133,17 @@
         }
       }
 
+      // Text
       .comment-text {
+        display: inline;
+        flex-direction: column;
         color: #666;
         line-height: 1.5;
         margin: 10px 0;
         font-size: 0.95rem;
       }
 
+      // Rating (Stars)
       .comment-rating {
         display: flex;
         gap: 2px;
@@ -143,6 +161,7 @@
       }
     }
 
+    // Actions (Approve / Delete)
     .comment-actions {
       display: flex;
       flex-direction: column;
@@ -151,7 +170,7 @@
 
       .approve-btn {
         background: #ff6b35;
-        color: white;
+        color: #fff;
         border: none;
         padding: 8px 16px;
         border-radius: 6px;
@@ -164,22 +183,18 @@
           background: #e55a2b;
           transform: translateY(-1px);
         }
-
         &:active {
           transform: translateY(0);
         }
 
         &.approved {
           background: #dc3545;
-
           &:hover {
             background: #c82333;
           }
         }
-
         &.pending {
           background: #28a745;
-
           &:hover {
             background: #218838;
           }
@@ -190,13 +205,12 @@
         background: transparent;
         color: #ff4757;
         border: none;
-        font-size: 1.5rem;
+        font-size: 2rem;
         font-weight: bold;
         cursor: pointer;
-        padding: 5px;
         border-radius: 50%;
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -204,7 +218,7 @@
 
         &:hover {
           background: #ff4757;
-          color: white;
+          color: #fff;
           transform: scale(1.1);
         }
       }
@@ -212,7 +226,9 @@
   }
 }
 
-// Responsive design
+// ===============================
+// RESPONSIVE
+// ===============================
 @media (max-width: 768px) {
   .comments-container {
     padding: 15px;

@@ -5,14 +5,19 @@ import {FaCheck, FaImage} from "react-icons/fa";
 import {IoIosUndo} from "react-icons/io";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
+import {toast, ToastContainer} from "react-toastify";
 
 function TeacherMain() {
     const [teachers, setTeachers] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
-    const [editedStudent, setEditedStudent] = useState({});
-    const [infoStudent, setInfoStudent] = useState(null);
+    const [editedTeacher, setEditedTeacher] = useState({});
+    const [infoTeacher, setInfoTeacher] = useState(null);
     const [groups, setGroups] = useState([]);
     const [branches, setBranches] = useState([]);
+    const [newPassword, setNewPassword] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selId, setSelId] = useState("");
+    const [selectedEmployerlogin, setSelectedEmployerlogin] = useState("");
     const BaseUrl = "http://localhost:8080";
 
     useEffect(() => {
@@ -42,7 +47,6 @@ function TeacherMain() {
     async function getTeachers() {
         try {
             const res = await ApiCall("/user/teacherWithData", {method: "GET"});
-            console.log(res.data);
             setTeachers(res.data);
         } catch (error) {
             console.log(error);
@@ -51,13 +55,14 @@ function TeacherMain() {
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
-        setEditedStudent({...editedStudent, [name]: value});
+        setEditedTeacher({...editedTeacher, [name]: value});
     };
 
     const handleCheckboxChange = (e, isEditing = false) => {
         const {value, checked} = e.target;
-        const selected = isEditing
-            && [...editedStudent.groupIds]
+        // const selected = isEditing && [...editedTeacher.groupIds]
+        const selected = isEditing ? [...editedTeacher.groupIds] : [];
+
 
         if (checked) {
             if (!selected.includes(value)) selected.push(value);
@@ -67,31 +72,47 @@ function TeacherMain() {
         }
 
         if (isEditing) {
-            setEditedStudent({...editedStudent, groupIds: selected});
+            setEditedTeacher({...editedTeacher, groupIds: selected});
         }
     };
 
+    const handleCheckboxChangeBranches = (e, isEditing = false) => {
+        const {value, checked} = e.target;
+        // const selected = isEditing && [...editedTeacher.branchIds]
+        const selected = isEditing ? [...editedTeacher.branchIds] : [];
+
+        if (checked) {
+            if (!selected.includes(value)) selected.push(value);
+        }else {
+            const index = selected.indexOf(value);
+            if (index > -1) selected.splice(index, 1);
+        }
+
+        if (isEditing) {
+            setEditedTeacher({...editedTeacher, branchIds: selected});
+        }
+    }
+
     async function handleSave() {
-        console.log(editedStudent);
-        if (editedStudent.firstName === "" || editedStudent.lastName === "" || editedStudent.phone === "" || editedStudent.branchId === "") {
+        console.log(editedTeacher);
+        if (editedTeacher.firstName === "" || editedTeacher.lastName === "" || editedTeacher.phone === "") {
             alert("Please fill all blanks")
         }
 
         try {
-            const res = await ApiCall(`/user/student/${editedStudent.id}`, {method: "PUT"}, {
-                firstName: editedStudent.firstName,
-                lastName: editedStudent.lastName,
-                phone: editedStudent.phone,
-                parentPhone: editedStudent.parentPhone,
-                filialId: editedStudent.branchId,
-                groupIds: editedStudent.groupIds,
-                username: editedStudent.username,
+            const res = await ApiCall(`/user/teacher/${editedTeacher.id}`, {method: "PUT"}, {
+                firstName: editedTeacher.firstName,
+                lastName: editedTeacher.lastName,
+                phone: editedTeacher.phone,
+                filialIds: editedTeacher.branchIds,
+                groupIds: editedTeacher.groupIds,
+                username: editedTeacher.username,
             });
 
-            if(res.data){
+            if (res.data) {
                 await getTeachers();
                 setEditingIndex(null);
-                setEditedStudent({});
+                setEditedTeacher({});
             }
         } catch (err) {
             console.log(err.message);
@@ -100,7 +121,7 @@ function TeacherMain() {
 
     function handleCancel() {
         setEditingIndex(null);
-        setEditedStudent({});
+        setEditedTeacher({});
     }
 
     const handleEdit = (idx) => {
@@ -108,21 +129,19 @@ function TeacherMain() {
 
         // Guruhga biriktirilgan o‘qituvchilar ID‑lar ro‘yxati
         const groupIds = (teacher.groups || []).map(g => g.id);
+        const branchIds = (teacher.branches || []).map(b => b.id);
 
         setEditingIndex(idx);
-        setEditedStudent({
+        setEditedTeacher({
             ...teacher,
             groupIds,              // checkboxlar uchun ['id1', 'id2', …]
-
-            // select uchun hozirgi filial va xona ID‑larini ham kiritib qo‘yish foydali
-            branchId: teacher.filialNameDto?.id || "",
+            branchIds,
 
         });
     };
 
     async function handleDelete(st) {
         if (window.confirm(`Are you confirm delete ${st.firstName} ${st.lastName}`)) {
-            // o‘chirish funksiyasi
 
             try {
                 const res = await ApiCall(`/user/delete/${st.id}`, {method: "DELETE"});
@@ -135,8 +154,76 @@ function TeacherMain() {
         }
     }
 
+    async function changePassword(t) {
+        setSelectedEmployerlogin(t.username)
+        setSelId(t.id)
+        setIsModalOpen(true);
+    }
+
+    async function savePassword() {
+        // Frontend tekshiruvlar
+        if (!newPassword || newPassword.trim() === "") {
+            toast.error("Password bo'sh bo'lishi mumkin emas");
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            toast.error("Password kamida 8 belgidan iborat bo'lishi kerak");
+            return;
+        }
+
+
+        // Agar hammasi to'g'ri bo'lsa, backendga yuborish
+        try {
+            const res = await ApiCall(`/user/changePassword/${selId}?newPassword=${newPassword}`, { method: "PUT" });
+            toast.success(res.data);
+            setIsModalOpen(false);
+            setSelId("");
+            setNewPassword("");
+            setSelectedEmployerlogin("")
+        } catch (err) {
+            toast.error(err.response?.data || err.message);
+        }
+    }
+
+    function cancelChangePassword() {
+        setIsModalOpen(false);
+        setSelId("")
+        setNewPassword("")
+        setSelectedEmployerlogin("")
+    }
+
     return (
         <div className="teacherM-page">
+            <ToastContainer />
+
+            {isModalOpen && (
+                <div className="modal-rec-overlay">
+                    <div className="modal-rec">
+                        <h3>Set new password for: {selectedEmployerlogin}</h3>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="Enter new Password"
+                            value={newPassword}
+                            onChange={(e)=>setNewPassword(e.target.value)}
+                        />
+
+                        <div className="modal-actions">
+                            <button
+                                className="cancelBtn"
+                                onClick={cancelChangePassword}
+                            >
+                                Cancel
+                            </button>
+                            <button onClick={savePassword} className="saveBtn">
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <h2>Teachers</h2>
             <div className="teacherM-header">
                 <select id="branch" className="filial-select">
@@ -184,7 +271,7 @@ function TeacherMain() {
                                     <input
                                         name="firstName"
                                         type={"text"}
-                                        value={editedStudent.firstName}
+                                        value={editedTeacher.firstName}
                                         onChange={handleInputChange}
                                         className="input-edit"
                                     />
@@ -196,7 +283,7 @@ function TeacherMain() {
                                 {editingIndex === i ? (
                                     <input
                                         name="lastName"
-                                        value={editedStudent.lastName}
+                                        value={editedTeacher.lastName}
                                         onChange={handleInputChange}
                                         className="input-edit"
                                     />
@@ -209,7 +296,7 @@ function TeacherMain() {
                                     <input
                                         name="phone"
                                         type="text"
-                                        value={editedStudent.phone}
+                                        value={editedTeacher.phone}
                                         onChange={handleInputChange}
                                         className="input-edit"
                                     />
@@ -219,21 +306,25 @@ function TeacherMain() {
                             </td>
                             <td>
                                 {editingIndex === i ? (
-                                    <select
-                                        name="branchId"
-                                        className={"select-g"}
-                                        value={editedStudent.branchId}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option  value="">SelectBranch</option>
+                                    <div className={"table-group-checkboxes"}>
                                         {
-                                            branches&&branches.map((b,i) => <option key={i} value={b?.id}>
-                                                {b?.name}
-                                            </option>)
+                                            branches?.map((b) => (
+                                                <label key={b.id}>
+                                                    <input
+                                                        className={"inp-check"}
+                                                        type="checkbox"
+                                                        value={b.id}
+                                                        checked={editedTeacher.branchIds.includes(b.id)}
+                                                        onChange={(e)=>handleCheckboxChangeBranches(e, true)}
+                                                    />
+                                                    {b.name}
+                                                </label>
+                                            ))
                                         }
-                                    </select>
-                                ):(
-                                    t.filialNameDto != null ? t.filialNameDto.name : "No"
+                                    </div>
+                                ) : (
+
+                                    t.branches?.map((b) => <h4 key={b.id}>{b.name}</h4>)
                                 )}
                             </td>
                             <td>
@@ -245,7 +336,7 @@ function TeacherMain() {
                                                     className="inp-check"
                                                     type="checkbox"
                                                     value={g.id}
-                                                    checked={editedStudent.groupIds.includes(g.id)}
+                                                    checked={editedTeacher.groupIds.includes(g.id)}
                                                     onChange={(e) => handleCheckboxChange(e, true)}
                                                 />
                                                 {g.name}
@@ -253,7 +344,7 @@ function TeacherMain() {
                                         ))}
                                     </div>
                                 ) : (
-                                    t.groups?.map((g) => <h4>{g.name}</h4>)
+                                    t.groups?.map((g) => <h4 key={g.id}>{g.name}</h4>)
                                 )}
                             </td>
                             <td>
@@ -261,7 +352,7 @@ function TeacherMain() {
                                     editingIndex === i ? (
                                         <input
                                             name="username"
-                                            value={editedStudent.username}
+                                            value={editedTeacher.username}
                                             onChange={handleInputChange}
                                             className="input-edit"
                                         />
@@ -271,7 +362,7 @@ function TeacherMain() {
                                 }
                             </td>
                             <td>
-                                <button className={"change-p-btn"}>Change</button>
+                                <button onClick={()=>changePassword(t)} className={"change-p-btn"}>Change</button>
                             </td>
                             <td>
                                 {editingIndex === i ? (
@@ -301,30 +392,30 @@ function TeacherMain() {
                 </table>
             </div>
 
-            {infoStudent && (
-                <div className="modal-overlay" onClick={() => setInfoStudent(null)}>
+            {infoTeacher && (
+                <div className="modal-overlay" onClick={() => setInfoTeacher(null)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>Student Info</h3>
-                        <img src={infoStudent.photo} alt={infoStudent.name}/>
+                        <img src={infoTeacher.photo} alt={infoTeacher.name}/>
                         <p>
-                            <strong>ID:</strong> {infoStudent.id}
+                            <strong>ID:</strong> {infoTeacher.id}
                         </p>
                         <p>
-                            <strong>Name:</strong> {infoStudent.name}
+                            <strong>Name:</strong> {infoTeacher.name}
                         </p>
                         <p>
-                            <strong>Age:</strong> {infoStudent.age}
+                            <strong>Age:</strong> {infoTeacher.age}
                         </p>
                         <p>
-                            <strong>Phone:</strong> {infoStudent.phone}
+                            <strong>Phone:</strong> {infoTeacher.phone}
                         </p>
                         <p>
-                            <strong>Group:</strong> {infoStudent.group}
+                            <strong>Group:</strong> {infoTeacher.group}
                         </p>
                         <p>
-                            <strong>Password:</strong> {infoStudent.password}
+                            <strong>Password:</strong> {infoTeacher.password}
                         </p>
-                        <button className="closeBtn" onClick={() => setInfoStudent(null)}>
+                        <button className="closeBtn" onClick={() => setInfoTeacher(null)}>
                             Close
                         </button>
                     </div>

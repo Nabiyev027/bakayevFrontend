@@ -1,0 +1,162 @@
+.rating-exam-page{
+  font-family: "NotoSerif", sans-serif;
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  overflow: hidden;
+
+  .rating-navbar{
+    width: 100%;
+    padding: 1.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+
+    .wrap-btn{
+      display: flex;
+      gap: 0.5rem;
+
+      .e-btn{
+        background-color: #ffaa22;
+        color: white;
+      }
+
+      .s-btn{
+        background-color: deepskyblue;
+        color: white;
+      }
+
+      .b2{
+        border: none;
+        border-radius: 8px;
+      }
+
+    }
+
+    .btn{
+      padding: 0.5rem 0.7rem;
+      font-size: 18px;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .back-btn{
+      gap: 0.5rem;
+      background-color: transparent;
+      border: 1px solid gray;
+      border-radius: 8px;
+
+      h3{
+        font-weight: 500;
+      }
+
+      &:hover{
+        color: red;
+      }
+
+    }
+
+
+
+  }
+
+
+
+  .table-lesson {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+
+
+    th,
+    td {
+      padding: 0.5rem 1rem;
+
+      text-align: center;
+
+      &.index-col {
+        width: 50px;
+        text-align: left;
+      }
+
+      &.name-col {
+        width: 200px;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &.phone-col {
+        width: 200px !important;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &.mark-col {
+        width: 120px;
+        text-align: center;
+      }
+    }
+
+    td{
+      height: 60px;
+    }
+
+    th {
+      color: #fff;
+      background-color: #f96000;
+      font-size: 20px;
+    }
+
+    th:first-child {
+      width: 50px;
+    }
+
+    th:nth-child(2) {
+      width: 300px;
+      text-align: start;
+    }
+
+    td:nth-child(2) {
+      text-align: start;
+    }
+
+    tr:nth-child(even) {
+      background: #fef1df;
+    }
+
+    .inp {
+      width: 60px;
+      height: 40px;
+      font-size: 20px;
+      padding: 10px;
+      border: 1px solid #f96000;
+      border-radius: 5px;
+      margin-right: 10px;
+
+      &[type="number"]::-webkit-inner-spin-button,
+      &[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      &[type="number"] {
+        -moz-appearance: textfield;
+      }
+    }
+
+  }
+
+}

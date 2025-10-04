@@ -1,22 +1,16 @@
 import "./admin.scss";
-import {
-  FaCommentDots,
-  FaHeadset,
-  FaHome,
-  FaRegIdCard,
-  FaBars,
-} from "react-icons/fa";
+import {FaCommentDots, FaHeadset, FaHome, FaRegIdCard, FaBars,} from "react-icons/fa";
 import { MdOutlineSettings } from "react-icons/md";
 import { ImExit } from "react-icons/im";
 import logo from "../../Images/Logos/logoO.png";
-import { BsCashCoin } from "react-icons/bs";
+import {BsBuildingsFill, BsCashCoin} from "react-icons/bs";
 import { GrGroup } from "react-icons/gr";
 import { Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import ApiCall from "../../Utils/ApiCall";
 import { useEffect, useState } from "react";
-import {IoIosPeople} from "react-icons/io";
 import {SlPeople} from "react-icons/sl";
+import RefreshTokenCall from "../../Utils/RefreshTokenCall";
 
 function Admin() {
   const [user, setUser] = useState({});
@@ -34,7 +28,11 @@ function Admin() {
     localStorage.setItem("userId", userId);
     ApiCall(`/user/${userId}`, { method: "GET" })
       .then((res) => setUser(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+          if(err.response.status === 401){
+              RefreshTokenCall()
+          }
+      });
   }
 
   const toggleSidebar = () => setSidebarOpen((open) => !open);
@@ -123,6 +121,14 @@ function Admin() {
               <FaCommentDots />
               <h3>Comments</h3>
             </div>
+              <div onClick={() => {
+                  navigate("/admin/branch");
+                  closeSidebar();
+              }}
+                   className="box">
+                  <BsBuildingsFill />
+                  <h3>Branches</h3>
+              </div>
             <div
               onClick={() => {
                 navigate("/admin/interface");

@@ -7,7 +7,7 @@ import {IoImage} from "react-icons/io5";
 import heic2any from "heic2any";
 import imageCompression from "browser-image-compression";
 import {useLang} from "../langConfig/LangContext";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import ApiCall from "../../../../Utils/ApiCall";
 
 function CoursesPage() {
@@ -32,7 +32,7 @@ function CoursesPage() {
 
     const [selPerId, setSelPerId] = useState("");
     const [selLevelId, setSelLevelId] = useState("");
-    const [levelContId, setLevelContId] = useState("");
+    const [selLevelContId, setSelLevelContId] = useState("");
 
     const [editPeriod, setEditPeriod] = useState(false);
     const [editPerLevel, setEditPerLevel] = useState(false);
@@ -50,16 +50,41 @@ function CoursesPage() {
     }, [isReady, lang]);
 
     useEffect(() => {
-        if (Array.isArray(unfilteredPers) && unfilteredPers.length > 0 && lang) {
-            filterPersByLang(unfilteredPers);
+        if (lang) {
+            if (Array.isArray(unfilteredPers)) {
+                filterPersByLang(unfilteredPers);
+            }
+
+            if (Array.isArray(unfilteredLevels)) {
+                filterLevelsByLang(unfilteredLevels);
+            }
+
+            if (Array.isArray(unfilteredContains)) {
+                filterContainsByLang(unfilteredContains);
+            }
         }
-    }, [unfilteredPers, lang]);
+    }, [unfilteredPers, unfilteredLevels, unfilteredContains, lang]);
 
     useEffect(() => {
-        if (Array.isArray(unfilteredLevels) && unfilteredLevels.length > 0 && lang) {
-            filterLevelsByLang(unfilteredLevels);
+        if (!activeModal) {
+            // Modal yopilganda barcha statelarni tozalash
+            setEditPeriod(false);
+            setEditPerLevel(false);
+            setEditLevelCont(false);
+
+            setNewPeriod({ titleUz: "", titleRu: "", titleEn: "" });
+            setNewLevel({ titleUz: "", titleRu: "", titleEn: "", rating: 0 });
+            setNewContain({ titleUz: "", titleRu: "", titleEn: "" });
+
+            setImageFile(null);
+            setSelectedImage("");
+            setErrors({});
+            setImgUrl("");
+
+
+            console.log("Modal yopildi — barcha statelar tozalandi.");
         }
-    }, [unfilteredLevels, lang]);
+    }, [activeModal]);
 
     function filterPersByLang(data) {
         const filtered = data.map((item) => {
@@ -88,9 +113,24 @@ function CoursesPage() {
                 title: matchedTranslation?.title || "",
                 rating: item.rating
             };
-        })
+        });
 
         setLevels(filtered);
+    }
+
+    function filterContainsByLang(data) {
+        const filtered = data.map((item) => {
+            const matchedTranslation = item.translations.find(
+                (t) => t.lang === lang
+            );
+
+            return {
+                id: item.id,
+                title: matchedTranslation?.title || "",
+            };
+        });
+
+        setLevelContains(filtered);
     }
 
     async function getPeriods() {
@@ -109,9 +149,10 @@ function CoursesPage() {
         if (perId) {
             setSelPerId(perId);
             try {
-                const res = await ApiCall(`/courseCard/${perId}`, {method: "GET"});
-                setUnfilteredLevels(res.data)
+                const res = await ApiCall(`/courseCard/${perId}`, { method: "GET" });
+                setUnfilteredLevels(res.data || []); // bo‘sh bo‘lsa ham array sifatida set qilinsin
             } catch (err) {
+                setUnfilteredLevels([]); // xatolik bo‘lsa ham eski holatda qolmasin
                 const message =
                     err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
                 toast.warn(message);
@@ -119,10 +160,27 @@ function CoursesPage() {
         }
     }
 
+    async function getLevelContains(levelId) {
+        if (levelId) {
+            setSelLevelId(levelId);
+            try {
+                const res = await ApiCall(`/cardSkill/${levelId}`, {method: "GET"});
+                setUnfilteredContains(res.data || []); // <= doim yangilanadi
+            } catch (err) {
+                setUnfilteredContains([]); // <= hatolik bo‘lsa ham eski ma’lumot qolmasin
+                const message =
+                    err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
+                toast.warn(message);
+            }
+        }
+
+    }
+
 
     function toggleModal() {
         setActiveModal(p => !p);
     }
+
 
     function OpenModalNewPer() {
         setModalType("Period")
@@ -139,24 +197,13 @@ function CoursesPage() {
         toggleModal()
     }
 
-    function clearPerData() {
-        setNewPeriod({titleUz: "", titleRu: "", titleEn: ""});
-    }
-
-    function clearPerLevelData() {
-        setImageFile(null);
-        setSelectedImage("");
-        setErrors({})
-        setImgUrl("")
-        setNewLevel({
-            titleUz: "",
-            titleRu: "",
-            titleEn: "",
-            rating: 0
-        })
-    }
-
     async function handleSavePeriod() {
+
+        if(newPeriod.titleUz==="" || newPeriod.titleRu==="" || newPeriod.titleEn===""){
+            toast.warn("Please fill in all required fields. Image is required for new items.");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("titleUz", newPeriod.titleUz);
         formData.append("titleRu", newPeriod.titleRu);
@@ -170,8 +217,6 @@ function CoursesPage() {
             toast.success(res.data);
             await getPeriods()
             toggleModal();
-            clearPerData()
-            setEditPeriod(false)
         } catch (err) {
             const message = err.response?.data || "Xatolik yuz berdi";
             toast.warn(message);
@@ -180,6 +225,16 @@ function CoursesPage() {
     }
 
     async function handleSavePerLevel() {
+        if (
+            newLevel.titleUz.trim() === "" ||
+            newLevel.titleRu.trim() === "" ||
+            newLevel.titleEn.trim() === "" ||
+            (!imageFile && !editPerLevel)  // faqat yangi bo‘lsa rasm majburiy
+        ) {
+            toast.warn("Please fill in all required fields. Image is required for new items.");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("img", imageFile)
         formData.append("titleUz", newLevel.titleUz);
@@ -195,8 +250,32 @@ function CoursesPage() {
             toast.success(res.data);
             await getPerLevels(selPerId);
             toggleModal();
-            clearPerLevelData()
-            setEditPeriod(false)
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+    async function handleSaveContain() {
+
+        if(newContain.titleUz==="" || newContain.titleRu==="" || newContain.titleEn===""){
+            toast.warn("Please fill in all required fields. Image is required for new items.");
+            return;
+        }
+
+        const data = new FormData();
+        data.append("titleUz", newContain.titleUz);
+        data.append("titleRu", newContain.titleRu);
+        data.append("titleEn", newContain.titleEn);
+
+        try {
+            const res = editLevelCont
+                ? await ApiCall(`/cardSkill/${selLevelContId}`, {method: "PUT"}, data)
+                : await ApiCall(`/cardSkill/${selLevelId}`, {method: "POST"}, data);
+
+            toast.success(res.data);
+            await getLevelContains(selLevelId)
+            toggleModal();
         } catch (err) {
             const message = err.response?.data || "Xatolik yuz berdi";
             toast.warn(message);
@@ -260,18 +339,6 @@ function CoursesPage() {
 
     }
 
-    async function handleDeletePer(id) {
-        try {
-            const res = await ApiCall(`/courseSection/${id}`, {method: "DELETE"});
-            toast.success(res.data);
-            await getPeriods();
-        } catch (err) {
-            const message =
-                err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
-            toast.warn(message);
-        }
-    }
-
     function addPerLevel() {
         if (selPerId) {
             OpenModalPerLevel()
@@ -279,6 +346,14 @@ function CoursesPage() {
             alert("Period not selected");
         }
 
+    }
+
+    function addLevelContain(){
+        if(selLevelId){
+            OpenModalLevelContains()
+        }else {
+            alert("Level not selected")
+        }
     }
 
     function handleEditPerlevel(id) {
@@ -298,27 +373,61 @@ function CoursesPage() {
 
     }
 
-    function handleDeletePerLevel(id) {
-
-    }
-
-    async function getLevelContains(levelId) {
-        if (levelId) {
-            setSelLevelId(levelId);
-            try {
-                const res = await ApiCall(`/courseCard/${levelId}`, {method: "GET"});
-                setUnfilteredContains(res.data)
-            } catch (err) {
-                const message =
-                    err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
-                toast.warn(message);
-            }
+    function handleEditLevelContains(id) {
+        OpenModalLevelContains()
+        setEditLevelCont(true)
+        setSelLevelContId(id)
+        const item = unfilteredContains.find((item) => item.id === id);
+        if (item) {
+            setNewContain({
+                titleUz: item.translations.find(t => t.lang === "UZ")?.title || "",
+                titleRu: item.translations.find(t => t.lang === "RU")?.title || "",
+                titleEn: item.translations.find(t => t.lang === "EN")?.title || "",
+            })
         }
 
     }
 
+
+    async function handleDeletePer(id) {
+        try {
+            const res = await ApiCall(`/courseSection/${id}`, {method: "DELETE"});
+            toast.success(res.data);
+            await getPeriods();
+        } catch (err) {
+            const message =
+                err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+    async function handleDeletePerLevel(id) {
+        try {
+            const res = await ApiCall(`/courseCard/${id}`, {method: "DELETE"});
+            toast.success(res.data);
+            await getPerLevels(selPerId);
+        } catch (err) {
+            const message = err.response?.data || "Ma'lumotni o'chirishda xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
+
+    async function deleteContain(id) {
+        try {
+            const res = await ApiCall(`/cardSkill/${id}`, {method: "DELETE"});
+            toast.success(res.data);
+            await getPerLevels(selPerId)
+        } catch (err) {
+            const message =
+                err.response?.data || "Ma'lumotni olishda xatolik yuz berdi";
+            toast.warn(message);
+        }
+    }
+
     return (
         <div className={"courses-page-WrapA"}>
+            <ToastContainer/>
             {
                 activeModal && <div className="custom-modal-overlay" onClick={toggleModal}>
                     <div
@@ -448,28 +557,37 @@ function CoursesPage() {
                                             <label>
                                                 <h4>Title UZ</h4>
                                                 <input
+                                                    onChange={(e) => setNewContain({...newContain, titleUz: e.target.value})}
+                                                    value={newContain.titleUz}
                                                     className={"title-i"}
                                                     placeholder={"Davr nomini kiriting"}
-                                                    type="text"/>
+                                                    type="text"
+                                                />
                                             </label>
                                             <label>
                                                 <h4>Title RU</h4>
                                                 <input
+                                                    onChange={(e) => setNewContain({...newContain, titleRu: e.target.value})}
+                                                    value={newContain.titleRu}
                                                     className={"title-i"}
                                                     placeholder={"Введите название периода"}
-                                                    type="text"/>
+                                                    type="text"
+                                                />
                                             </label>
                                             <label>
                                                 <h4>Title EN</h4>
                                                 <input
+                                                    onChange={(e) => setNewContain({...newContain, titleEn: e.target.value})}
+                                                    value={newContain.titleEn}
                                                     className={"title-i"}
                                                     placeholder={"Enter Period Name"}
-                                                    type="text"/>
+                                                    type="text"
+                                                />
                                             </label>
                                         </div>
                                     </div>
 
-                                    <button onClick={handleSavePeriod} className={"btn"}>Save</button>
+                                    <button onClick={handleSaveContain} className={"btn"}>Save</button>
                                 </div>
                         }
 
@@ -484,7 +602,7 @@ function CoursesPage() {
                     <h3 className={"box-head"}>Period</h3>
                     <div className={"box-scroll"}>
                         {
-                            periods && periods.map((item, index) => <div className={"per-card"}>
+                            periods && periods.map((item, index) => <div className={"per-card"} key={item.id}>
                                 <h3 className={"title"}>{item.title}</h3>
                                 <div className={"wrap-icons"}>
 
@@ -505,7 +623,7 @@ function CoursesPage() {
 
                     <div className={"box-scroll-2"}>
                         {
-                            levels && levels.map((item, index) => <div className={"per-card-box"}>
+                            levels && levels.map((item, index) => <div className={"per-card-box"} key={item.id}>
                                 <div className={"wrap-icons"}>
                                     <MdEdit onClick={() => handleEditPerlevel(item.id)} className={"icon v1"}/>
                                     <MdDelete onClick={() => handleDeletePerLevel(item.id)} className={"icon v2"}/>
@@ -521,16 +639,16 @@ function CoursesPage() {
                 <div className={"box"}>
                     <h3 className={"box-head"}>
                         Level contains
-                        <IoMdAdd className={"iconAdd"}/>
+                        <IoMdAdd onClick={addLevelContain} className={"iconAdd"}/>
                     </h3>
                     <div className={"box-scroll"}>
                         {
-                            levelContains && levelContains.map((item, index) => <div className={"per-card"}>
+                            levelContains && levelContains.map((item, index) => <div className={"per-card"} key={item.id}>
                                 <h3 className={"title"}>{item.title}</h3>
                                 <div className={"wrap-icons"}>
 
-                                    <MdEdit className={"icon v1"}/>
-                                    <MdDelete className={"icon v2"}/>
+                                    <MdEdit onClick={()=>handleEditLevelContains(item.id)} className={"icon v1"}/>
+                                    <MdDelete onClick={()=>deleteContain(item.id)} className={"icon v2"}/>
                                 </div>
                             </div>)
                         }

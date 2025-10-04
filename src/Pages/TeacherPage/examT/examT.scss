@@ -3,138 +3,177 @@
   color: #333;
   display: flex;
   flex-direction: column;
-  height: 100vh;
   background: #f9f9f9;
-  position: relative;
+
   height: 100%;
   overflow: hidden; /* hide overflow for form panel */
 
-  .top-bar {
-    border-radius: 10px;
-    width: 97%;
+  .top-bar-exam{
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center; /* center group & button */
-    gap: 1rem;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    border-radius: 12px;
     padding: 1rem;
-    background: #fff;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 
-    h1 {
-      flex: 1;
-      text-align: left;
-      margin: 0;
+    .h1{
+      display: block;
+      margin: 0 !important;
+      padding: 0 !important;
     }
-    .group-select {
-      width: 150px;
-      padding: 0.4rem 0.8rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      color: #f96000;
-      outline: none;
-      border: solid 1px #f96000;
-    }
-    .btn-add {
-      background: #f96000;
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-add.active,
-    .btn-add:hover {
-      background: #e14a00;
-    }
-  }
 
-  .form-panel {
-    z-index: 999;
-    border: 1px solid #f96000;
-    border-radius: 8px;
-    background: #fff;
-    padding: 1rem;
-    position: absolute;
-    top: 20%;
-    right: 2rem;
-    width: 300px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-
-    .input-full {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .datetime-row {
+    .wrap-btn-bar{
       display: flex;
-      gap: 0.5rem;
-      .input-date,
-      .input-time {
-        flex: 1;
-        padding: 0.4rem;
+      gap: 1rem;
+
+      select{
+        width: 120px;
+        padding: 0.5rem;
+        border-radius: 6px;
         border: 1px solid #ccc;
-        border-radius: 4px;
+        font-size: 1rem;
       }
-    }
-    .types-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      .type-tag {
-        background: #f96000;
+
+      .btn-add-exam{
+        width: 110px;
+        background-color: #f96000;
         color: #fff;
-        padding: 0.3rem 0.6rem;
-        border-radius: 4px;
-        font-size: 0.85rem;
-      }
-    }
-    .add-type {
-      display: flex;
-      gap: 0.5rem;
-      .input-type {
-        flex: 1;
-        padding: 0.4rem;
-        border: 1px solid #ccc;
-        border-radius: 4px 0 0 4px;
-      }
-      .btn-type {
-        background: #f96000;
         border: none;
-        color: #fff;
-        padding: 0 1rem;
-        border-radius: 0 4px 4px 0;
+        padding: 5px 10px;
+        border-radius: 5px;
         cursor: pointer;
       }
+
     }
-    .btn-save {
-      align-self: flex-end;
-      background: #28a745;
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-save:hover {
-      background: #208f3f;
-    }
+
   }
+
+
 
   .panels {
     width: 100%;
     flex: 1;
     display: flex;
     gap: 1rem;
-    padding: 1rem;
+    padding-top: 1rem;
+    position: relative;
 
-    .panel {
+    .form-panel {
+      z-index: 999;
+      border: 1px solid #f96000;
+      border-radius: 8px;
+      background: #fff;
+      padding: 1rem;
+      position: absolute;
+      top: 0;
+      right: 1rem;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+      .input-full {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .datetime-row {
+        display: flex;
+        gap: 0.5rem;
+        .input-date,
+        .input-time {
+          flex: 1;
+          padding: 0.4rem;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+        }
+      }
+
+      .types-lists {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        .type-tag {
+          width: 100%;
+          padding: 0.3rem 0.6rem;
+          background: #f96000;
+          color: white;
+          border-radius: 4px;
+          display: flex;
+          align-items: center !important;
+          justify-content: space-between;
+
+          h1{
+            display: block;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 0;
+          }
+
+          .btn-wrap{
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .checkbox{
+              width: 28px;
+              height: 28px;
+              cursor: pointer;
+            }
+
+            .btn-delete{
+              color: black;
+              width: 28px;
+              height: 28px;
+              cursor: pointer;
+            }
+
+          }
+
+
+        }
+
+      }
+
+      .add-type {
+        display: flex;
+        gap: 0.5rem;
+        .input-type {
+          flex: 1;
+          padding: 0.4rem;
+          border: 1px solid #ccc;
+          border-radius: 4px 0 0 4px;
+        }
+        .btn-type {
+          background: #f96000;
+          border: none;
+          color: #fff;
+          padding: 0 1rem;
+          border-radius: 0 4px 4px 0;
+          cursor: pointer;
+        }
+      }
+      .btn-save {
+        align-self: flex-end;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .btn-save:hover {
+        background: #208f3f;
+      }
+    }
+
+    .panel{
       flex: 1;
       background: #fff;
       border-radius: 8px;
@@ -154,37 +193,86 @@
 
       .exam-item {
         position: relative;
+        height: 150px;
         padding: 1rem;
-        padding-right: 2.5rem; /* room for edit button */
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #f96000;
         transition: background 0.2s, transform 0.2s;
       }
+
       .exam-item:hover {
-        background: #fafafa;
-        transform: translateY(-1px);
+        background: #e3e3e3;
       }
 
-      .edit-btn {
+      .wrap-btns{
+        display: flex;
         position: absolute;
         top: 1rem;
         right: 1rem;
-        background: none;
-        border: none;
-        color: #f96000;
+        gap: 0.5rem;
+
+        .e-btn {
+          color: #0090bf;
+          border: 1px solid #0090bf;
+
+          &:hover{
+            border: 1px solid gray;
+          }
+
+        }
+
+        .d-btn{
+          color: red;
+          border: 1px solid red;
+
+          &:hover{
+            border: 1px solid gray;
+          }
+
+        }
+
+        .btn{
+          width: 40px;
+          height: 38px;
+          font-size: 22px;
+          display: flex;
+          text-align: center;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          background: none;
+          border-radius: 8px;
+
+        }
+
+
+        .btn:hover {
+          color: gray;
+        }
+
+      }
+
+      .mark-students{
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        color: white;
+        font-size: 16px;
+        padding: 0.6rem 0.5rem;
+        background-color: #2aff2a;
         cursor: pointer;
-        font-size: 1rem;
-        transition: color 0.2s;
+        border: 1px solid transparent;
+        font-weight: 700;
+        border-radius: 8px;
       }
-      .edit-btn:hover {
-        color: #e14a00;
-      }
+
 
       .exam-header {
         font-weight: 600;
         margin-bottom: 0.5rem;
+        font-size: 20px;
       }
       .exam-meta {
-        font-size: 0.85rem;
+        font-size: 16px;
         color: #555;
       }
       .exam-meta .dot {
@@ -195,12 +283,13 @@
         margin-top: 0.5rem;
         display: flex;
         gap: 0.3rem;
+
         .type-tag {
           background: #f96000;
           color: #fff;
           padding: 0.2rem 0.5rem;
           border-radius: 4px;
-          font-size: 0.75rem;
+          font-size: 16px;
         }
       }
     }
@@ -211,7 +300,7 @@
 // Tablets & Small Desktops
 @media (max-width: 1024px) {
   .exam-page {
-    .top-bar {
+    .top-bar-exam {
       flex-wrap: wrap;
       justify-content: center;
       gap: 0.75rem;
@@ -233,14 +322,15 @@
 @media (max-width: 768px) {
   .exam-page {
     padding: 0.5rem;
-    .top-bar {
+    .top-bar-exam {
       flex-direction: column;
       align-items: stretch;
     }
     .group-select,
-    .btn-add {
+    .btn-add-exam {
       width: 100%;
     }
+
     .form-panel {
       position: static;
       transform: none;
@@ -263,7 +353,7 @@
 // Mobile Portrait & Small Phones
 @media (max-width: 480px) {
   .exam-page {
-    .top-bar {
+    .top-bar-exam {
       h1 {
         font-size: 1.25rem;
       }

@@ -33,12 +33,13 @@ import NotFound from "./Pages/NotFound/NotFound";
 import Massage from "./Pages/ReceptionPag-Main/Massage/Massage";
 import SelectRoles from "./Pages/SelectRoles/SelectRoles";
 import Appeal from "./Pages/ReceptionPag-Main/AppealPage/Appeal";
-import Branch from "./Pages/ReceptionPag-Main/Branch/Branch";
+import Branch from "./Pages/AdminPages/Branch/Branch";
 import TeacherMain from "./Pages/ReceptionPag-Main/TeacherPage/TeacherMain";
 import Employer from "./Pages/AdminPages/employerA/Employer";
 import CommentsA from "./Pages/AdminPages/comentsA/CommentsA";
 import {LangProvider} from "./Pages/AdminPages/interfaceA/langConfig/LangContext";
 import HeaderSect from "./Pages/AdminPages/interfaceA/homePageSections/headerSect/HeaderSect";
+import Rating from "./Pages/TeacherPage/ratingExam/Rating";
 
 
 function App() {
@@ -78,12 +79,12 @@ function App() {
                     <Route path={"/reception/present"} element={<PresentR/>}/>
                     <Route path={"/reception/massage"} element={<Massage/>}/>
                     <Route path={"/reception/appeal"} element={<Appeal/>}/>
-                    <Route path={"/reception/branch"} element={<Branch/>}/>
                 </Route>
                 <Route path="/teacher" element={<Teacher/>}>
                     <Route path="/teacher/group" element={<GroupT/>}/>
                     <Route path="/teacher/lessons" element={<LessonsT/>}/>
                     <Route path="/teacher/exam" element={<ExamT/>}/>
+                    <Route path="/teacher/rating" element={<Rating/>} />
                 </Route>
                 <Route path="/student" element={<StudentPage/>}>
                     <Route path="/student/lessons" element={<LessonsS/>}/>
@@ -98,6 +99,7 @@ function App() {
                     <Route path="/admin/addREC" element={<AddReception/>}/>
                     <Route path="/admin/interface" element={<InterfaceA/>}/>
                     <Route path={"/admin/employer"} element={<Employer/>}/>
+                    <Route path={"/admin/branch"} element={<Branch/>}/>
                 </Route>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>

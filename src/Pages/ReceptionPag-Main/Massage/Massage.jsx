@@ -1,225 +1,117 @@
-// Massage.jsx
-import React, { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import React, {useEffect, useState} from "react";
 import "react-toastify/dist/ReactToastify.css";
 import "./Massage.scss";
+import {toast, ToastContainer} from "react-toastify";
+import ApiCall from "../../../Utils/ApiCall";
 
 export default function Massage() {
-  const groups = [
-    { id: 1, name: "Group A" },
-    { id: 2, name: "Group B" },
-    { id: 3, name: "Group C" },
-  ];
-
-  const studentData = {
-    1: [
-      {
-        id: 101,
-        name: "Alice",
-        number: "U123",
-        parent: "+998901234567",
-        paid: true,
-        amount: 900000,
-      },
-      {
-        id: 102,
-        name: "Bob",
-        number: "U124",
-        parent: "+998909876543",
-        paid: false,
-        amount: 450000,
-      },
-    ],
-    2: [
-      {
-        id: 201,
-        name: "Charlie",
-        number: "U125",
-        parent: "+998901112233",
-        paid: true,
-        amount: 900000,
-      },
-    ],
-    330: [],
-  };
-
-  const [selectedGroup, setSelectedGroup] = useState("");
-  const [checkedStudents, setCheckedStudents] = useState({});
-  const [expandedRows, setExpandedRows] = useState({});
+  const [groups, setGroups] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [students,setStudents] = useState([]);
+  const [selGroupId, setSelGroupId] = useState("");
+  const [selBranchId, setSelBranchId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [messageToStudent, setMessageToStudent] = useState("");
-  const [messageToParent, setMessageToParent] = useState("");
+  const [data, setData] = useState({mToStudent:"", mToParent:""});
 
-  const handleGroupChange = (e) => {
-    setSelectedGroup(e.target.value);
-    setCheckedStudents({});
-    setExpandedRows({});
-  };
+  useEffect(() => {
+    getFilials()
+  }, []);
 
-  const handleCheck = (id) => {
-    setCheckedStudents((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleRow = (id) => {
-    setExpandedRows((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  const sendMessages = (type) => {
-    const targets = Object.entries(checkedStudents)
-      .filter(([_, checked]) => checked)
-      .map(([id]) => id);
-    if (!targets.length) {
-      toast.error("Iltimos, kamida bitta o'quvchini tanlang", {
-        theme: "colored",
-      });
-      return;
+  async function getFilials() {
+    try {
+      const res = await ApiCall("/filial/getAll", {method: "GET"});
+      setBranches(res.data);
+    } catch (err) {
+      const res = err.message || "Branches not found";
+      toast.error(res);
     }
-    toast(
-      `Xabar ${type === "student" ? "o'quvchiga" : "otasiga/onaga"} yuborildi!`,
-      { theme: "colored" }
-    );
-    closeModal();
-    setMessageToStudent("");
-    setMessageToParent("");
-    setCheckedStudents({});
-  };
 
-  const students = selectedGroup ? studentData[selectedGroup] || [] : [];
+  }
+
+  function toggleModal() {
+    setIsModalOpen(!isModalOpen);
+    setData({mToStudent:"", mToParent:""});
+  }
 
   return (
     <div className="message-page">
       <h1>Message</h1>
 
-      <div className="select-container">
-        <label htmlFor="group-select">Select Group:</label>
-        <select
-          id="group-select"
-          value={selectedGroup}
-          onChange={handleGroupChange}
-        >
-          <option value="">-- Tanlang --</option>
-          {groups.map((g) => (
-            <option key={g.id} value={g.id}>
-              {g.name}
-            </option>
-          ))}
-        </select>
+      <div className="select-wrap-cont">
+        <label htmlFor="branch-select">
+          <h4>Select branch:</h4>
+          <select
+              id="branch-select"
+              value={selBranchId}
+          >
+            <option value="">Select</option>
+            {groups.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor="group-select">
+          <h4>Select group:</h4>
+          <select
+              id="group-select"
+              value={selGroupId}
+          >
+            <option value="">Select</option>
+            {groups.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+            ))}
+          </select>
+        </label>
+
       </div>
 
-      {selectedGroup && (
+      {selGroupId==="" && (
         <table className="students-table">
-          <thead>
+          <thead className={"sM-thead"}>
             <tr>
-              <th>#</th>
+              <th>No</th>
               <th>Name</th>
-              <th className="info-col">Info</th>
-              <th className="hide-mobile">Number</th>
-              <th className="hide-mobile">Parent</th>
-              <th className="hide-mobile">Paid</th>
-              <th className="hide-mobile">Select</th>
+              <th>Phone 1</th>
+              <th>Phone 2</th>
+              <th>Course payment</th>
+              <th>Debt</th>
+              <th>Choose</th>
             </tr>
           </thead>
-          <tbody>
-            {students.length > 0 ? (
-              students.map((s, idx) => (
-                <React.Fragment key={s.id}>
-                  <tr className={idx % 2 === 0 ? "even" : "odd"}>
-                    <td>{idx + 1}</td>
-                    <td>{s.name}</td>
-                    <td className="info-col">
-                      <button
-                        className="info-btn"
-                        onClick={() => toggleRow(s.id)}
-                      >
-                        Info
-                      </button>
-                    </td>
-                    <td className="hide-mobile">{s.number}</td>
-                    <td className="hide-mobile">{s.parent}</td>
-                    <td className="hide-mobile">
-                      {s.paid
-                        ? "Ha"
-                        : `Yo'q, to'langan: ${s.amount.toLocaleString()}`}
-                    </td>
-                    <td className="hide-mobile">
-                      <input
-                        type="checkbox"
-                        checked={!!checkedStudents[s.id]}
-                        onChange={() => handleCheck(s.id)}
-                      />
-                    </td>
-                  </tr>
-                  {expandedRows[s.id] && (
-                    <tr className="expanded-row">
-                      <td colSpan={7}>
-                        <div className="expanded-content">
-                          <p>
-                            <strong>Number:</strong> {s.number}
-                          </p>
-                          <p>
-                            <strong>Parent:</strong> {s.parent}
-                          </p>
-                          <p>
-                            <strong>Paid:</strong>{" "}
-                            {s.paid
-                              ? "Ha"
-                              : `Yo'q, to'langan: ${s.amount.toLocaleString()}`}
-                          </p>
-                          <p>
-                            <strong>Select:</strong>{" "}
-                            <input
-                              type="checkbox"
-                              checked={!!checkedStudents[s.id]}
-                              onChange={() => handleCheck(s.id)}
-                            />
-                          </p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="no-data">
-                  Bu guruhda o'quvchi yo'q
-                </td>
-              </tr>
-            )}
+          <tbody className={"sM-tbody"}>
+
           </tbody>
         </table>
       )}
 
-      <button className="send-btn" onClick={openModal}>
+      <button className="send-btn" onClick={toggleModal}>
         Xabar yuborish
       </button>
 
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal">
-            <button className="modal-close" onClick={closeModal}>
-              x
-            </button>
-            <h2>Xabarnoma yuborish</h2>
-            <textarea
-              placeholder="O'quvchiga xabar"
-              value={messageToStudent}
-              onChange={(e) => setMessageToStudent(e.target.value)}
+          <div className="modal-body">
+            <h2>Send SMS</h2>
+            <textarea className={"area-message"}
+              placeholder="Message To Student"
+              value={data.mToStudent}
+              onChange={(e) => setData({...data, mToStudent:e.target.value})}
             />
-            <textarea
-              placeholder="Ota/Onaga xabar"
-              value={messageToParent}
-              onChange={(e) => setMessageToParent(e.target.value)}
+            <textarea className={"area-message"}
+              placeholder="Message To Parent"
+              value={data.mToParent}
+              onChange={(e) => setData({...data, mToParent:e.target.value})}
             />
             <div className="modal-buttons">
-              <button onClick={() => sendMessages("student")}>
-                O'quvchiga yuborish
+              <button onClick={toggleModal}>
+                Cancel
               </button>
-              <button onClick={() => sendMessages("parent")}>
-                Ota/Onaga yuborish
+              <button>
+                Send message
               </button>
             </div>
           </div>

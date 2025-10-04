@@ -40,12 +40,13 @@ function StudentPage() {
       if (decoded && decoded.sub) {
         const id = decoded.sub;
         localStorage.setItem("userId", id);
-        ApiCall(`/auth/user/${id}`, { method: "GET" })
+        ApiCall(`/user/${id}`, { method: "GET" })
           .then((res) => setUser(res.data))
           .catch((err) => console.error(err));
       }
     }
   }, [userToken]);
+
 
   const toggleSidebar = () => {
     if (sidebarOpen) setSidebarOpen(false);

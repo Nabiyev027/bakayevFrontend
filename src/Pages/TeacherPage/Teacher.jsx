@@ -7,6 +7,7 @@ import { GrGroup } from "react-icons/gr";
 import { GiWhiteBook } from "react-icons/gi";
 import { MdEditDocument } from "react-icons/md";
 import { useState } from "react";
+import {FaRankingStar} from "react-icons/fa6";
 
 export default function Teachers() {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ export default function Teachers() {
                 <h3>Darslar</h3>
               </div>
             </div>
+
             <div className="wrap-bars">
               <div
                 onClick={() => {
@@ -82,6 +84,7 @@ export default function Teachers() {
                 <h3>Imtihon</h3>
               </div>
             </div>
+
           </div>
 
           <div

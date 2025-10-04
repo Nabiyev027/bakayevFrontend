@@ -349,14 +349,14 @@ function Group() {
                         {errors.timeRange && <p className="error-msg">{errors.timeRange}</p>}
 
                         <div className="modal-actions">
-                            <button className="saveBtn" onClick={AddGroup}>
-                                Add
-                            </button>
                             <button
                                 className="cancelBtn"
                                 onClick={cancelAdd}
                             >
                                 Cancel
+                            </button>
+                            <button className="saveBtn" onClick={AddGroup}>
+                                Add
                             </button>
                         </div>
                     </div>

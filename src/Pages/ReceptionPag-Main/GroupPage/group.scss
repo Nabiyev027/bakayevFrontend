@@ -50,196 +50,129 @@
 .GroupTable {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
   background-color: #fff;
-  font-size: 14px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: fixed;
 
-  thead {
+  th,
+  td {
+    text-align: center;
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    word-wrap: break-word;
+  }
 
-    th {
-      font-weight: 600;
-      font-size: 20px;
-      text-align: center;
-    }
+  th {
+    background-color: #f96000;
+    color: #fff;
+    font-weight: bold;
+  }
 
-    th:first-child{
-      width: 40px;
-    }
+  td img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f96000;
+  }
 
-    th:nth-child(2){
-      width: 100px;
-    }
-    th:nth-child(3){
-      width: 100px;
-    }
-    th:nth-child(4){
-      width: 100px;
-    }
-    th:nth-child(5){
-      width: 150px;
-    }
-    th:nth-child(6){
-      width: 80px;
-    }
-    th:nth-child(7){
-      width: 80px;
-    }
+  td input {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 120px;
+    font-size: 14px;
+    text-align: center;
+  }
 
-    th:last-child{
-      width: 80px;
+  .input-edit {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 120px;
+    font-size: 14px;
+    text-align: center;
+
+    &:focus {
+      border-color: #f96000;
+      outline: none;
+      box-shadow: 0 0 5px #f9600073;
     }
   }
 
-  tbody {
-    tr {
-
-      &:hover {
-        background-color: #fff0e6;
-      }
-
-      td {
-        text-align: center;
-        font-size: 18px;
-        border-bottom: 1px solid #f0f0f0;
-        overflow: hidden;
-        white-space: nowrap;
-
-        .inp-g{
-          width: 100%;
-          border-radius: 5px;
-          padding: 4px;
-          height: 40px;
-          border: 2px solid #f96000;
-          font-size: 16px;
-        }
-
-        .select-g{
-          width: 100%;
-          border-radius: 5px;
-          padding: 4px;
-          height: 40px;
-          border: 2px solid #f96000;
-          font-size: 16px;
-        }
-
-        .table-teacher-checkboxes{
-          border:  2px solid #f96000;
-          border-radius: 5px;
-          display: flex;
-          flex-direction: column;
-          justify-content: start;
-          height: 80px;
-          gap: 5px;
-          overflow-y: scroll;
-          padding: 5px;
-
-          label{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 30px;
-            font-size: 20px;
-            padding: 0.5px 0.8px;
-            border-radius: 4px;
-            background-color: white;
-
-
-            .inp-check{
-              width: 20px;
-              height: 20px;
-            }
-
-          }
-
-        }
-
-      }
-
-      .actions-g{
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        margin: 0 auto;
-        gap: 5px;
-
-        .btn-g{
-          width: 40px;
-          height: 40px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 10px;
-          font-size: 20px;
-          color: #fff;
-
-
-          &:hover{
-            cursor: pointer;
-            box-shadow: 0px 0px 12px 1px black;
-
-          }
-        }
-
-        .g-btn-edit{
-          background-color: orange;
-        }
-
-        .g-btn-delete{
-          background-color: red;
-        }
-
-        .g-btn-check{
-          background-color: greenyellow;
-        }
-
-        .g-btn-cancel{
-          background-color: gray;
-        }
-
-      }
-    }
+  tr:hover {
+    background-color: #fff5ec;
   }
 
-  .actions {
+  .actions-g{
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
+    text-align: center;
+    margin: 0 auto;
+    gap: 5px;
 
-    button {
-      min-width: 60px;
-      height: 30px;
-      font-size: 12px;
-      font-weight: 500;
-      border: none;
-      border-radius: 4px;
-      color: white;
-      cursor: pointer;
-      transition: 0.3s ease;
-      padding: 4px 6px;
-    }
+    .btn-g{
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      font-size: 20px;
+      color: #fff;
 
-    .editBtn {
-      background-color: #f96000;
 
-      &:hover {
-        background-color: #fff;
-        color: #f96000;
-        border: 1px solid #f96000;
+      &:hover{
+        cursor: pointer;
+        box-shadow: 0px 0px 12px 1px black;
+
       }
     }
 
-    .deleteBtn {
-      background-color: #fff;
-      color: #f96000;
-      border: 1px solid #f96000;
+    .g-btn-edit{
+      background-color: orange;
+    }
 
-      &:hover {
-        background-color: #f96000;
-        color: white;
+    .g-btn-delete{
+      background-color: red;
+    }
+
+    .g-btn-check{
+      background-color: greenyellow;
+    }
+
+    .g-btn-cancel{
+      background-color: gray;
+    }
+
+  }
+
+  .expanded-row {
+    background-color: #f9f9f9;
+
+    td {
+      padding: 12px;
+    }
+
+    .expanded-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      p {
+        flex: 1 1 45%;
+        margin: 4px 0;
+
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
       }
     }
   }

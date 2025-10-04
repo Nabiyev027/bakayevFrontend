@@ -1,0 +1,102 @@
+.payment-day-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 300px !important;
+}
+
+.selector-label h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.selector-container {
+    position: relative;
+}
+
+.selector-trigger {
+    width: 100%;
+    padding: 12px 16px;
+    border: 3px solid #f96000;
+    border-radius: 8px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.selector-trigger:hover {
+    border-color: black;
+}
+
+.selector-trigger:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.selector-arrow {
+    transition: transform 0.2s ease;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.selector-arrow.open {
+    transform: rotate(180deg);
+}
+
+.selector-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    margin-top: 4px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    padding: 12px;
+}
+
+.day-button {
+    padding: 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.day-button:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.day-button.selected {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.day-button.selected:hover {
+    background: #2563eb;
+}

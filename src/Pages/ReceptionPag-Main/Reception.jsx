@@ -4,7 +4,7 @@ import {PiPhoneCallFill, PiStudentBold} from "react-icons/pi";
 import {MdOutlineSettings} from "react-icons/md";
 import {ImExit} from "react-icons/im";
 import logo from "../../Images/Logos/logoO.png";
-import {BsBuildingsFill, BsCashCoin} from "react-icons/bs";
+import {BsCashCoin} from "react-icons/bs";
 import {GrGroup} from "react-icons/gr";
 import {TbPresentationAnalytics} from "react-icons/tb";
 import {Outlet, useNavigate} from "react-router-dom";
@@ -147,14 +147,6 @@ function Reception() {
                         >
                             <PiPhoneCallFill/>
                             <h3>Appeals</h3>
-                        </div>
-                        <div onClick={() => {
-                            navigate("/reception/branch");
-                            closeSidebar();
-                        }}
-                             className="box">
-                            <BsBuildingsFill />
-                            <h3>Branches</h3>
                         </div>
                         <div
                             onClick={() => {

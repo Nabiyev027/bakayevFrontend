@@ -1,65 +1,27 @@
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import "./comentsA.scss"
+import {toast, ToastContainer} from "react-toastify";
+import ApiCall from "../../../Utils/ApiCall";
 
 const CommentsA = () => {
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      name: "Alice",
-      text: "Great post! Learned a lot.",
-      rating: 5,
-      date: "2025-04-10",
-      status: true, // approved
-    },
-    {
-      id: 2,
-      name: "Bob",
-      text: "Interesting perspective.",
-      rating: 4,
-      date: "2025-04-11",
-      status: false, // pending
-    },
-    {
-      id: 3,
-      name: "Charlie",
-      text: "Could use more examples.",
-      rating: 3,
-      date: "2025-04-12",
-      status: true, // approved
-    },
-    {
-      id: 4,
-      name: "Dana",
-      text: "Loved the visuals!",
-      rating: 5,
-      date: "2025-04-13",
-      status: false, // pending
-    },
-    {
-      id: 5,
-      name: "Eve",
-      text: "Not sure I agree.",
-      rating: 2,
-      date: "2025-04-14",
-      status: true, // approved
-    },
-    {
-      id: 6,
-      name: "Frank",
-      text: "Thanks for sharing this information.",
-      rating: 4,
-      date: "2025-04-15",
-      status: false, // pending
-    },
-  ])
+  const [comments, setComments] = useState([])
 
-  const handleApprove = (id) => {
-    setComments(comments.map((comment) => (comment.id === id ? { ...comment, status: !comment.status } : comment)))
+  useEffect(() => {
+    getComments()
+  },[])
+
+  async function getComments() {
+    try {
+      const res = await ApiCall("/comment", {method: "GET"})
+      console.log(res.data)
+      setComments(res.data)
+    } catch (err) {
+      const message =
+          err.response?.data || "Xatolik yuz berdi";
+      toast.warn(message);
+    }
   }
 
-  const handleDelete = (id) => {
-    setComments(comments.filter((comment) => comment.id !== id))
-  }
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -69,15 +31,40 @@ const CommentsA = () => {
     ))
   }
 
+  async function handleApprove(id) {
+    try {
+      const res = await ApiCall(`/comment/${id}`, {method: "PUT"})
+      toast.success(res.data);
+      await getComments();
+    } catch (err) {
+      const message =
+          err.response?.data || "Xatolik yuz berdi";
+      toast.warn(message);
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      const res = await ApiCall(`/comment/${id}`, {method: "DELETE"})
+      toast.success(res.data);
+      await getComments();
+    } catch (err) {
+      const message =
+          err.response?.data || "Xatolik yuz berdi";
+      toast.warn(message);
+    }
+  }
+
   return (
       <div className="comments-container">
+        <ToastContainer/>
         <h2 className="comments-title">Comments</h2>
         <div className="comments-list">
-          {comments.map((comment) => (
+          {comments&&comments.map((comment) =>
               <div key={comment.id} className={`comment-item ${comment.status ? "approved" : "pending"}`}>
                 <div className="comment-content">
                   <div className="comment-header">
-                    <h4 className="comment-author">{comment.name}</h4>
+                    <h4 className="comment-author">{comment.firstName + " " + comment.lastName}</h4>
                     <div className="comment-meta">
                   <span className={`status-badge ${comment.status ? "approved" : "pending"}`}>
                     {comment.status ? "Tasdiqlangan" : "Kutilmoqda"}
@@ -86,7 +73,7 @@ const CommentsA = () => {
                     </div>
                   </div>
                   <p className="comment-text">{comment.text}</p>
-                  <div className="comment-rating">{renderStars(comment.rating)}</div>
+                  <div className="comment-rating">{renderStars(comment.rate)}</div>
                 </div>
                 <div className="comment-actions">
                   <button
@@ -100,7 +87,7 @@ const CommentsA = () => {
                   </button>
                 </div>
               </div>
-          ))}
+          )}
         </div>
       </div>
   )
