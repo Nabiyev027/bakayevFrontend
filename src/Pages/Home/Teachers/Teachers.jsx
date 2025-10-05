@@ -1,102 +1,122 @@
-"use client"
+import { useState, useEffect } from "react"
+import "./teachers.css"
+import ApiCall from "../../../Utils/ApiCall"
+import { toast, ToastContainer } from "react-toastify"
 
-import { useState, useEffect, useRef } from "react"
-import "./teachers.css" // Fayl nomi .css ga qaytarildi
+// 🌍 Tilga bog‘liq matnlar
+const translations = {
+  UZ: {
+    title: "Bizning O'qituvchilarimiz",
+    certTitle: "Professional Sertifikat",
+    certDesc: "CELTA va boshqa xalqaro sertifikatlarga ega",
+    resultsTitle: "Yuqori Natijalar",
+    resultsDesc: "O'quvchilarning 95% muvaffaqiyat ko'rsatkichi",
+    approachTitle: "Individual Yondashuv",
+    approachDesc: "Har bir o'quvchiga maxsus dastur",
+    stats: {
+      ielts: "IELTS ball",
+      cert: "Sertifikati",
+      exp: "Tajribasi",
+      students: "O'quvchilari",
+    },
+  },
+  EN: {
+    title: "Our Teachers",
+    certTitle: "Professional Certificate",
+    certDesc: "Holds CELTA and other international certifications",
+    resultsTitle: "High Results",
+    resultsDesc: "95% success rate among students",
+    approachTitle: "Individual Approach",
+    approachDesc: "Personalized program for every student",
+    stats: {
+      ielts: "IELTS Score",
+      cert: "Certificate",
+      exp: "Experience",
+      students: "Students",
+    },
+  },
+  RU: {
+    title: "Наши Преподаватели",
+    certTitle: "Профессиональный Сертификат",
+    certDesc: "Имеет CELTA и другие международные сертификаты",
+    resultsTitle: "Высокие Результаты",
+    resultsDesc: "95% успеха среди студентов",
+    approachTitle: "Индивидуальный Подход",
+    approachDesc: "Персональная программа для каждого ученика",
+    stats: {
+      ielts: "Результат IELTS",
+      cert: "Сертификат",
+      exp: "Опыт",
+      students: "Студенты",
+    },
+  },
+}
 
 export default function Teachers() {
-  const mainTeacher = {
-    name: "Nabiyev Abduvali",
-    title: "IELTS 9.0 Instructor",
-    image: "/placeholder.svg?height=400&width=400",
-    achievements: [
-      { label: "IELTS ball", value: "9.0", icon: "🎯" },
-      { label: "Sertifikati", value: "CELTA", icon: "🏆" },
-      { label: "Tajribasi", value: "10+", icon: "📚" },
-      { label: "O'quvchilari", value: "650+", icon: "👥" },
-    ],
-    description:
-        "O'zbekistonda 8-bo'lib IELTS 9.0 ballni qo'lga kiritganman va bu o'zimga bo'lgan ishonchimni oshirgan...",
-    fullDescription:
-        "O'zbekistonda 8-bo'lib IELTS 9.0 ballni qo'lga kiritganman va bu o'zimga bo'lgan ishonchimni oshirgan. Hozirda 650+ o'quvchiga IELTS va ingliz tilini o'rgatib kelmoqdaman. CELTA sertifikatiga ega bo'lib, zamonaviy o'qitish metodlarini qo'llayman.",
-  }
+  const [selectedLang, setSelectedLang] = useState(localStorage.getItem("lang") || "UZ")
+  const BaseUrl = "http://localhost:8080"
 
-  const allTeachers = [
-    {
-      id: 1,
-      name: "Sardor Aliyev",
-      subject: "TOEFL 115",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: 2,
-      name: "Aziza Karimova",
-      subject: "General English",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: 3,
-      name: "Nabiyev Abduvali",
-      subject: "IELTS 9.0",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: 4,
-      name: "Malika Tosheva",
-      subject: "IELTS 8.5",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: 5,
-      name: "Bobur Rahimov",
-      subject: "Business English",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: 6,
-      name: "Nilufar Yusupova",
-      subject: "Academic Writing",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-  ]
+  const [teachers, setTeachers] = useState([])
+  const [selTeacher, setSelTeacher] = useState(null)
+  const [teacherData, setTeacherData] = useState({})
 
-  const [activeTeacher, setActiveTeacher] = useState(0)
-  const [isManuallySelected, setIsManuallySelected] = useState(false)
-  const intervalRef = useRef(null)
-
-  // Auto rotation function
-  const startAutoRotation = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
-    intervalRef.current = setInterval(() => {
-      if (!isManuallySelected) {
-        setActiveTeacher((prev) => (prev + 1) % allTeachers.length)
-      }
-    }, 6000)
-  }
-
-  // Handle manual teacher selection
-  const handleTeacherClick = (index) => {
-    setActiveTeacher(index)
-    setIsManuallySelected(true)
-
-    // Resume auto rotation after 10 seconds of manual selection
-    setTimeout(() => {
-      setIsManuallySelected(false)
-    }, 10000)
-  }
-
+  // Til o‘zgarganda kuzatuvchi
   useEffect(() => {
-    startAutoRotation()
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
+    const onLangChange = () => {
+      setSelectedLang(localStorage.getItem("lang") || "UZ")
     }
-  }, [isManuallySelected])
+    window.addEventListener("languageChanged", onLangChange)
+    return () => window.removeEventListener("languageChanged", onLangChange)
+  }, [])
+
+  // O‘qituvchilarni olish
+  useEffect(() => {
+    getTeachers()
+  }, [])
+
+  // Tanlangan o‘qituvchi yoki til o‘zgarsa — ma’lumotni qayta yuklash
+  useEffect(() => {
+    getTeacherData()
+  }, [selTeacher, selectedLang])
+
+  async function getTeachers() {
+    try {
+      const res = await ApiCall(`/teacherSection/getHome`, { method: "GET" })
+      setTeachers(res.data)
+      if (res.data.length > 0) {
+        const firstTeacher = res.data[0]
+        setSelTeacher(firstTeacher)
+        await getTeacherData(firstTeacher)
+      }
+    } catch (err) {
+      const message = err.response?.data || "No data"
+      toast.warn(message)
+    }
+  }
+
+  async function getTeacherData(teacher = selTeacher) {
+    if (!teacher || !teacher.id) return
+    try {
+      const res = await ApiCall(
+          `/teacherSection/getInfo/${teacher.id}?lang=${selectedLang}`,
+          { method: "GET" }
+      )
+      setTeacherData(res.data)
+    } catch (err) {
+      const message = err.response?.data || "No teacher data"
+      toast.warn(message)
+    }
+  }
+
+  const handleTeacherClick = (teacher) => {
+    setSelTeacher(teacher)
+  }
+
+  const t = translations[selectedLang] || translations.UZ
 
   return (
       <div className="teachers-page">
+        <ToastContainer />
         {/* Hero Section */}
         <div className="hero-section">
           <div className="hero-background">
@@ -108,26 +128,35 @@ export default function Teachers() {
           </div>
 
           <div className="hero-content">
-            <h1 className="main-title">Bizning O'qituvchilarimiz</h1>
+            <h1 className="main-title">{t.title}</h1>
 
             {/* Teachers Pills */}
             <div className="teachers-pills-container">
-              {allTeachers.map((teacher, index) => (
+              {teachers.map((teacher, index) => (
                   <div
                       key={teacher.id}
-                      className={`teacher-pill ${index === activeTeacher ? "active" : "inactive"}`}
-                      onClick={() => handleTeacherClick(index)}
+                      className={`teacher-pill ${
+                          teacher.id === selTeacher?.id ? "active" : "inactive"
+                      }`}
+                      onClick={() => handleTeacherClick(teacher)}
                       style={{
                         animationDelay: `${index * 0.1}s`,
-                        transitionDelay: index === activeTeacher ? "0s" : `${Math.abs(index - activeTeacher) * 0.05}s`,
+                        transitionDelay:
+                            teacher.id === selTeacher?.id
+                                ? "0s"
+                                : `${Math.abs(teacher.id - selTeacher?.id) * 0.05}s`,
                       }}
                   >
                     <div className="pill-image">
-                      <img src={teacher.image || "/placeholder.svg"} alt={teacher.name} />
+                      <img src={`${BaseUrl}${teacher.imageUrl}`} alt={teacher.name} />
                     </div>
-                    <div className={`pill-info ${index === activeTeacher ? "show" : "hide"}`}>
+                    <div
+                        className={`pill-info ${
+                            teacher.id === selTeacher?.id ? "show" : "hide"
+                        }`}
+                    >
                       <span className="pill-name">{teacher.name}</span>
-                      <span className="pill-subject">{teacher.subject}</span>
+                      <span className="pill-subject">IELTS: {teacher.ieltsBall}</span>
                     </div>
                   </div>
               ))}
@@ -140,7 +169,16 @@ export default function Teachers() {
                 <div className="profile-image-container">
                   <div className="profile-background"></div>
                   <div className="profile-image">
-                    <img src={mainTeacher.image || "/placeholder.svg"} alt={mainTeacher.name} />
+                    <img
+                        src={
+                          teacherData?.imgUrl
+                              ? `${BaseUrl}${teacherData.imgUrl}`
+                              : "/placeholder.svg"
+                        }
+                        alt={`${teacherData?.firstName || ""} ${
+                            teacherData?.lastName || ""
+                        }`}
+                    />
                   </div>
                   <div className="profile-glow"></div>
                 </div>
@@ -149,8 +187,25 @@ export default function Teachers() {
               {/* Stats Grid */}
               <div className="stats-section">
                 <div className="stats-grid">
-                  {mainTeacher.achievements.map((achievement, index) => (
-                      <div key={index} className="stat-card" style={{ animationDelay: `${0.8 + index * 0.1}s` }}>
+                  {[
+                    { label: t.stats.ielts, value: teacherData?.ieltsBall, icon: "🎯" },
+                    { label: t.stats.cert, value: teacherData?.certificate, icon: "🏆" },
+                    {
+                      label: t.stats.exp,
+                      value: `${teacherData?.experience}+ yil`,
+                      icon: "📚",
+                    },
+                    {
+                      label: t.stats.students,
+                      value: `${teacherData?.numberOfStudents}+`,
+                      icon: "👥",
+                    },
+                  ].map((achievement, index) => (
+                      <div
+                          key={index}
+                          className="stat-card"
+                          style={{ animationDelay: `${0.8 + index * 0.1}s` }}
+                      >
                         <div className="stat-icon">{achievement.icon}</div>
                         <div className="stat-value">{achievement.value}</div>
                         <div className="stat-label">{achievement.label}</div>
@@ -161,7 +216,7 @@ export default function Teachers() {
                 {/* Description Card */}
                 <div className="description-card">
                   <div className="description-content">
-                    <p>{mainTeacher.fullDescription}</p>
+                    <p>{teacherData?.description}</p>
                     <div className="description-gradient"></div>
                   </div>
                 </div>
@@ -175,18 +230,18 @@ export default function Teachers() {
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">🎓</div>
-              <h3>Professional Sertifikat</h3>
-              <p>CELTA va boshqa xalqaro sertifikatlarga ega</p>
+              <h3>{t.certTitle}</h3>
+              <p>{t.certDesc}</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">📈</div>
-              <h3>Yuqori Natijalar</h3>
-              <p>O'quvchilarning 95% muvaffaqiyat ko'rsatkichi</p>
+              <h3>{t.resultsTitle}</h3>
+              <p>{t.resultsDesc}</p>
             </div>
             <div className="feature-card">
               <div className="feature-icon">🌟</div>
-              <h3>Individual Yondashuv</h3>
-              <p>Har bir o'quvchiga maxsus dastur</p>
+              <h3>{t.approachTitle}</h3>
+              <p>{t.approachDesc}</p>
             </div>
           </div>
         </div>

@@ -40,7 +40,7 @@
 .hero-section .hero-background .floating-elements .floating-circle {
     position: absolute;
     border-radius: 50%;
-    background: linear-gradient(45deg, #ff9a56, #ffad56);
+    background: linear-gradient(45deg, deepskyblue, blue);
     opacity: 0.1;
     animation: float 8s ease-in-out infinite;
 }
@@ -54,18 +54,18 @@
 }
 
 .hero-section .hero-background .floating-elements .floating-circle.circle-2 {
-    width: 150px;
-    height: 150px;
-    top: 70%;
-    right: 15%;
+    width: 260px;
+    height: 260px;
+    top: 25%;
+    right: 10%;
     animation-delay: 2s;
 }
 
 .hero-section .hero-background .floating-elements .floating-circle.circle-3 {
-    width: 100px;
-    height: 100px;
-    bottom: 20%;
-    left: 70%;
+    width: 260px;
+    height: 260px;
+    bottom: 10%;
+    left: 20%;
     animation-delay: 4s;
 }
 

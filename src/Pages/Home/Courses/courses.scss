@@ -1,13 +1,29 @@
 .wrap-courses {
-  min-height: 76vh;
   padding: 1rem 0.5rem;
   font-family: sans-serif;
-  background: linear-gradient(180deg, #3c3ca5, #fbbf24, #3c3ca5);
+  background: linear-gradient(-45deg, #3A0CA3, #7209B7, #F72585);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  min-height: 76vh;
+
 
 
   @media (min-width: 768px) {
     padding: 2rem 1rem;
   }
+
+  @keyframes gradientMove {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
 }
 
 .container {
@@ -151,6 +167,7 @@
 }
 
 .courses-grid {
+  padding: 0 1rem;
   display: grid;
   gap: 1rem;
 
@@ -204,6 +221,7 @@
     opacity: 0;
     transition: opacity 0.3s;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+
   }
 
   &:hover {
@@ -439,29 +457,4 @@
     }
   }
 
-  .course-meta {
-    margin-top: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.75rem;
-
-    @media (min-width: 768px) {
-      margin-top: 1rem;
-      gap: 1rem;
-    }
-
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .meta-icon {
-      width: 0.75rem;
-      height: 0.75rem;
-    }
-  }
 }

@@ -135,7 +135,7 @@ function CoursesPage() {
 
     async function getPeriods() {
         try {
-            const res = await ApiCall("/courseSection", {method: "GET"});
+            const res = await ApiCall("/courseSection/get", {method: "GET"});
             console.log(res.data);
             setUnfilteredPers(res.data);
         } catch (err) {
@@ -147,6 +147,9 @@ function CoursesPage() {
 
     async function getPerLevels(perId) {
         if (perId) {
+            setLevelContains([]);
+            setUnfilteredContains([]);
+            setSelLevelId("");
             setSelPerId(perId);
             try {
                 const res = await ApiCall(`/courseCard/${perId}`, { method: "GET" });
@@ -158,6 +161,7 @@ function CoursesPage() {
                 toast.warn(message);
             }
         }
+
     }
 
     async function getLevelContains(levelId) {

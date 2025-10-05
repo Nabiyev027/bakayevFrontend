@@ -35,8 +35,7 @@ function ResultPage() {
 
     async function getStudentResults() {
         try {
-            const res = await ApiCall("/studentSection", {method: "GET"});
-            toast.success(res.data);
+            const res = await ApiCall("/studentSection/getInfo", {method: "GET"});
             setResults(res.data);
         } catch (err) {
             const message =
@@ -254,6 +253,7 @@ function ResultPage() {
                                     <h3>Reading: <span>{item.reading}</span></h3>
                                     <h3>Writing: <span>{item.writing}</span></h3>
                                     <h3>Speaking: <span>{item.speaking}</span></h3>
+                                    <h3>Overall: <span>{item.overall}</span></h3>
                                 </div>
                             </div>
                         </div>
