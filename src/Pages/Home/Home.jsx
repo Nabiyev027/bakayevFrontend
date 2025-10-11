@@ -19,7 +19,7 @@ function Home() {
             <MyModal isOpen={isOpen} onClose={onClose} />
             <Navbar setIsOpen={setIsOpen} />
             <Outlet context={{ isOpen, setIsOpen }} />
-            <Footer context={{ isOpen, setIsOpen }} />
+            <Footer setIsOpen={setIsOpen} />
 
         </div>
 );

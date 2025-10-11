@@ -9,7 +9,6 @@ import Students from "./Pages/Home/Students/Students";
 import Courses from "./Pages/Home/Courses/Courses";
 import Login from "./Pages/Login/Login";
 import Teacher from "./Pages/TeacherPage/Teacher";
-import GroupT from "./Pages/TeacherPage/GroupPage/GroupT";
 import LessonsT from "./Pages/TeacherPage/lessonsPage/LessonsT";
 import StudentPage from "./Pages/StudentPage/StudentPage";
 import LessonsS from "./Pages/StudentPage/lessonsS/LessonsS";
@@ -28,7 +27,6 @@ import Student from "./Pages/ReceptionPag-Main/StudentPage/Student";
 import Group from "./Pages/ReceptionPag-Main/GroupPage/Group";
 import Payment from "./Pages/ReceptionPag-Main/PaymentPage/Payment";
 import Setting from "./Pages/ReceptionPag-Main/SettingPage/Setting";
-import PresentR from "./Pages/ReceptionPag-Main/PresentR/AttendanceR";
 import NotFound from "./Pages/NotFound/NotFound";
 import Massage from "./Pages/ReceptionPag-Main/Massage/Massage";
 import SelectRoles from "./Pages/SelectRoles/SelectRoles";
@@ -38,8 +36,9 @@ import TeacherMain from "./Pages/ReceptionPag-Main/TeacherPage/TeacherMain";
 import Employer from "./Pages/AdminPages/employerA/Employer";
 import CommentsA from "./Pages/AdminPages/comentsA/CommentsA";
 import {LangProvider} from "./Pages/AdminPages/interfaceA/langConfig/LangContext";
-import HeaderSect from "./Pages/AdminPages/interfaceA/homePageSections/headerSect/HeaderSect";
 import Rating from "./Pages/TeacherPage/ratingExam/Rating";
+import AttendanceTable from "./Pages/ReceptionPag-Main/Attendance/AttendanceR";
+import AttendanceGroup from "./Pages/TeacherPage/groupAttendance/AttendanceG";
 
 
 function App() {
@@ -76,12 +75,12 @@ function App() {
                     <Route path={"/reception/group"} element={<Group/>}/>
                     <Route path={"/reception/payment"} element={<Payment/>}/>
                     <Route path={"/reception/setting"} element={<Setting/>}/>
-                    <Route path={"/reception/present"} element={<PresentR/>}/>
+                    <Route path={"/reception/present"} element={<AttendanceTable />}/>
                     <Route path={"/reception/massage"} element={<Massage/>}/>
                     <Route path={"/reception/appeal"} element={<Appeal/>}/>
                 </Route>
                 <Route path="/teacher" element={<Teacher/>}>
-                    <Route path="/teacher/group" element={<GroupT/>}/>
+                    <Route path="/teacher/group" element={<AttendanceGroup/>}/>
                     <Route path="/teacher/lessons" element={<LessonsT/>}/>
                     <Route path="/teacher/exam" element={<ExamT/>}/>
                     <Route path="/teacher/rating" element={<Rating/>} />

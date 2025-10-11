@@ -1,12 +1,15 @@
 import React, {useEffect, useState} from "react";
 import "./footer.scss"
 import { Phone, Mail, Instagram, Send, Facebook, GraduationCap, Clock, Award } from "lucide-react"
+import ApiCall from "../../Utils/ApiCall";
+import {toast} from "react-toastify";
 
-function Footer() {
+function Footer({setIsOpen}) {
 
   const [selectedLang, setSelectedLang] = useState(
       localStorage.getItem("lang") || "UZ"
   );
+  const [info,setInfo] = useState({});
 
   useEffect(() => {
     const onLangChange = () => {
@@ -15,6 +18,20 @@ function Footer() {
     window.addEventListener("languageChanged", onLangChange);
     return () => window.removeEventListener("languageChanged", onLangChange);
   }, []);
+
+  useEffect(()=>{
+    getFooterInfo()
+  },[])
+
+  async function getFooterInfo() {
+    try {
+      const res = await ApiCall("/footerSection/get", { method: "GET" });
+      setInfo(res.data);
+    } catch (err) {
+      const message = err.response?.data || "No info footer";
+      toast.warn(message);
+    }
+  }
 
   const texts = {
     UZ: {
@@ -63,6 +80,20 @@ function Footer() {
 
   const t = texts[selectedLang];
 
+  function getHandle(url = "") {
+    if (!url) return "";
+
+    // Agar foydalanuvchi faqat username yoki qisqa narsa kiritgan bo‘lsa
+    if (!url.startsWith("http") && !url.startsWith("www.")) {
+      return url;
+    }
+
+    // URL dan domen qismini olib tashlash (Facebook, Instagram, Telegram, T.me uchun)
+    return url
+        .replace(/https?:\/\/(www\.)?(facebook\.com|instagram\.com|t\.me|telegram\.me|telegram\.org)\//, "")
+        .split(/[/?#]/)[0]; // URLdagi keyingi slash, query yoki anchor'ni kesib tashlaydi
+  }
+
   return (
       <footer className="modern-footer">
         {/* Background Pattern */}
@@ -99,7 +130,7 @@ function Footer() {
                       {t.info2TitleD}
                     </span>
                     </p>
-                    <button className="cta-button" onClick={() => alert("Yozilish formasi ochiladi!")}>
+                    <button className="cta-button" onClick={() => setIsOpen(true)}>
                       {t.btn}
                     </button>
                   </div>
@@ -144,7 +175,7 @@ function Footer() {
                       <div className="contact-details">
                         <div className="contact-label">{t.phone1}</div>
                         <a href="tel:+998930676146" className="contact-link">
-                          +998 93 067 61 46
+                          {info.phone1}
                         </a>
                       </div>
                     </div>
@@ -158,7 +189,7 @@ function Footer() {
                       <div className="contact-details">
                         <div className="contact-label">{t.phone2}</div>
                         <a href="tel:+998930676146" className="contact-link">
-                          +998 93 067 61 46
+                          {info.phone2}
                         </a>
                       </div>
                     </div>
@@ -172,7 +203,7 @@ function Footer() {
                       <div className="contact-details">
                         <div className="contact-label">{t.email}</div>
                         <a href="mailto:bakayeveducation@gmail.com" className="contact-link email">
-                          bakayeveducation@gmail.com
+                          {info.email}
                         </a>
                       </div>
                     </div>
@@ -188,33 +219,48 @@ function Footer() {
                 </h3>
 
                 <div className="social-items">
-                  <a href="#" className="social-item instagram">
+                  <a
+                      href={`${info.instagramUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+
+                     className="social-item instagram">
                     <div className="social-icon">
                       <Instagram className="instagram-icon" />
                     </div>
                     <div className="social-details">
                       <div className="social-name">Instagram</div>
-                      <div className="social-handle">@bakayev_education</div>
+                      <div className="social-handle">{getHandle(info.instagramUrl)}</div>
                     </div>
                   </a>
 
-                  <a href="#" className="social-item telegram">
+                  <a
+                      href={`${info.telegramUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+
+                      className="social-item telegram">
                     <div className="social-icon">
                       <Send className="telegram-icon" />
                     </div>
                     <div className="social-details">
                       <div className="social-name">Telegram</div>
-                      <div className="social-handle">@bakayev_edu</div>
+                      <div className="social-handle">{getHandle(info.telegramUrl)}</div>
                     </div>
                   </a>
 
-                  <a href="#" className="social-item facebook">
+                  <a
+                      href={`${info.facebookUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+
+                      className="social-item facebook">
                     <div className="social-icon">
                       <Facebook className="facebook-icon" />
                     </div>
                     <div className="social-details">
                       <div className="social-name">Facebook</div>
-                      <div className="social-handle">Bakayev Education</div>
+                      <div className="social-handle">{getHandle(info.facebookUrl)}</div>
                     </div>
                   </a>
                 </div>
