@@ -341,6 +341,13 @@
 
 .tableHead th.center {
   text-align: center;
+
+}
+
+.text{
+  width: max-content;
+  color: #1e40af;
+  margin: 0 auto;
 }
 
 .stickyColumn {

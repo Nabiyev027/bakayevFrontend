@@ -6,6 +6,7 @@ import {Calendar, Users, Filter, Download, Edit, Save, X, Plus} from "lucide-rea
 import "./AttendanceG.scss"
 import apiCall from "../../../Utils/ApiCall";
 import {toast, ToastContainer} from "react-toastify";
+import ApiCall from "../../../Utils/ApiCall";
 
 // Months in Uzbek (can remain as it's UI specific)
 const months = [
@@ -101,16 +102,19 @@ export default function AttendanceGroup() {
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
     const [selectedDay, setSelectedDay] = useState(new Date().getDate())
+    const today = new Date().getDate();
     const [selectedWeek, setSelectedWeek] = useState(1)
+
+
 
     // attendanceData will now be fetched from the backend based on filters
     const [attendanceData, setAttendanceData] = useState([])
     const [isEditing, setIsEditing] = useState(false)
     const [editingData, setEditingData] = useState([]) // For local changes before saving
-    const [newDate, setNewDate] = useState("")
+    const [editedAttendance, setEditedAttendance] = useState([]);
 
     // Array for absent reasons (can be fetched from backend or hardcoded if static)
-    const absentReasons = ["Kasallik", "Oilaviy sabab", "Transport muammosi", "Boshqa sabab", "Sababsiz"]
+    const absentReasons = ["Illness", "Family reason", "Transport problem", "Other reason", "No reason"]
 
     useEffect(() => {
         getTeacherGroups();
@@ -119,7 +123,7 @@ export default function AttendanceGroup() {
     useEffect(() => {
         if (selectedGroup && selectedGroup.id) {
             getAttendanceData(selectedGroup);
-            }
+        }
     }, [selectedGroup, filterType, selectedMonth, selectedYear, selectedDay, selectedWeek]);
 
     const getTeacherGroups = async () => {
@@ -173,7 +177,6 @@ export default function AttendanceGroup() {
             toast.error(err.message || "Davomat ma'lumotlarini olishda xatolik");
         }
     };
-
 
 
     const handleMonthChange = (month) => {
@@ -231,54 +234,29 @@ export default function AttendanceGroup() {
     }
 
     const startEditing = () => {
-        setIsEditing(true)
-        // Create a deep copy of current attendanceData for editing
-        // This ensures changes are only applied when 'Save' is clicked
-        setEditingData(JSON.parse(JSON.stringify(attendanceData)))
-    }
+        setIsEditing(true);
+
+        // Dastlabki holatda dataToDisplay ni deep copy qilib olamiz
+        setEditingData(JSON.parse(JSON.stringify(dataToDisplay)));
+    };
 
     const cancelEditing = () => {
-        setIsEditing(false)
-        setEditingData([]) // Clear editing data
-    }
+        setIsEditing(false);
+        setEditingData([]);
+    };
 
-    const saveChanges = async () => {
-        try {
-            const res = await apiCall(`/attendance/update`, {
-                method: "PUT",
-                body: JSON.stringify(editingData),
-                headers: {"Content-Type": "application/json"},
-            });
-
-            if (res.status === 200) {
-                toast.success("Davomat saqlandi!");
-                setAttendanceData(editingData);
-                setIsEditing(false);
-            } else {
-                toast.error("Saqlashda xatolik yuz berdi");
-            }
-        } catch (error) {
-            toast.error("Tarmoq xatosi yoki serverga ulanish muammosi");
-        }
+    const handleEditChange = (studentId, field, value) => {
+        setEditingData((prev) => ({
+            ...prev,
+            [studentId]: {
+                ...prev[studentId],
+                [field]: value,
+            },
+        }));
     };
 
 
-    const updateAttendance = (dateIndex, studentId, status, reason = null) => {
-        const newEditingData = [...editingData]
-        newEditingData[dateIndex].attendance[studentId] = {
-            status: status,
-            reason: status === "absent" ? reason : null,
-        }
-        setEditingData(newEditingData)
-    }
 
-    const updateReason = (dateIndex, studentId, reason) => {
-        const newEditingData = [...editingData]
-        if (newEditingData[dateIndex].attendance[studentId].status === "absent") {
-            newEditingData[dateIndex].attendance[studentId].reason = reason
-            setEditingData(newEditingData)
-        }
-    }
 
     const markAllForDate = (dateIndex, status) => {
         const newEditingData = [...editingData]
@@ -367,6 +345,110 @@ export default function AttendanceGroup() {
 
     const {presentCount, absentCount} = getTotalPresentAbsentForSelectedPeriod();
 
+    async function saveChanges() {
+        try {
+            // 1️⃣ Backend kutayotgan formatga o‘tkazamiz
+            const payload = editedAttendance.map(item => ({
+                studentId: item.studentId,
+                status: item.status || "none",
+                cause: item.cause || "",
+            }));
+
+            // 2️⃣ So‘rov yuboramiz
+            const response = await ApiCall(
+                `/attendance/save/${selectedGroup.id}`,   // ✅ Backend mappingiga to‘liq mos
+                { method: "PUT" },                        // ✅ axios uchun method
+                payload,                                  // ✅ bu 'data' sifatida yuboriladi
+                { "Content-Type": "application/json" }    // ✅ header
+            );
+
+            // 3️⃣ Natijani tekshiramiz
+            if (response.status === 200) {
+                toast.success("Davomat muvaffaqiyatli saqlandi!");
+                setIsEditing(false);
+                setEditedAttendance([]);
+                getAttendanceData(selectedGroup);
+            } else {
+                toast.error("Xatolik: " + response.data);
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Server bilan bog‘lanishda xatolik");
+        }
+    }
+
+
+    function updateAttendance(studentId, status) {
+        setEditedAttendance(prev => {
+            console.log("updateAttendance chaqirildi:", { studentId, status, prev });
+
+            // mavjud studentni qidiramiz
+            const existingIndex = prev.findIndex(item => item.studentId === studentId);
+
+            if (existingIndex !== -1) {
+                // mavjud studentni yangilaymiz
+                const updated = [...prev];
+                updated[existingIndex] = { ...updated[existingIndex], status };
+                return updated;
+            } else {
+                // yangi student qo‘shamiz
+                return [...prev, { studentId, status, cause: "" }];
+            }
+        });
+    }
+
+    function updateReason(studentId, cause) {
+        setEditedAttendance(prev => {
+            console.log("updateReason chaqirildi:", { studentId, cause, prev });
+
+            const existingIndex = prev.findIndex(item => item.studentId === studentId);
+
+            if (existingIndex !== -1) {
+                const updated = [...prev];
+                updated[existingIndex] = { ...updated[existingIndex], cause };
+                return updated;
+            } else {
+                return [...prev, { studentId, status: "none", cause }];
+            }
+        });
+    }
+
+
+
+    function renderReasonCell(day, dayIndex, student) {
+        const record = day.attendance.find(a => a.studentId === student.studentId);
+
+        return (
+            <td key={dayIndex} className={`${styles.reasonCell} ${isEditing ? styles.editingCell : ""}`}>
+                <div className={styles.attendanceIndicator}>
+                    {isEditing ? (
+                        <select
+                            defaultValue={record?.reason || ""}
+                            className={styles.reasonSelect}
+                            onChange={(e)=>updateReason(student.studentId, e.target.value)}
+                        >
+                            <option value="">Select</option>
+                            {absentReasons.map((reason) => (
+                                <option key={reason} value={reason}>
+                                    {reason}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className={styles.attendanceDisplay}>
+                            {/*{record ? getAttendanceIcon(record) : null}*/}
+                            {/*{record ? getAttendanceBadge(record) : null}*/}
+                            <span className={styles.reasonText}>
+                                {record?.reason!==null ? record?.reason : "Unmarked" }
+                            </span>
+
+                        </div>
+                    )}
+                </div>
+            </td>
+        );
+    }
+
 
     // 👇 Tepada funksiya yaratamiz
     const renderAttendanceCell = (day, dayIndex, student) => {
@@ -377,26 +459,22 @@ export default function AttendanceGroup() {
                 <div className={styles.attendanceIndicator}>
                     {isEditing ? (
                         <select
-                            value={record?.status || "present"}
-                            onChange={(e) =>
-                                updateAttendance(
-                                    dayIndex,
-                                    student.studentId,
-                                    e.target.value,
-                                    e.target.value === "absent"
-                                        ? record?.reason || "Sababsiz"
-                                        : null
-                                )
-                            }
+                            defaultValue={record?.status || ""}
                             className={styles.attendanceSelect}
+                            onChange={(e)=>updateAttendance(student.studentId, e.target.value)}
                         >
+
                             <option value="present">Present</option>
                             <option value="absent">Absent</option>
                         </select>
                     ) : (
                         <div className={styles.attendanceDisplay}>
-                            {record ? getAttendanceIcon(record) : null}
-                            {record ? getAttendanceBadge(record) : null}
+                            {/*{record ? getAttendanceIcon(record) : null}*/}
+                            {/*{record ? getAttendanceBadge(record) : null}*/}
+                            <span className={styles.reasonText}>
+                                {record?.status!=="none" ? record?.status : "Unmarked" }
+                            </span>
+
                         </div>
                     )}
                 </div>
@@ -414,13 +492,15 @@ export default function AttendanceGroup() {
                     <p className={"white-text"}>Talabalar davomatini kuzatish va boshqarish</p>
                 </div>
                 <div style={{display: "flex", gap: "0.5rem"}}>
-                    <button
-                        className={`${styles.editButton} ${isEditing ? styles.editing : ""}`}
-                        onClick={isEditing ? cancelEditing : startEditing}
-                    >
-                        {isEditing ? <X size={16}/> : <Edit size={16}/>}
-                        {isEditing ? "Bekor qilish" : "Tahrirlash"}
-                    </button>
+                    {(filterType === "daily" && Number(selectedDay) === today) && (
+                        <button
+                            className={`${styles.editButton} ${isEditing ? styles.editing : ""}`}
+                            onClick={isEditing ? cancelEditing : startEditing}
+                        >
+                            {isEditing ? <X size={16} /> : <Edit size={16} />}
+                            {isEditing ? "Bekor qilish" : "Tahrirlash"}
+                        </button>
+                    )}
                     {/* TODO: Add export functionality here (e.g., export to CSV) */}
                     <button className={styles.exportButton}>
                         <Download size={16}/>
@@ -677,7 +757,8 @@ export default function AttendanceGroup() {
                             <thead className={styles.tableHead}>
                             <tr>
                                 <th className={styles.stickyColumn + " "}>Talaba</th>
-                                {filterType === "daily" && <th className={styles.center}>Sabab</th>}
+                                {filterType === "daily" && <th className={styles.center}>Phone</th>}
+                                {filterType === "daily" && <th className={styles.center}>Reason</th>}
                                 {dataToDisplay.map((day, index) => (
                                     <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
                                             <span className={styles.dateType}>
@@ -714,45 +795,28 @@ export default function AttendanceGroup() {
                                         </div>
                                     </td>
 
-                                    {/* === Sabab (faqat daily uchun) === */}
                                     {filterType === "daily" && (
-                                        <td className={styles.reasonCell}>
-                                            {(() => {
-                                                const record = dataToDisplay[0].attendance.find(a => a.studentId === student.studentId);
-                                                if (record?.status === "absent") {
-                                                    return isEditing ? (
-                                                        <select
-                                                            value={record.reason || "Sababsiz"}
-                                                            onChange={(e) => updateReason(0, student.studentId, e.target.value)}
-                                                            className={styles.reasonSelect}
-                                                        >
-                                                            {absentReasons.map((reason) => (
-                                                                <option key={reason} value={reason}>
-                                                                    {reason}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    ) : (
-                                                        <span className={styles.reasonText}>
-                                {record.reason || "Sababsiz"}
-                            </span>
-                                                    );
-                                                }
-                                                return null;
-                                            })()}
+                                        <td className={styles.center}>
+                                            <h3 className={styles.text}>{student.phone || "-"}</h3>
                                         </td>
                                     )}
+
+                                    {/* === Sabab (faqat daily uchun) === */}
+                                    {filterType === "daily" && (
+                                        dataToDisplay.map((day, dayIndex)=> renderReasonCell(day, dayIndex, student))
+                                    )}
+
 
                                     {/* === Har bir sana uchun attendance cell === */}
                                     {dataToDisplay.map((day, dayIndex) => renderAttendanceCell(day, dayIndex, student))}
 
                                     {/* === Foiz (%) === */}
                                     <td className={styles.percentageCell}>
-            <span
-                className={`${styles.percentageBadge} ${styles[getPercentageClass(calculateAttendanceStats(student.studentId))]}`}
-            >
-                {calculateAttendanceStats(student.studentId)}%
-            </span>
+                                        <span
+                                        className={`${styles.percentageBadge} ${styles[getPercentageClass(calculateAttendanceStats(student.studentId))]}`}
+                                        >
+                                        {calculateAttendanceStats(student.studentId)}%
+                                        </span>
                                     </td>
                                 </tr>
                             ))}
