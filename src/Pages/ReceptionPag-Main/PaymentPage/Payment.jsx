@@ -8,6 +8,8 @@ import styles from "./page.module.scss"
 
 export default function Payment() {
     const [activeTab, setActiveTab] = useState("new-payment")
+
+
     const [payments, setPayments] = useState([
         {
             id: "1",
@@ -146,7 +148,7 @@ export default function Payment() {
                                           <h2 className={styles.listTitle}>To'lovlar Tarixi</h2>
                                           <p className={styles.listSubtitle}>Barcha amalga oshirilgan to'lovlarni ko'ring va boshqaring</p>
                                       </div>
-                                      <PaymentsList payments={payments} />
+                                      <PaymentsList />
                                   </div>
                               )}
                           </div>

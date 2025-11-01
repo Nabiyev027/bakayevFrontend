@@ -3,45 +3,32 @@
 import { useState, useEffect } from "react"
 import { CreditCard, DollarSign, Calendar, User, BookOpen, Users, GraduationCap, ChevronDown } from "lucide-react"
 import styles from "./payments-list.module.scss"
+import ApiCall from "../../../../Utils/ApiCall";
+import {toast, ToastContainer} from "react-toastify";
+import {FaCheckCircle} from "react-icons/fa";
+import {GiSandsOfTime} from "react-icons/gi";
 
-// Mock data for teachers, groups, and students
-const teachers = [
-    { id: "1", name: "Aziz Karimov", subject: "Frontend Development" },
-    { id: "2", name: "Malika Tosheva", subject: "Backend Development" },
-    { id: "3", name: "Bobur Rahimov", subject: "Mobile Development" },
-    { id: "4", name: "Dilnoza Ahmadova", subject: "UI/UX Design" },
-    { id: "5", name: "Jasur Tursunov", subject: "Data Science" },
-]
 
-const groups = [
-    { id: "1", name: "Frontend-01", teacherId: "1", course: "Frontend Development" },
-    { id: "2", name: "Frontend-02", teacherId: "1", course: "Frontend Development" },
-    { id: "3", name: "Backend-01", teacherId: "2", course: "Backend Development" },
-    { id: "4", name: "Backend-02", teacherId: "2", course: "Backend Development" },
-    { id: "5", name: "Mobile-01", teacherId: "3", course: "Mobile Development" },
-    { id: "6", name: "UI/UX-01", teacherId: "4", course: "UI/UX Design" },
-    { id: "7", name: "DataScience-01", teacherId: "5", course: "Data Science" },
-]
 
-const students = [
-    { id: "1", name: "Alisher Karimov", groupId: "1" },
-    { id: "2", name: "Malika Tosheva", groupId: "1" },
-    { id: "3", name: "Bobur Rahimov", groupId: "1" },
-    { id: "4", name: "Dilnoza Ahmadova", groupId: "2" },
-    { id: "5", name: "Jasur Tursunov", groupId: "3" },
-    { id: "6", name: "Nigora Karimova", groupId: "3" },
-    { id: "7", name: "Sardor Umarov", groupId: "4" },
-    { id: "8", name: "Feruza Nazarova", groupId: "5" },
-    { id: "9", name: "Otabek Salimov", groupId: "6" },
-    { id: "10", name: "Madina Yusupova", groupId: "7" },
-]
+export function PaymentsList() {
+    const resId = localStorage.getItem("userId");
+    const selectedRole = localStorage.getItem("selectedRole");
+    const [branches, setBranches] = useState([])
+    const [selBranch, setSelBranch] = useState(null)
+    const [teachers, setTeachers] = useState([])
+    const [selTeacher, setSelTeacher] = useState(null)
+    const [groups, setGroups] = useState([])
+    const [selGroup, setSelGroup] = useState(null);
+    const [students, setStudents] = useState([])
+    const [selStudent, setSelStudent] = useState(null);
 
-export function PaymentsList({ payments }) {
+    const [payments, setPayments] = useState([])
+
     // Get current month's start and end dates
     const getCurrentMonthRange = () => {
         const now = new Date()
         const start = new Date(now.getFullYear(), now.getMonth(), 1)
-        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+        const end = new Date(now.getFullYear(), now.getMonth()+1, 1)
 
         return {
             start: start.toISOString().split("T")[0],
@@ -50,6 +37,7 @@ export function PaymentsList({ payments }) {
     }
 
     const [filters, setFilters] = useState({
+        filialId: "",
         teacherId: "",
         groupId: "",
         studentId: "",
@@ -58,52 +46,143 @@ export function PaymentsList({ payments }) {
         paymentMethod: "all",
     })
 
-    const [filteredGroups, setFilteredGroups] = useState([])
-    const [filteredStudents, setFilteredStudents] = useState([])
+    useEffect(() => {
+        if (selGroup && selGroup.id) {
+            getPayments(selGroup);
+        }
+    }, [selGroup, selStudent, filters.dateFrom, filters.dateTo, filters.paymentMethod]);
+
+    const getPayments = async (group) => {
+        if (!group || !group.id) return;
+
+        try {
+            let url = `/payment/getPayments?groupId=${group.id}&dateFrom=${filters.dateFrom}&dateTo=${filters.dateTo}&paymentMethod=${filters.paymentMethod}`;
+            if (selStudent !== null) {
+                url += `&studentId=${selStudent.id}`;
+            }
+
+            const res = await ApiCall(url, {method: "GET"});
+            if (res.data) {
+                setPayments(res.data);
+            } else {
+                setPayments([]);
+                toast.warning("Data not found");
+            }
+        } catch (err) {
+            toast.error(err.response?.message || "Failed to get Data");
+        }
+    };
+
     const [dropdowns, setDropdowns] = useState({
+        branch: false,
         teacher: false,
         group: false,
         student: false,
     })
 
-    // Filter groups based on selected teacher
     useEffect(() => {
-        if (filters.teacherId) {
-            const filtered = groups.filter((group) => group.teacherId === filters.teacherId)
-            setFilteredGroups(filtered)
-            setFilters((prev) => ({ ...prev, groupId: "", studentId: "" }))
-        } else {
-            setFilteredGroups([])
+        if(selectedRole==="ROLE_MAIN_RECEPTION"){
+            getFilials()
+        }else {
+            getFilialByReceptionId();
         }
-    }, [filters.teacherId])
+    }, []);
 
-    // Filter students based on selected group
+
     useEffect(() => {
-        if (filters.groupId) {
-            const filtered = students.filter((student) => student.groupId === filters.groupId)
-            setFilteredStudents(filtered)
-            setFilters((prev) => ({ ...prev, studentId: "" }))
-        } else {
-            setFilteredStudents([])
+        if (filters.filialId) {
+            getTeacherByFilial(filters.filialId);
         }
-    }, [filters.groupId])
+    }, [filters.filialId]);
 
-    const filteredPayments = payments.filter((payment) => {
-        // Student filter
-        const matchesStudent =
-            !filters.studentId || students.find((s) => s.id === filters.studentId)?.name === payment.studentName
+    useEffect(() => {
+        if (selTeacher && selTeacher.id) {
+            getGroups()
+        }
+    }, [selTeacher]);
 
-        // Payment method filter
-        const matchesMethod = filters.paymentMethod === "all" || payment.paymentMethod === filters.paymentMethod
+    useEffect(() => {
+        if(selGroup && selGroup.id) {
+            getStudents()
+        }
+    }, [selGroup]);
 
-        // Date range filter
-        const paymentDate = new Date(payment.date)
-        const fromDate = new Date(filters.dateFrom)
-        const toDate = new Date(filters.dateTo)
-        const matchesDate = paymentDate >= fromDate && paymentDate <= toDate
 
-        return matchesStudent && matchesMethod && matchesDate
-    })
+    async function getFilials() {
+
+        try {
+            const res = await ApiCall("/filial/getAll",{method:"GET"});
+            setBranches(res.data);
+            setTeachers([])
+            setSelTeacher(null)
+            setGroups([])
+            setSelGroup(null)
+            setStudents([])
+            setSelStudent(null)
+        } catch (err) {
+            const errorMsg = err.response?.data || err.message || "Filial not found";
+            toast.error(errorMsg);
+        }
+    }
+
+    async function getFilialByReceptionId() {
+        try {
+            const res = await ApiCall(`/filial/getOne/${resId}`, { method: "GET" });
+            setSelBranch(res.data);
+        } catch (err) {
+            const errorMsg = err.response?.data || err.message || "Filial not found";
+            toast.error(errorMsg);
+        }
+    }
+
+    async function getTeacherByFilial(selBranchId) {
+        try {
+            const res = await ApiCall(`/user/teacher/${selBranchId}`, { method: "GET" });
+            if (res.data.length === 0) {
+                // 🔥 O'qituvchi topilmagan holatda tozalaymiz
+                setTeachers([]);
+                setSelTeacher(null);
+                setGroups([]);
+                setSelGroup(null);
+                setStudents([]);
+                setSelStudent(null);
+                setFilters(prev => ({
+                    ...prev,
+                    teacherId: "",
+                    groupId: "",
+                    studentId: ""
+                }));
+            } else {
+                // 🔥 Normal holatda o‘qituvchilarni o‘rnatamiz
+                setTeachers(res.data);
+            }
+        } catch (err) {
+            toast.error(err.response?.data || "Error to get teachers");
+        }
+    }
+
+
+    async function getGroups() {
+        try {
+            const res = await ApiCall(`/group/teacher/${selTeacher.id}`, {
+                method: "GET",
+            });
+            setGroups(res.data);
+        } catch (err) {
+            toast.error(err.response?.data || "Error to get groups");
+        }
+    }
+
+    async function getStudents() {
+        try {
+            const res = await ApiCall(`/user/student?groupId=${selGroup.id}`, {
+                method: "GET",
+            });
+            setStudents(res.data);
+        } catch (err) {
+            toast.error(err.response?.data || "Error to get students");
+        }
+    }
 
     const formatDate = (dateString) => {
         const date = new Date(dateString)
@@ -136,51 +215,107 @@ export function PaymentsList({ payments }) {
 
     const getSelectedText = (type) => {
         switch (type) {
+            case "branch":
+                return selBranch
+                    ? branches.find((f) => f.id === selBranch.id)?.name || "Filial tanlanmagan"
+                    : "Filialni tanlang";
             case "teacher":
-                return filters.teacherId ? teachers.find((t) => t.id === filters.teacherId)?.name : "O'qituvchini tanlang"
+                if (!filters.filialId) {
+                    return "Avval filialni tanlang";
+                }
+                if (teachers.length === 0) {
+                    return "Filialda o‘qituvchi topilmadi";
+                }
+                return filters.teacherId
+                    ? teachers.find((t) => t.id === filters.teacherId)?.name
+                    : "O'qituvchini tanlang";
             case "group":
                 return filters.groupId
-                    ? filteredGroups.find((g) => g.id === filters.groupId)?.name
+                    ? groups.find((g) => g.id === filters.groupId)?.name
                     : filters.teacherId
                         ? "Guruhni tanlang"
-                        : "Avval o'qituvchini tanlang"
+                        : "Avval o'qituvchini tanlang";
+
             case "student":
                 return filters.studentId
-                    ? filteredStudents.find((s) => s.id === filters.studentId)?.name
+                    ? students.find((s) => s.id === filters.studentId)?.name
                     : filters.groupId
                         ? "Talabani tanlang"
-                        : "Avval guruhni tanlang"
+                        : "Avval guruhni tanlang";
             default:
-                return ""
+                return "";
         }
-    }
+    };
+
 
     return (
         <div className={styles.container}>
+            <ToastContainer />
             {/* Filters */}
             <div className={styles.filtersSection}>
                 {/* Teacher, Group, Student Selects */}
                 <div className={styles.selectFilters}>
+
+                    {
+                        selectedRole === "ROLE_MAIN_RECEPTION" && <div className={styles.selectGroup}>
+                            <label className={styles.label}>
+                                <BookOpen className={styles.labelIcon} />
+                                Filial
+                            </label>
+                            <div className={styles.selectWrapper}>
+                                <button
+                                    type="button"
+                                    className={styles.select}
+                                    onClick={() => toggleDropdown("branch")}
+                                >
+                                    <span>{getSelectedText("branch")}</span>
+                                    <ChevronDown className={styles.chevron} />
+                                </button>
+                                {dropdowns.branch && (
+                                    <div className={styles.dropdown}>
+                                        {branches.map((filial) => (
+                                            <div
+                                                key={filial.id}
+                                                className={styles.dropdownItem}
+                                                onClick={() => {
+                                                    setSelBranch(filial); // filial obyektini saqlaymiz
+                                                    selectOption("branch", filial.id, "filialId");
+                                                    setDropdowns((prev) => ({ ...prev, branch: false }));
+                                                }}
+                                            >
+                                                {filial.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    }
+
+
+
                     <div className={styles.selectGroup}>
                         <label className={styles.label}>
                             <GraduationCap className={styles.labelIcon} />
                             O'qituvchi
                         </label>
                         <div className={styles.selectWrapper}>
-                            <button type="button" className={styles.select} onClick={() => toggleDropdown("teacher")}>
+                            <button type="button"
+                                    className={`${styles.select} ${(!filters.filialId || teachers.length === 0) ? styles.disabled : ""}`}
+                                    onClick={() => toggleDropdown("teacher")}>
                                 <span>{getSelectedText("teacher")}</span>
                                 <ChevronDown className={styles.chevron} />
                             </button>
                             {dropdowns.teacher && (
                                 <div className={styles.dropdown}>
-                                    <div className={styles.dropdownItem} onClick={() => selectOption("teacher", "", "teacherId")}>
-                                        Barchasi
-                                    </div>
                                     {teachers.map((teacher) => (
                                         <div
                                             key={teacher.id}
                                             className={styles.dropdownItem}
-                                            onClick={() => selectOption("teacher", teacher.id, "teacherId")}
+                                            onClick={() => {
+                                                selectOption("teacher", teacher.id, "teacherId");
+                                                setSelTeacher(teacher); // 🔥 bu kerak
+                                            }}
                                         >
                                             <div className={styles.teacherOption}>
                                                 <span className={styles.teacherName}>{teacher.name}</span>
@@ -210,19 +345,16 @@ export function PaymentsList({ payments }) {
                             </button>
                             {dropdowns.group && filters.teacherId && (
                                 <div className={styles.dropdown}>
-                                    <div className={styles.dropdownItem} onClick={() => selectOption("group", "", "groupId")}>
-                                        Barchasi
-                                    </div>
-                                    {filteredGroups.map((group) => (
+                                    {groups.map((group) => (
                                         <div
                                             key={group.id}
                                             className={styles.dropdownItem}
-                                            onClick={() => selectOption("group", group.id, "groupId")}
+                                            onClick={() => {
+                                                selectOption("group", group.id, "groupId");
+                                                setSelGroup(group); // 🔥 qo‘shish kerak
+                                            }}
                                         >
-                                            <div className={styles.groupOption}>
-                                                <span className={styles.groupName}>{group.name}</span>
-                                                <span className={styles.courseName}>{group.course}</span>
-                                            </div>
+                                            <span>{group.name}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -247,14 +379,14 @@ export function PaymentsList({ payments }) {
                             </button>
                             {dropdowns.student && filters.groupId && (
                                 <div className={styles.dropdown}>
-                                    <div className={styles.dropdownItem} onClick={() => selectOption("student", "", "studentId")}>
-                                        Barchasi
-                                    </div>
-                                    {filteredStudents.map((student) => (
+                                    {students.map((student) => (
                                         <div
                                             key={student.id}
                                             className={styles.dropdownItem}
-                                            onClick={() => selectOption("student", student.id, "studentId")}
+                                            onClick={() => {
+                                                selectOption("student", student.id, "studentId");
+                                                setSelStudent(student); // 🔥 qo‘shish kerak
+                                            }}
                                         >
                                             {student.name}
                                         </div>
@@ -322,7 +454,7 @@ export function PaymentsList({ payments }) {
             {/* Payments Table */}
             <div className={styles.tableCard}>
                 <div className={styles.tableContent}>
-                    {filteredPayments.length === 0 ? (
+                    {payments.length === 0 ? (
                         <div className={styles.emptyState}>
                             <div className={styles.emptyIcon}>
                                 <BookOpen className={styles.emptySearchIcon} />
@@ -341,12 +473,6 @@ export function PaymentsList({ payments }) {
                                             Talaba
                                         </div>
                                     </th>
-                                    <th className={styles.headerCell}>
-                                        <div className={styles.headerContent}>
-                                            <BookOpen className={styles.headerIcon} />
-                                            Kurs
-                                        </div>
-                                    </th>
                                     <th className={styles.headerCell}>Miqdor</th>
                                     <th className={styles.headerCell}>To'lov Turi</th>
                                     <th className={styles.headerCell}>
@@ -359,27 +485,26 @@ export function PaymentsList({ payments }) {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {filteredPayments.map((payment) => (
+                                {payments?.map((payment) => (
                                     <tr key={payment.id} className={styles.dataRow}>
-                                        <td className={styles.studentName}>{payment.studentName}</td>
-                                        <td className={styles.courseName}>{payment.courseName}</td>
-                                        <td className={styles.amount}>{payment.amount.toLocaleString()} so'm</td>
+                                        <td className={styles.studentName}>{payment?.fullName}</td>
+                                        <td className={styles.amount}>{payment?.paidAmount} so'm</td>
                                         <td>
                         <span
                             className={`${styles.methodBadge} ${payment.paymentMethod === "card" ? styles.cardBadge : styles.cashBadge}`}
                         >
                           <div className={styles.badgeContent}>
                             {getPaymentMethodIcon(payment.paymentMethod)}
-                              {payment.paymentMethod === "card" ? "Karta" : "Naqd"}
+                              {payment.paymentMethod === "CARD" ? "Karta" : "Naqd"}
                           </div>
                         </span>
                                         </td>
                                         <td className={styles.date}>{formatDate(payment.date)}</td>
                                         <td>
                         <span
-                            className={`${styles.statusBadge} ${payment.status === "completed" ? styles.completedBadge : styles.pendingBadge}`}
+                            className={`${styles.statusBadge} ${payment.paymentStatus === "PAID" ? styles.completedBadge : styles.pendingBadge}`}
                         >
-                          {payment.status === "completed" ? "Bajarildi" : "Kutilmoqda"}
+                          {payment.paymentStatus === "PAID" ? <FaCheckCircle /> : <GiSandsOfTime />}
                         </span>
                                         </td>
                                     </tr>
@@ -392,24 +517,24 @@ export function PaymentsList({ payments }) {
             </div>
 
             {/* Summary */}
-            {filteredPayments.length > 0 && (
+            {payments.length > 0 && (
                 <div className={styles.summaryCard}>
                     <div className={styles.summaryContent}>
                         <div className={styles.summaryGrid}>
                             <div className={styles.summaryItem}>
                                 <p className={styles.summaryLabel}>Jami To'lovlar</p>
-                                <p className={styles.summaryValue}>{filteredPayments.length}</p>
+                                <p className={styles.summaryValue}>{payments.length}</p>
                             </div>
                             <div className={styles.summaryItem}>
                                 <p className={styles.summaryLabel}>Jami Miqdor</p>
                                 <p className={styles.summaryValue}>
-                                    {filteredPayments.reduce((sum, p) => sum + p.amount, 0).toLocaleString()} so'm
+                                    {payments.reduce((sum, p) => sum + p.amount, 0).toLocaleString()} so'm
                                 </p>
                             </div>
                             <div className={styles.summaryItem}>
                                 <p className={styles.summaryLabel}>Bajarilgan To'lovlar</p>
                                 <p className={`${styles.summaryValue} ${styles.completedValue}`}>
-                                    {filteredPayments.filter((p) => p.status === "completed").length}
+                                    {payments.filter((p) => p.status === "PAID").length}
                                 </p>
                             </div>
                         </div>

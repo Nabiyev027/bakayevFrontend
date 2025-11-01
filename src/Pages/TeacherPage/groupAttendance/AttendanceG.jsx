@@ -55,38 +55,38 @@ const generateDays = (month, year) => {
     return days
 }
 
-// Generate weeks for a selected month/year (can remain as it's UI specific)
-const generateWeeksInMonth = (month, year) => {
-    const weeks = []
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
 
-    let currentWeek = 1
-    const currentDate = new Date(firstDay)
+function generateWeeksInMonth(month, year) {
+    const weeks = [];
+    const firstDayOfMonth = new Date(year, month - 1, 1);
+    const lastDayOfMonth = new Date(year, month, 0);
+    let current = new Date(firstDayOfMonth);
 
-    while (currentDate <= lastDay) {
-        const weekStart = new Date(currentDate)
-        const weekEnd = new Date(currentDate)
-        weekEnd.setDate(weekEnd.getDate() + 6)
+    // Haftaning 1-kunini dushanbaga surish
+    const dayOfWeek = current.getDay() === 0 ? 7 : current.getDay(); // Yakshanba -> 7
+    current.setDate(current.getDate() - (dayOfWeek - 1));
 
-        if (weekEnd > lastDay) {
-            weekEnd.setTime(lastDay.getTime())
-        }
+    let weekNumber = 1;
+
+    while (current <= lastDayOfMonth) {
+        const startDay = new Date(current);
+        const endDay = new Date(current);
+        endDay.setDate(startDay.getDate() + 6);
 
         weeks.push({
-            number: currentWeek,
-            label: `${currentWeek}-hafta`,
-            startDate: weekStart.getDate(),
-            endDate: weekEnd.getDate(),
-            fullLabel: `${currentWeek}-hafta (${weekStart.getDate()}-${weekEnd.getDate()})`,
-        })
+            number: weekNumber,
+            startDay: startDay.getMonth() === (month - 1) ? startDay.getDate() : 1,
+            endDay: endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate(),
+            fullLabel: `${weekNumber}-hafta (${startDay.getMonth() === (month - 1) ? startDay.getDate() : 1}–${endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate()})`
+        });
 
-        currentDate.setDate(currentDate.getDate() + 7)
-        currentWeek++
+        current.setDate(current.getDate() + 7);
+        weekNumber++;
     }
 
-    return weeks
+    return weeks;
 }
+
 
 
 export default function AttendanceGroup() {
@@ -104,7 +104,7 @@ export default function AttendanceGroup() {
     const [selectedDay, setSelectedDay] = useState(new Date().getDate())
     const today = new Date().getDate();
     const [selectedWeek, setSelectedWeek] = useState(1)
-
+    const weekDays = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
 
 
     // attendanceData will now be fetched from the backend based on filters
@@ -236,8 +236,21 @@ export default function AttendanceGroup() {
     const startEditing = () => {
         setIsEditing(true);
 
-        // Dastlabki holatda dataToDisplay ni deep copy qilib olamiz
-        setEditingData(JSON.parse(JSON.stringify(dataToDisplay)));
+        // dataToDisplay dan deep copy olish
+        const deepCopy = JSON.parse(JSON.stringify(dataToDisplay));
+        setEditingData(deepCopy);
+
+        // Har bir student uchun hozirgi holatni editedAttendance ga yozamiz
+        const initialEdited = deepCopy.flatMap(day =>
+            day.attendance.map(a => ({
+                studentId: a.studentId,
+                status: a.status,
+                cause: a.cause || "",
+            }))
+        );
+
+        setEditedAttendance(initialEdited);
+        console.log("Initial editedAttendance:", initialEdited);
     };
 
     const cancelEditing = () => {
@@ -254,31 +267,6 @@ export default function AttendanceGroup() {
             },
         }));
     };
-
-
-
-
-    const markAllForDate = (dateIndex, status) => {
-        const newEditingData = [...editingData]
-        // This assumes 'students' state is populated from backend
-        students.forEach((student) => {
-            newEditingData[dateIndex].attendance[student.id] = {
-                status: status,
-                reason: status === "absent" ? "Sababsiz" : null, // Default reason
-            }
-        })
-        setEditingData(newEditingData)
-    }
-
-
-    const getAttendanceIcon = (attendanceData) => {
-        return <div className={`${styles.statusDot} ${styles[attendanceData.status]}`}/>
-    }
-
-    const getAttendanceBadge = (attendanceData) => {
-        const statusText = attendanceData.status === "present" ? "Kelgan" : "Kelmagan"
-        return <span className={`${styles.attendanceBadge} ${styles[attendanceData.status]}`}>{statusText}</span>
-    }
 
     const calculateAttendanceStats = (studentId) => {
         const dataToUse = isEditing ? editingData : attendanceData
@@ -305,6 +293,7 @@ export default function AttendanceGroup() {
     const students = dataToDisplay[0]?.attendance || [];
     const availableDays = generateDays(selectedMonth, selectedYear)
     const availableWeeks = generateWeeksInMonth(selectedMonth, selectedYear)
+
 
     const getPeriodInfo = () => {
         if (filterType === "monthly") {
@@ -377,8 +366,33 @@ export default function AttendanceGroup() {
         }
     }
 
+    const markAllForDate = (status) => {
+        // 1️⃣ Har bir student uchun statusni tahrir ro‘yxatiga yozamiz
+        setEditedAttendance((prev) => {
+            const updatedList = students.map((student) => ({
+                studentId: student.studentId || student.id,
+                status,
+                cause: "",
+            }));
+            return updatedList;
+        });
 
-    function updateAttendance(studentId, status) {
+        // 2️⃣ Jadvaldagi `select`lar ham darhol o‘zgarishi uchun
+        setEditingData((prevData) =>
+            prevData.map((student) => ({
+                ...student,
+                attendance: student.attendance.map((att) => ({
+                    ...att,
+                    status, // faqat statusni yangilaymiz
+                })),
+            }))
+        );
+    };
+
+
+
+
+    function updateAttendance(dayIndex,studentId, status) {
         setEditedAttendance(prev => {
             console.log("updateAttendance chaqirildi:", { studentId, status, prev });
 
@@ -439,7 +453,8 @@ export default function AttendanceGroup() {
                             {/*{record ? getAttendanceIcon(record) : null}*/}
                             {/*{record ? getAttendanceBadge(record) : null}*/}
                             <span className={styles.reasonText}>
-                                {record?.reason!==null ? record?.reason : "Unmarked" }
+                                {(record?.reason && record?.reason.trim() !== "") ? record.reason : "Unmarked"}
+
                             </span>
 
                         </div>
@@ -449,37 +464,79 @@ export default function AttendanceGroup() {
         );
     }
 
-
-    // 👇 Tepada funksiya yaratamiz
     const renderAttendanceCell = (day, dayIndex, student) => {
-        const record = day.attendance.find(a => a.studentId === student.studentId);
+        const record = isEditing
+            ? editedAttendance.find(a => a.studentId === student.studentId)
+            : day.attendance.find(a => a.studentId === student.studentId);
 
         return (
             <td key={dayIndex} className={`${styles.attendanceCell} ${isEditing ? styles.editingCell : ""}`}>
                 <div className={styles.attendanceIndicator}>
                     {isEditing ? (
                         <select
-                            defaultValue={record?.status || ""}
+                            value={record?.status || ""}
                             className={styles.attendanceSelect}
-                            onChange={(e)=>updateAttendance(student.studentId, e.target.value)}
+                            onChange={(e) => updateAttendance(dayIndex, student.studentId, e.target.value)}
                         >
-
+                            <option value="">Select</option>
                             <option value="present">Present</option>
                             <option value="absent">Absent</option>
                         </select>
                     ) : (
                         <div className={styles.attendanceDisplay}>
-                            {/*{record ? getAttendanceIcon(record) : null}*/}
-                            {/*{record ? getAttendanceBadge(record) : null}*/}
-                            <span className={styles.reasonText}>
-                                {record?.status!=="none" ? record?.status : "Unmarked" }
-                            </span>
-
+                            {record?.status!=="none" ?
+                                                            <span className={
+                                                                record?.status === "present"
+                                                                    ? styles.attendanceGreen
+                                                                        : styles.attendanceRed
+                                                            }>
+                                                                {record?.status}
+                                                            </span> :
+                                                            <span className={styles.attendanceGray}>
+                                                                Unmarked
+                                                            </span> }
                         </div>
                     )}
                 </div>
             </td>
         );
+    };
+
+    // O'rtacha davomatni hisoblaydigan umumiy funksiya
+    const calculateAverageAttendance = (type) => {
+        if (!dataToDisplay || dataToDisplay.length === 0) return 0;
+
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentWeekStart = new Date(now);
+        currentWeekStart.setDate(now.getDate() - now.getDay());
+        const currentWeekEnd = new Date(currentWeekStart);
+        currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+
+        let totalStudents = 0;
+        let totalPresent = 0;
+
+        dataToDisplay.forEach(day => {
+            const dayDate = new Date(day.date);
+
+            // filterType bo'yicha filtrlash
+            const include =
+                type === "daily"
+                    ? dayDate.toDateString() === now.toDateString()
+                    : type === "weekly"
+                        ? dayDate >= currentWeekStart && dayDate <= currentWeekEnd
+                        : dayDate.getMonth() === currentMonth; // monthly default
+
+            if (include && Array.isArray(day.attendance)) {
+                day.attendance.forEach(record => {
+                    totalStudents++;
+                    if (record.status === "present") totalPresent++;
+                });
+            }
+        });
+
+        if (totalStudents === 0) return 0;
+        return ((totalPresent / totalStudents) * 100).toFixed(2);
     };
 
 
@@ -720,8 +777,7 @@ export default function AttendanceGroup() {
 
                     {isEditing && (
                         <div>
-                            <h3 style={{fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.5rem"}}>Ommaviy
-                                amallar:</h3>
+                            <h3 style={{fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.5rem"}}>Ommaviy amallar:</h3>
                             <div className={styles.bulkActions}>
                                 {dataToDisplay.slice(0, 10).map((day, dateIndex) => (
                                     <div key={dateIndex} style={{display: "flex", alignItems: "center", gap: "0.5rem"}}>
@@ -730,13 +786,13 @@ export default function AttendanceGroup() {
                                         </span>
                                         <button
                                             className={`${styles.bulkButton} ${styles.present}`}
-                                            onClick={() => markAllForDate(dateIndex, "present")}
+                                            onClick={() => markAllForDate("present")}
                                         >
                                             Hammasi kelgan
                                         </button>
                                         <button
                                             className={`${styles.bulkButton} ${styles.absent}`}
-                                            onClick={() => markAllForDate(dateIndex, "absent")}
+                                            onClick={() => markAllForDate("absent")}
                                         >
                                             Hammasi kelmagan
                                         </button>
@@ -759,25 +815,31 @@ export default function AttendanceGroup() {
                                 <th className={styles.stickyColumn + " "}>Talaba</th>
                                 {filterType === "daily" && <th className={styles.center}>Phone</th>}
                                 {filterType === "daily" && <th className={styles.center}>Reason</th>}
-                                {dataToDisplay.map((day, index) => (
-                                    <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
-                                            <span className={styles.dateType}>
-                                                {filterType === "daily" ? "Kun" : filterType === "weekly" ? "Hafta kuni" : "Kun"}
-                                            </span>
-                                        <span className={styles.dateValue}>
-                                                {filterType === "weekly" && day.weekday ? (
-                                                    <>
-                                                        <div className={styles.weekdayName}>{day.weekday}</div>
-                                                        <div className={styles.dayNumber}>{day.dayNumber}</div>
-                                                    </>
-                                                ) : filterType === "monthly" ? (
-                                                    new Date(day.date).getDate()
-                                                ) : (
-                                                    day.date
-                                                )}
-                                            </span>
-                                    </th>
-                                ))}
+                                {dataToDisplay.map((day, index) => {
+                                    const dateObj = new Date(day.date);
+                                    const weekdayName = weekDays[dateObj.getDay()]; // 0=Yakshanba, 1=Dushanba, ...
+
+                                    return (
+                                        <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
+            <span className={styles.dateType}>
+                {filterType === "daily" ? "Sana" : filterType === "weekly" ? "" : "Kun"}
+            </span>
+                                            <span className={styles.dateValue}>
+                {filterType === "weekly" ? (
+                    <>
+                        <div className={styles.weekdayName}>{weekdayName}</div>
+                        <div className={styles.dayNumber}>{dateObj.getDate()}</div>
+                    </>
+                ) : filterType === "monthly" ? (
+                    dateObj.getDate()
+                ) : (
+                    day.date
+                )}
+            </span>
+                                        </th>
+                                    );
+                                })}
+
                                 <th className={styles.center}>Davomat %</th>
                             </tr>
                             </thead>
@@ -786,11 +848,8 @@ export default function AttendanceGroup() {
                             {dataToDisplay[0]?.attendance && dataToDisplay[0].attendance.map((student) => (
                                 <tr key={student.studentId}>
                                     {/* === Talaba ma'lumotlari === */}
-                                    <td className={`${styles.studentCell} ${styles.stickyColumn}`}>
+                                    <td className={`${styles.studentCell} ${styles.stickyColumn2}`}>
                                         <div className={styles.studentInfo}>
-                                            <div className={styles.avatar}>
-                                                <h1>{student.fullName.charAt(0)}</h1>
-                                            </div>
                                             <span>{student.fullName}</span>
                                         </div>
                                     </td>
@@ -815,7 +874,7 @@ export default function AttendanceGroup() {
                                         <span
                                         className={`${styles.percentageBadge} ${styles[getPercentageClass(calculateAttendanceStats(student.studentId))]}`}
                                         >
-                                        {calculateAttendanceStats(student.studentId)}%
+                                            {student.percent}
                                         </span>
                                     </td>
                                 </tr>
@@ -861,14 +920,8 @@ export default function AttendanceGroup() {
                         <div className={styles.statText}>
                             <p>O'rtacha davomat</p>
                             <p className={`${styles.statValue} ${styles.green}`}>
-                                {/* This calculation should reflect the actual loaded attendance for all students */}
-                                {students.length > 0
-                                    ? Math.round(
-                                        students.reduce((acc, student) => acc + calculateAttendanceStats(student.id), 0) /
-                                        students.length,
-                                    )
-                                    : 0}
-                                %
+                                {/* Group Average attendance */}
+                                {calculateAverageAttendance(filterType)}%
                             </p>
                         </div>
                         <div className={`${styles.statIcon} ${styles.green}`}/>

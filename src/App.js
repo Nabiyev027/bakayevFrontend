@@ -37,7 +37,7 @@ import Employer from "./Pages/AdminPages/employerA/Employer";
 import CommentsA from "./Pages/AdminPages/comentsA/CommentsA";
 import {LangProvider} from "./Pages/AdminPages/interfaceA/langConfig/LangContext";
 import Rating from "./Pages/TeacherPage/ratingExam/Rating";
-import AttendanceTable from "./Pages/ReceptionPag-Main/Attendance/AttendanceR";
+import AttendanceGroupForReception from "./Pages/ReceptionPag-Main/Attendance/AttendanceR";
 import AttendanceGroup from "./Pages/TeacherPage/groupAttendance/AttendanceG";
 
 
@@ -75,7 +75,7 @@ function App() {
                     <Route path={"/reception/group"} element={<Group/>}/>
                     <Route path={"/reception/payment"} element={<Payment/>}/>
                     <Route path={"/reception/setting"} element={<Setting/>}/>
-                    <Route path={"/reception/present"} element={<AttendanceTable />}/>
+                    <Route path={"/reception/present"} element={<AttendanceGroupForReception />}/>
                     <Route path={"/reception/massage"} element={<Massage/>}/>
                     <Route path={"/reception/appeal"} element={<Appeal/>}/>
                 </Route>

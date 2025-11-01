@@ -2,26 +2,25 @@
 
 import {useEffect, useState} from "react"
 import styles from "./attendanceR.module.css"
-import { Calendar, Users, Filter, Download, Edit, Save, X, Plus } from "lucide-react"
+import {Calendar, Users, Filter, Download, Edit, Save, X} from "lucide-react"
 import "./AttendanceR.scss"
-import apiCall from "../../../Utils/ApiCall";
-
-
+import {toast, ToastContainer} from "react-toastify";
+import ApiCall from "../../../Utils/ApiCall";
 
 // Months in Uzbek (can remain as it's UI specific)
 const months = [
-    { value: 0, name: "Yanvar" },
-    { value: 1, name: "Fevral" },
-    { value: 2, name: "Mart" },
-    { value: 3, name: "Aprel" },
-    { value: 4, name: "May" },
-    { value: 5, name: "Iyun" },
-    { value: 6, name: "Iyul" },
-    { value: 7, name: "Avgust" },
-    { value: 8, name: "Sentabr" },
-    { value: 9, name: "Oktabr" },
-    { value: 10, name: "Noyabr" },
-    { value: 11, name: "Dekabr" },
+    {value: 0, name: "Yanvar"},
+    {value: 1, name: "Fevral"},
+    {value: 2, name: "Mart"},
+    {value: 3, name: "Aprel"},
+    {value: 4, name: "May"},
+    {value: 5, name: "Iyun"},
+    {value: 6, name: "Iyul"},
+    {value: 7, name: "Avgust"},
+    {value: 8, name: "Sentabr"},
+    {value: 9, name: "Oktabr"},
+    {value: 10, name: "Noyabr"},
+    {value: 11, name: "Dekabr"},
 ]
 
 // Weekdays in Uzbek (can remain as it's UI specific)
@@ -39,7 +38,7 @@ const weekdays = [
 const generateYears = () => {
     const currentYear = new Date().getFullYear()
     const years = []
-    for (let i = currentYear - 2; i <= currentYear + 1; i++) {
+    for (let i = currentYear - 1; i <= currentYear + 1; i++) {
         years.push(i)
     }
     return years
@@ -55,101 +54,140 @@ const generateDays = (month, year) => {
     return days
 }
 
-// Generate weeks for a selected month/year (can remain as it's UI specific)
-const generateWeeksInMonth = (month, year) => {
-    const weeks = []
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
 
-    let currentWeek = 1
-    const currentDate = new Date(firstDay)
+function generateWeeksInMonth(month, year) {
+    const weeks = [];
+    const firstDayOfMonth = new Date(year, month - 1, 1);
+    const lastDayOfMonth = new Date(year, month, 0);
+    let current = new Date(firstDayOfMonth);
 
-    while (currentDate <= lastDay) {
-        const weekStart = new Date(currentDate)
-        const weekEnd = new Date(currentDate)
-        weekEnd.setDate(weekEnd.getDate() + 6)
+    // Haftaning 1-kunini dushanbaga surish
+    const dayOfWeek = current.getDay() === 0 ? 7 : current.getDay(); // Yakshanba -> 7
+    current.setDate(current.getDate() - (dayOfWeek - 1));
 
-        if (weekEnd > lastDay) {
-            weekEnd.setTime(lastDay.getTime())
-        }
+    let weekNumber = 1;
+
+    while (current <= lastDayOfMonth) {
+        const startDay = new Date(current);
+        const endDay = new Date(current);
+        endDay.setDate(startDay.getDate() + 6);
 
         weeks.push({
-            number: currentWeek,
-            label: `${currentWeek}-hafta`,
-            startDate: weekStart.getDate(),
-            endDate: weekEnd.getDate(),
-            fullLabel: `${currentWeek}-hafta (${weekStart.getDate()}-${weekEnd.getDate()})`,
-        })
+            number: weekNumber,
+            startDay: startDay.getMonth() === (month - 1) ? startDay.getDate() : 1,
+            endDay: endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate(),
+            fullLabel: `${weekNumber}-hafta (${startDay.getMonth() === (month - 1) ? startDay.getDate() : 1}–${endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate()})`
+        });
 
-        currentDate.setDate(currentDate.getDate() + 7)
-        currentWeek++
+        current.setDate(current.getDate() + 7);
+        weekNumber++;
     }
 
-    return weeks
+    return weeks;
 }
 
-// Mock attendance data generator and related mock data are removed.
-// This data will be fetched from your backend.
-// const generateAttendanceData = (...) => { ... }
-// const absentReasons = [...]
-// const getRandomReason = () => { ... }
 
 
-export default function AttendanceTable() {
+export default function AttendanceGroup() {
+    const resId = localStorage.getItem("userId");
+    const selectedRole = localStorage.getItem("selectedRole");
     // Mock data is removed, these would come from your backend.
-    const [mockGroups,setMockGroups] = useState([])
-    const [mockStudents,setMockStudents] = useState([])
+    const [mockGroups, setMockGroups] = useState([])
+    const [mockStudents, setMockStudents] = useState([])
     // State for selected group (will need to be initialized from backend groups)
-    const [selectedGroup, setSelectedGroup] = useState(null) // Initialize with null or a default from backend
-    const [groups, setGroups] = useState([]) // State to store groups fetched from backend
-    const [students, setStudents] = useState([]) // State to store students fetched from backend
+    const [selectedGroup, setSelectedGroup] = useState(null);
+    const [groups, setGroups] = useState([])
+    const [filials, setFilials] = useState([])
+    const [selectedFilial, setSelectedFilial] = useState(null)
 
     const [filterType, setFilterType] = useState("daily")
     const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth())
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
     const [selectedDay, setSelectedDay] = useState(new Date().getDate())
+    const today = new Date().getDate();
     const [selectedWeek, setSelectedWeek] = useState(1)
+    const weekDays = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
+
 
     // attendanceData will now be fetched from the backend based on filters
     const [attendanceData, setAttendanceData] = useState([])
     const [isEditing, setIsEditing] = useState(false)
     const [editingData, setEditingData] = useState([]) // For local changes before saving
-    const [newDate, setNewDate] = useState("")
+    const [editedAttendance, setEditedAttendance] = useState([]);
 
     // Array for absent reasons (can be fetched from backend or hardcoded if static)
-    const absentReasons = ["Kasallik", "Oilaviy sabab", "Transport muammosi", "Boshqa sabab", "Sababsiz"]
+    const absentReasons = ["Illness", "Family reason", "Transport problem", "Other reason", "No reason"]
 
-    // Effect to fetch initial data (groups, students, and initial attendance)
-    // This will run once on component mount and whenever filters change.
-    // Replace with your actual API calls.
-    // Example: Use useEffect to fetch data when selectedGroup, filterType, selectedMonth, etc. change.
-    // You'll need to handle loading states and errors.
-    // For example:
     useEffect(() => {
-        const fetchInitialData = async () => {
-            // Fetch groups
-            const groupsResponse = await apiCall('/group/getAll',{method: "Get"});
-            const groupsData = await groupsResponse.data;
-            setGroups(groupsData);
-            if (groupsData.length > 0 && selectedGroup === null) {
-                setSelectedGroup(groupsData[0].id);
-            }
+        if(selectedRole==="ROLE_MAIN_RECEPTION"){
+            getFilials()
+        }else {
+            getFilialByReceptionId();
+        }
+    }, []); // faqat bir marta chaqiriladi
 
-           if(groups.length>0){
-               // Fetch students for the selected group
-               const studentsResponse = await apiCall(`/group/${selectedGroup}`,{method: "GET"});
-               const studentsData = await studentsResponse.data;
-               setStudents(studentsData);
-
-               // Fetch attendance data based on current filters
-               const attendanceResponse = await apiCall(`/attendance/get?group=${selectedGroup}&viewType=${filterType}&year=${selectedYear}&month=${selectedMonth}&day=${selectedDay}`, {method:"get"});
-               const attendanceData = await attendanceResponse.data;
-               setAttendanceData(attendanceData);
-               setEditingData(attendanceData); // Initialize editing data with fetched data
-           }
-        };
-            fetchInitialData();
+    useEffect(() => {
+        if (selectedGroup && selectedGroup.id) {
+            getAttendanceData(selectedGroup);
+        }
     }, [selectedGroup, filterType, selectedMonth, selectedYear, selectedDay, selectedWeek]);
+
+    useEffect(() => {
+        if (!selectedFilial) return;
+
+        // 🔄 Avval guruhni reset qilamiz
+        setSelectedGroup(null);
+
+        // 🔽 Keyin yangi filial guruhlarini yuklaymiz
+        getGroupsByFilial();
+    }, [selectedFilial]);
+
+
+    async function getFilials() {
+
+        try {
+            const res = await ApiCall("/filial/getAll",{method:"GET"});
+            setFilials(res.data);
+        } catch (err) {
+            const errorMsg = err.response?.data || err.message || "Filial not found";
+            toast.error(errorMsg);
+        }
+    }
+
+    async function getFilialByReceptionId() {
+        try {
+            const res = await ApiCall(`/filial/getOne/${resId}`, { method: "GET" });
+            setSelectedFilial(res.data);
+        } catch (err) {
+            const errorMsg = err.response?.data || err.message || "Filial not found";
+            toast.error(errorMsg);
+        }
+    }
+
+
+
+    const getGroupsByFilial = async () => {
+        if (!selectedFilial || !selectedFilial.id) return;
+
+        try {
+            const res = await ApiCall(`/group?filialId=${selectedFilial.id}`, {method: "GET"});
+            setGroups(res.data);
+
+            if (res.data.length > 0) {
+                // 🆕 Har doim birinchi guruhni tanlaymiz (filial o‘zgarganda)
+                setSelectedGroup(res.data[0]);
+                await getAttendanceData(res.data[0]);
+            } else {
+                // ⚠️ Guruhlar bo‘lmasa, tozalaymiz
+                setSelectedGroup(null);
+                setAttendanceData([]);
+            }
+        } catch (err) {
+            toast.error(err.message || "Groups not found");
+        }
+    };
+
+
 
     const handleFilterChange = (newFilter) => {
         setFilterType(newFilter)
@@ -157,6 +195,32 @@ export default function AttendanceTable() {
         // Example: fetchData(selectedGroup, newFilter, selectedMonth, selectedYear, selectedDay, selectedWeek);
         setIsEditing(false) // Exit editing mode when filter changes
     }
+
+    const getAttendanceData = async (group) => {
+        if (!group || !group.id) return;
+
+        try {
+            let url = `/attendance/get?groupId=${group.id}&viewType=${filterType}`;
+            if (filterType === "daily") {
+                url += `&year=${selectedYear}&month=${selectedMonth + 1}&day=${selectedDay}`;
+            } else if (filterType === "weekly") {
+                url += `&year=${selectedYear}&month=${selectedMonth + 1}&week=${selectedWeek}`;
+            } else if (filterType === "monthly") {
+                url += `&year=${selectedYear}&month=${selectedMonth + 1}`;
+            }
+
+            const res = await ApiCall(url, {method: "GET"});
+            if (res.data) {
+                setAttendanceData(res.data);
+            } else {
+                setAttendanceData([]);
+                toast.warning("Ma'lumot topilmadi");
+            }
+        } catch (err) {
+            toast.error(err.message || "Davomat ma'lumotlarini olishda xatolik");
+        }
+    };
+
 
     const handleMonthChange = (month) => {
         const newMonth = Number.parseInt(month)
@@ -213,102 +277,29 @@ export default function AttendanceTable() {
     }
 
     const startEditing = () => {
-        setIsEditing(true)
-        // Create a deep copy of current attendanceData for editing
-        // This ensures changes are only applied when 'Save' is clicked
-        setEditingData(JSON.parse(JSON.stringify(attendanceData)))
-    }
+        setIsEditing(true);
+
+        // dataToDisplay dan deep copy olish
+        const deepCopy = JSON.parse(JSON.stringify(dataToDisplay));
+        setEditingData(deepCopy);
+
+        // Har bir student uchun hozirgi holatni editedAttendance ga yozamiz
+        const initialEdited = deepCopy.flatMap(day =>
+            day.attendance.map(a => ({
+                studentId: a.studentId,
+                status: a.status,
+                cause: a.cause || "",
+            }))
+        );
+
+        setEditedAttendance(initialEdited);
+        console.log("Initial editedAttendance:", initialEdited);
+    };
 
     const cancelEditing = () => {
-        setIsEditing(false)
-        setEditingData([]) // Clear editing data
-    }
-
-    const saveChanges = async () => {
-        // TODO: Send editingData to your backend API to persist changes
-        // Example:
-        // try {
-        //     const response = await fetch('/api/attendance/update', {
-        //         method: 'POST', // Or PUT, depending on your API
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(editingData),
-        //     });
-        //     if (response.ok) {
-        //         // If save successful, update the main attendanceData and exit editing mode
-        //         setAttendanceData(editingData);
-        //         setIsEditing(false);
-        //         setEditingData([]);
-        //         console.log("Saving attendance data:", editingData);
-        //     } else {
-        //         console.error("Failed to save changes:", await response.text());
-        //         // Handle error, e.g., show an alert to the user
-        //     }
-        // } catch (error) {
-        //     console.error("Error saving changes:", error);
-        //     // Handle network or other errors
-        // }
-    }
-
-    const updateAttendance = (dateIndex, studentId, status, reason = null) => {
-        const newEditingData = [...editingData]
-        newEditingData[dateIndex].attendance[studentId] = {
-            status: status,
-            reason: status === "absent" ? reason : null,
-        }
-        setEditingData(newEditingData)
-    }
-
-    const updateReason = (dateIndex, studentId, reason) => {
-        const newEditingData = [...editingData]
-        if (newEditingData[dateIndex].attendance[studentId].status === "absent") {
-            newEditingData[dateIndex].attendance[studentId].reason = reason
-            setEditingData(newEditingData)
-        }
-    }
-
-    const markAllForDate = (dateIndex, status) => {
-        const newEditingData = [...editingData]
-        // This assumes 'students' state is populated from backend
-        students.forEach((student) => {
-            newEditingData[dateIndex].attendance[student.id] = {
-                status: status,
-                reason: status === "absent" ? "Sababsiz" : null, // Default reason
-            }
-        })
-        setEditingData(newEditingData)
-    }
-
-    const addNewDate = () => {
-        if (!newDate) return
-
-        // TODO: Prepare data to be sent to backend to add a new attendance entry for this date
-        // This might involve creating a new entry with default 'present' for all students
-        const newAttendanceEntry = {
-            date: newDate,
-            attendance: students.reduce((acc, student) => { // Use 'students' from backend
-                acc[student.id] = {
-                    status: "present",
-                    reason: null,
-                }
-                return acc
-            }, {}),
-        }
-
-        const newData = [...editingData, newAttendanceEntry]
-        setEditingData(newData)
-        setNewDate("")
-        // TODO: You might want to immediately save this new date to backend or wait for general save
-        // If immediate save: await fetch('/api/attendance/add-date', { method: 'POST', body: JSON.stringify(newAttendanceEntry) });
-    }
-
-    const getAttendanceIcon = (attendanceData) => {
-        return <div className={`${styles.statusDot} ${styles[attendanceData.status]}`} />
-    }
-
-    const getAttendanceBadge = (attendanceData) => {
-        const statusText = attendanceData.status === "present" ? "Kelgan" : "Kelmagan"
-        return <span className={`${styles.attendanceBadge} ${styles[attendanceData.status]}`}>{statusText}</span>
-    }
+        setIsEditing(false);
+        setEditingData([]);
+    };
 
     const calculateAttendanceStats = (studentId) => {
         const dataToUse = isEditing ? editingData : attendanceData
@@ -325,12 +316,22 @@ export default function AttendanceTable() {
         return "low"
     }
 
-    // `groups` array will be populated from backend
-    const selectedGroupName = groups.find((group) => group.id.toString() === selectedGroup)?.name || "Guruh tanlanmagan"
+
+    // const selectedGroupName = selectedGroup
+    //     ? groups.find((group) => group.id === selectedGroup.id)?.name || "Guruh tanlanmagan"
+    //     : "Guruh tanlanmagan";
+
+    const selectedGroupName =
+        selectedGroup && selectedGroup.name
+            ? selectedGroup.name
+            : "Guruh tanlanmagan";
+
     const selectedMonthName = months.find((month) => month.value === selectedMonth)?.name
-    const dataToDisplay = isEditing ? editingData : attendanceData
+    const dataToDisplay = isEditing ? editingData : attendanceData;
+    const students = dataToDisplay[0]?.attendance || [];
     const availableDays = generateDays(selectedMonth, selectedYear)
     const availableWeeks = generateWeeksInMonth(selectedMonth, selectedYear)
+
 
     const getPeriodInfo = () => {
         if (filterType === "monthly") {
@@ -351,10 +352,6 @@ export default function AttendanceTable() {
         const dataForPeriod = dataToDisplay; // This is already filtered by filterType and selected date/week/month
 
         if (dataForPeriod.length > 0) {
-            // For daily view, it's just one day. For weekly/monthly, average over the days shown
-            // For stats, we usually want totals for the specific selected period (e.g., this exact day, or average across days in week/month)
-            // For simplicity, let's assume the stats cards refer to the *last day loaded in dataToDisplay* if it's a multi-day view (weekly/monthly).
-            // A more precise approach would be to calculate averages or sums based on the filter.
             const lastDayData = dataForPeriod[dataForPeriod.length - 1];
             if (lastDayData && lastDayData.attendance) {
                 Object.values(lastDayData.attendance).forEach(att => {
@@ -366,29 +363,237 @@ export default function AttendanceTable() {
                 });
             }
         }
-        return { presentCount, absentCount };
+        return {presentCount, absentCount};
     };
 
-    const { presentCount, absentCount } = getTotalPresentAbsentForSelectedPeriod();
+    const {presentCount, absentCount} = getTotalPresentAbsentForSelectedPeriod();
+
+    async function saveChanges() {
+        try {
+            // 1️⃣ Backend kutayotgan formatga o‘tkazamiz
+            const payload = editedAttendance.map(item => ({
+                studentId: item.studentId,
+                status: item.status || "none",
+                cause: item.cause || "",
+            }));
+
+            // 2️⃣ So‘rov yuboramiz
+            const response = await ApiCall(
+                `/attendance/save/${selectedGroup.id}`,   // ✅ Backend mappingiga to‘liq mos
+                { method: "PUT" },                        // ✅ axios uchun method
+                payload,                                  // ✅ bu 'data' sifatida yuboriladi
+                { "Content-Type": "application/json" }    // ✅ header
+            );
+
+            // 3️⃣ Natijani tekshiramiz
+            if (response.status === 200) {
+                toast.success("Davomat muvaffaqiyatli saqlandi!");
+                setIsEditing(false);
+                setEditedAttendance([]);
+                getAttendanceData(selectedGroup);
+            } else {
+                toast.error("Xatolik: " + response.data);
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Server bilan bog‘lanishda xatolik");
+        }
+    }
+
+    const markAllForDate = (status) => {
+        // 1️⃣ Har bir student uchun statusni tahrir ro‘yxatiga yozamiz
+        setEditedAttendance((prev) => {
+            const updatedList = students.map((student) => ({
+                studentId: student.studentId || student.id,
+                status,
+                cause: "",
+            }));
+            return updatedList;
+        });
+
+        // 2️⃣ Jadvaldagi `select`lar ham darhol o‘zgarishi uchun
+        setEditingData((prevData) =>
+            prevData.map((student) => ({
+                ...student,
+                attendance: student.attendance.map((att) => ({
+                    ...att,
+                    status, // faqat statusni yangilaymiz
+                })),
+            }))
+        );
+    };
+
+
+
+
+    function updateAttendance(dayIndex,studentId, status) {
+        setEditedAttendance(prev => {
+            console.log("updateAttendance chaqirildi:", { studentId, status, prev });
+
+            // mavjud studentni qidiramiz
+            const existingIndex = prev.findIndex(item => item.studentId === studentId);
+
+            if (existingIndex !== -1) {
+                // mavjud studentni yangilaymiz
+                const updated = [...prev];
+                updated[existingIndex] = { ...updated[existingIndex], status };
+                return updated;
+            } else {
+                // yangi student qo‘shamiz
+                return [...prev, { studentId, status, cause: "" }];
+            }
+        });
+    }
+
+    function updateReason(studentId, cause) {
+        setEditedAttendance(prev => {
+            console.log("updateReason chaqirildi:", { studentId, cause, prev });
+
+            const existingIndex = prev.findIndex(item => item.studentId === studentId);
+
+            if (existingIndex !== -1) {
+                const updated = [...prev];
+                updated[existingIndex] = { ...updated[existingIndex], cause };
+                return updated;
+            } else {
+                return [...prev, { studentId, status: "none", cause }];
+            }
+        });
+    }
+
+
+
+    function renderReasonCell(day, dayIndex, student) {
+        const record = day.attendance.find(a => a.studentId === student.studentId);
+
+        return (
+            <td key={dayIndex} className={`${styles.reasonCell} ${isEditing ? styles.editingCell : ""}`}>
+                <div className={styles.attendanceIndicator}>
+                    {isEditing ? (
+                        <select
+                            defaultValue={record?.reason || ""}
+                            className={styles.reasonSelect}
+                            onChange={(e)=>updateReason(student.studentId, e.target.value)}
+                        >
+                            <option value="">Select</option>
+                            {absentReasons.map((reason) => (
+                                <option key={reason} value={reason}>
+                                    {reason}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className={styles.attendanceDisplay}>
+
+                            <span className={styles.reasonText}>
+                                {(record?.reason && record?.reason.trim() !== "") ? record.reason : "Unmarked"}
+
+                            </span>
+
+                        </div>
+                    )}
+                </div>
+            </td>
+        );
+    }
+
+    const renderAttendanceCell = (day, dayIndex, student) => {
+        const record = isEditing
+            ? editedAttendance.find(a => a.studentId === student.studentId)
+            : day.attendance.find(a => a.studentId === student.studentId);
+
+        return (
+            <td key={dayIndex} className={`${styles.attendanceCell} ${isEditing ? styles.editingCell : ""}`}>
+                <div className={styles.attendanceIndicator}>
+                    {isEditing ? (
+                        <select
+                            value={record?.status || ""}
+                            className={styles.attendanceSelect}
+                            onChange={(e) => updateAttendance(dayIndex, student.studentId, e.target.value)}
+                        >
+                            <option value="">Select</option>
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                        </select>
+                    ) : (
+                        <div className={styles.attendanceDisplay}>
+                            {record?.status!=="none" ?
+                                                            <span className={
+                                                                record?.status === "present"
+                                                                    ? styles.attendanceGreen
+                                                                        : styles.attendanceRed
+                                                            }>
+                                                                {record?.status}
+                                                            </span> :
+                                                            <span className={styles.attendanceGray}>
+                                                                Unmarked
+                                                            </span> }
+                        </div>
+                    )}
+                </div>
+            </td>
+        );
+    };
+
+    // O'rtacha davomatni hisoblaydigan umumiy funksiya
+    const calculateAverageAttendance = (type) => {
+        if (!dataToDisplay || dataToDisplay.length === 0) return 0;
+
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentWeekStart = new Date(now);
+        currentWeekStart.setDate(now.getDate() - now.getDay());
+        const currentWeekEnd = new Date(currentWeekStart);
+        currentWeekEnd.setDate(currentWeekStart.getDate() + 6);
+
+        let totalStudents = 0;
+        let totalPresent = 0;
+
+        dataToDisplay.forEach(day => {
+            const dayDate = new Date(day.date);
+
+            // filterType bo'yicha filtrlash
+            const include =
+                type === "daily"
+                    ? dayDate.toDateString() === now.toDateString()
+                    : type === "weekly"
+                        ? dayDate >= currentWeekStart && dayDate <= currentWeekEnd
+                        : dayDate.getMonth() === currentMonth; // monthly default
+
+            if (include && Array.isArray(day.attendance)) {
+                day.attendance.forEach(record => {
+                    totalStudents++;
+                    if (record.status === "present") totalPresent++;
+                });
+            }
+        });
+
+        if (totalStudents === 0) return 0;
+        return ((totalPresent / totalStudents) * 100).toFixed(2);
+    };
+
 
     return (
         <div className={styles.container}>
+            <ToastContainer/>
             <div className={styles.header}>
                 <div className={styles.headerContent}>
                     <h1 className={"white-text"}>Talabalar Davomat Jadvali</h1>
                     <p className={"white-text"}>Talabalar davomatini kuzatish va boshqarish</p>
                 </div>
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                    <button
-                        className={`${styles.editButton} ${isEditing ? styles.editing : ""}`}
-                        onClick={isEditing ? cancelEditing : startEditing}
-                    >
-                        {isEditing ? <X size={16} /> : <Edit size={16} />}
-                        {isEditing ? "Bekor qilish" : "Tahrirlash"}
-                    </button>
+                <div style={{display: "flex", gap: "0.5rem"}}>
+                    {(filterType === "daily" && Number(selectedDay) === today) && (
+                        <button
+                            className={`${styles.editButton} ${isEditing ? styles.editing : ""}`}
+                            onClick={isEditing ? cancelEditing : startEditing}
+                        >
+                            {isEditing ? <X size={16} /> : <Edit size={16} />}
+                            {isEditing ? "Bekor qilish" : "Tahrirlash"}
+                        </button>
+                    )}
                     {/* TODO: Add export functionality here (e.g., export to CSV) */}
                     <button className={styles.exportButton}>
-                        <Download size={16} />
+                        <Download size={16}/>
                         Export
                     </button>
                 </div>
@@ -397,7 +602,7 @@ export default function AttendanceTable() {
             <div className={styles.card}>
                 <div className={styles.cardHeader}>
                     <h2 className={styles.cardTitle}>
-                        <Filter size={20} />
+                        <Filter size={20}/>
                         Filtrlar
                     </h2>
                 </div>
@@ -405,27 +610,55 @@ export default function AttendanceTable() {
                     <div className={styles.filtersContainer}>
                         <div className={styles.filterGroup}>
                             <label className={styles.filterLabel}>
-                                <Users size={16} />
+                                <Users size={16}/>
                                 Guruhni tanlang
                             </label>
-                            <select
-                                className={styles.select}
-                                value={selectedGroup || ""} // Handle null selectedGroup initially
-                                onChange={(e) => setSelectedGroup(e.target.value)}
-                                disabled={isEditing || groups.length === 0} // Disable if editing or no groups loaded
-                            >
-                                <option value="" disabled>Guruhni tanlang</option> {/* Placeholder */}
-                                {groups.map((group) => ( // Use 'groups' state
-                                    <option key={group.id} value={group.id.toString()}>
-                                        {group.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className={styles.flexContainer}>
+                                {
+                                    selectedRole === "ROLE_MAIN_RECEPTION" && <select
+                                        className={styles.select}
+                                        value={selectedFilial?.id || ""} // Handle null selectedGroup initially
+                                        onChange={(e) => {
+                                            const filial = filials.find(f => f.id === e.target.value);
+                                            setSelectedFilial(filial);
+                                        }}
+
+                                        disabled={isEditing || filials.length === 0} // Disable if editing or no groups loaded
+                                    >
+                                        <option value="" disabled>Select branch</option>
+                                        {/* Placeholder */}
+                                        {filials.map((filial) => (
+                                            <option key={filial.id} value={filial.id}>
+                                                {filial.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                }
+                                <select
+                                    className={styles.select}
+                                    value={selectedGroup?.id || ""} // Handle null selectedGroup initially
+                                    onChange={(e) => {
+                                        const group = groups.find(g => g.id === e.target.value);
+                                        setSelectedGroup(group);
+                                        getAttendanceData(group);
+                                    }}
+
+                                    disabled={isEditing || groups.length === 0} // Disable if editing or no groups loaded
+                                >
+                                    <option value="" disabled>Guruhni tanlang</option>
+                                    {/* Placeholder */}
+                                    {groups.map((group) => ( // Use 'groups' state
+                                        <option key={group.id} value={group.id}>
+                                            {group.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
 
                         <div className={styles.filterGroup}>
                             <label className={styles.filterLabel}>
-                                <Calendar size={16} />
+                                <Calendar size={16}/>
                                 Vaqt davri
                             </label>
                             <select
@@ -443,7 +676,7 @@ export default function AttendanceTable() {
                         {filterType === "daily" && (
                             <div className={styles.filterGroup}>
                                 <label className={styles.filterLabel}>
-                                    <Calendar size={16} />
+                                    <Calendar size={16}/>
                                     Yil, oy va kunni tanlang
                                 </label>
                                 <div className={styles.dateSelector}>
@@ -490,7 +723,7 @@ export default function AttendanceTable() {
                         {filterType === "weekly" && (
                             <div className={styles.filterGroup}>
                                 <label className={styles.filterLabel}>
-                                    <Calendar size={16} />
+                                    <Calendar size={16}/>
                                     Yil, oy va haftani tanlang
                                 </label>
                                 <div className={styles.weekSelector}>
@@ -537,7 +770,7 @@ export default function AttendanceTable() {
                         {filterType === "monthly" && (
                             <div className={styles.filterGroup}>
                                 <label className={styles.filterLabel}>
-                                    <Calendar size={16} />
+                                    <Calendar size={16}/>
                                     Oy va yilni tanlang
                                 </label>
                                 <div className={styles.monthYearSelector}>
@@ -574,22 +807,6 @@ export default function AttendanceTable() {
                         <h4 className={styles.periodTitle}>Tanlangan davr:</h4>
                         <p className={styles.periodDetails}>{getPeriodInfo()}</p>
                     </div>
-
-                    {isEditing && filterType === "daily" && (
-                        <div className={styles.dateSelector}>
-                            <label>Sana qo'shish:</label>
-                            <input
-                                type="date"
-                                value={newDate}
-                                onChange={(e) => setNewDate(e.target.value)}
-                                className={styles.dateInput}
-                            />
-                            <button onClick={addNewDate} className={styles.addDateButton}>
-                                <Plus size={16} />
-                                Qo'shish
-                            </button>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -598,15 +815,16 @@ export default function AttendanceTable() {
                     <div className={styles.tableHeader}>
                         <h2 className={styles.cardTitle}>
                             Davomat jadvali - {selectedGroupName}
-                            {isEditing && <span style={{ color: "#f59e0b", marginLeft: "0.5rem" }}>(Tahrirlash rejimi)</span>}
+                            {isEditing &&
+                                <span style={{color: "#f59e0b", marginLeft: "0.5rem"}}>(Tahrirlash rejimi)</span>}
                         </h2>
                         <div className={styles.legend}>
                             <div className={styles.legendItem}>
-                                <div className={`${styles.statusDot} ${styles.present}`} />
+                                <div className={`${styles.statusDot} ${styles.present}`}/>
                                 <span>Kelgan</span>
                             </div>
                             <div className={styles.legendItem}>
-                                <div className={`${styles.statusDot} ${styles.absent}`} />
+                                <div className={`${styles.statusDot} ${styles.absent}`}/>
                                 <span>Kelmagan</span>
                             </div>
                         </div>
@@ -614,29 +832,29 @@ export default function AttendanceTable() {
 
                     {isEditing && (
                         <div>
-                            <h3 style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.5rem" }}>Ommaviy amallar:</h3>
+                            <h3 style={{fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.5rem"}}>Ommaviy amallar:</h3>
                             <div className={styles.bulkActions}>
                                 {dataToDisplay.slice(0, 10).map((day, dateIndex) => (
-                                    <div key={dateIndex} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                        <span style={{ fontSize: "0.75rem", minWidth: "80px" }}>
+                                    <div key={dateIndex} style={{display: "flex", alignItems: "center", gap: "0.5rem"}}>
+                                        <span style={{fontSize: "0.75rem", minWidth: "80px"}}>
                                             {filterType === "monthly" ? new Date(day.date).getDate() : day.date}:
                                         </span>
                                         <button
                                             className={`${styles.bulkButton} ${styles.present}`}
-                                            onClick={() => markAllForDate(dateIndex, "present")}
+                                            onClick={() => markAllForDate("present")}
                                         >
                                             Hammasi kelgan
                                         </button>
                                         <button
                                             className={`${styles.bulkButton} ${styles.absent}`}
-                                            onClick={() => markAllForDate(dateIndex, "absent")}
+                                            onClick={() => markAllForDate("absent")}
                                         >
                                             Hammasi kelmagan
                                         </button>
                                     </div>
                                 ))}
                                 {dataToDisplay.length > 10 && (
-                                    <p style={{ fontSize: "0.75rem", color: "#6b7280" }}>
+                                    <p style={{fontSize: "0.75rem", color: "#6b7280"}}>
                                         ... va yana {dataToDisplay.length - 10} ta kun
                                     </p>
                                 )}
@@ -649,111 +867,74 @@ export default function AttendanceTable() {
                         <table className={styles.table}>
                             <thead className={styles.tableHead}>
                             <tr>
-                                <th className={styles.stickyColumn + " "} >Talaba</th>
-                                <th className={styles.center}>Guruh raqami</th>
-                                {filterType === "daily" && <th className={styles.center}>Sabab</th>}
-                                {dataToDisplay.map((day, index) => (
-                                    <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
-                                            <span className={styles.dateType}>
-                                                {filterType === "daily" ? "Kun" : filterType === "weekly" ? "Hafta kuni" : "Kun"}
-                                            </span>
-                                        <span className={styles.dateValue}>
-                                                {filterType === "weekly" && day.weekday ? (
-                                                    <>
-                                                        <div className={styles.weekdayName}>{day.weekday}</div>
-                                                        <div className={styles.dayNumber}>{day.dayNumber}</div>
-                                                    </>
-                                                ) : filterType === "monthly" ? (
-                                                    new Date(day.date).getDate()
-                                                ) : (
-                                                    day.date
-                                                )}
-                                            </span>
-                                    </th>
-                                ))}
+                                <th className={styles.stickyColumn + " "}>Talaba</th>
+                                {filterType === "daily" && <th className={styles.center}>Phone</th>}
+                                {filterType === "daily" && <th className={styles.center}>Reason</th>}
+                                {dataToDisplay.map((day, index) => {
+                                    const dateObj = new Date(day.date);
+                                    const weekdayName = weekDays[dateObj.getDay()]; // 0=Yakshanba, 1=Dushanba, ...
+
+                                    return (
+                                        <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
+            <span className={styles.dateType}>
+                {filterType === "daily" ? "Sana" : filterType === "weekly" ? "" : "Kun"}
+            </span>
+                                            <span className={styles.dateValue}>
+                {filterType === "weekly" ? (
+                    <>
+                        <div className={styles.weekdayName}>{weekdayName}</div>
+                        <div className={styles.dayNumber}>{dateObj.getDate()}</div>
+                    </>
+                ) : filterType === "monthly" ? (
+                    dateObj.getDate()
+                ) : (
+                    day.date
+                )}
+            </span>
+                                        </th>
+                                    );
+                                })}
+
                                 <th className={styles.center}>Davomat %</th>
                             </tr>
                             </thead>
                             <tbody className={styles.tableBody}>
                             {/* Ensure 'students' state is populated from backend before rendering */}
-                            {students.map((student) => (
-                                <tr key={student.id}>
-                                    <td className={`${styles.studentCell} ${styles.stickyColumn}`}>
+                            {dataToDisplay[0]?.attendance && dataToDisplay[0].attendance.map((student) => (
+                                <tr key={student.studentId}>
+                                    {/* === Talaba ma'lumotlari === */}
+                                    <td className={`${styles.studentCell} ${styles.stickyColumn2}`}>
                                         <div className={styles.studentInfo}>
-                                            <div className={styles.avatar}>
-                                                {student.firstName
-                                                    .split(" ")
-                                                    .map((n) => n[0])
-                                                    .join("")}
-                                            </div>
-                                            <span>{student.firstName + " "+student.lastName}</span>
+                                            <span>{student.fullName}</span>
                                         </div>
                                     </td>
-                                    <td className={styles.rollNumber}>{student.rollNo}</td>
 
                                     {filterType === "daily" && (
-                                        <td className={styles.reasonCell}>
-                                            {dataToDisplay.length > 0 && dataToDisplay[0].attendance[student.id]?.status === "absent" && (
-                                                <>
-                                                    {isEditing ? (
-                                                        <select
-                                                            value={dataToDisplay[0].attendance[student.id]?.reason || "Sababsiz"}
-                                                            onChange={(e) => updateReason(0, student.id, e.target.value)}
-                                                            className={styles.reasonSelect}
-                                                        >
-                                                            {absentReasons.map((reason) => (
-                                                                <option key={reason} value={reason}>
-                                                                    {reason}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    ) : (
-                                                        <span className={styles.reasonText}>
-                                                                {dataToDisplay[0].attendance[student.id]?.reason || "Sababsiz"}
-                                                            </span>
-                                                    )}
-                                                </>
-                                            )}
+                                        <td className={styles.center}>
+                                            <h3 className={styles.text}>{student.phone || "-"}</h3>
                                         </td>
                                     )}
 
-                                    {dataToDisplay.map((day, dayIndex) => (
-                                        <td key={dayIndex} className={`${styles.attendanceCell} ${isEditing ? styles.editingCell : ""}`}>
-                                            <div className={styles.attendanceIndicator}>
-                                                {isEditing ? (
-                                                    <select
-                                                        value={day.attendance[student.id]?.status || "present"} // Default to present if status is undefined
-                                                        onChange={(e) =>
-                                                            updateAttendance(
-                                                                dayIndex,
-                                                                student.id,
-                                                                e.target.value,
-                                                                e.target.value === "absent" ? day.attendance[student.id]?.reason || "Sababsiz" : null,
-                                                            )
-                                                        }
-                                                        className={styles.attendanceSelect}
-                                                    >
-                                                        <option value="present">Kelgan</option>
-                                                        <option value="absent">Kelmagan</option>
-                                                    </select>
-                                                ) : (
-                                                    <div className={styles.attendanceDisplay}>
-                                                        {day.attendance[student.id] ? getAttendanceIcon(day.attendance[student.id]) : null}
-                                                        {day.attendance[student.id] ? getAttendanceBadge(day.attendance[student.id]) : null}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </td>
-                                    ))}
+                                    {/* === Sabab (faqat daily uchun) === */}
+                                    {filterType === "daily" && (
+                                        dataToDisplay.map((day, dayIndex)=> renderReasonCell(day, dayIndex, student))
+                                    )}
+
+
+                                    {/* === Har bir sana uchun attendance cell === */}
+                                    {dataToDisplay.map((day, dayIndex) => renderAttendanceCell(day, dayIndex, student))}
+
+                                    {/* === Foiz (%) === */}
                                     <td className={styles.percentageCell}>
-                                            <span
-                                                className={`${styles.percentageBadge} ${styles[getPercentageClass(calculateAttendanceStats(student.id))]}`}
-                                            >
-                                                {calculateAttendanceStats(student.id)}%
-                                            </span>
+                                        <span
+                                        className={`${styles.percentageBadge} ${styles[getPercentageClass(calculateAttendanceStats(student.studentId))]}`}
+                                        >
+                                            {student.percent}
+                                        </span>
                                     </td>
                                 </tr>
                             ))}
+
                             </tbody>
                         </table>
                     </div>
@@ -764,11 +945,11 @@ export default function AttendanceTable() {
                                 Siz hozir davomat yozuvlarini tahrirlamoqdasiz. O'zgarishlar "Saqlash" tugmasini bosganda saqlanadi.
                             </span>
                             <button onClick={saveChanges} className={styles.saveButton}>
-                                <Save size={16} />
+                                <Save size={16}/>
                                 Saqlash
                             </button>
                             <button onClick={cancelEditing} className={styles.cancelButton}>
-                                <X size={16} />
+                                <X size={16}/>
                                 Bekor qilish
                             </button>
                         </div>
@@ -784,7 +965,7 @@ export default function AttendanceTable() {
                             <p className={styles.statValue}>{students.length}</p> {/* Use 'students' state */}
                         </div>
                         <div className={`${styles.statIcon} ${styles.blue}`}>
-                            <Users size={20} />
+                            <Users size={20}/>
                         </div>
                     </div>
                 </div>
@@ -794,17 +975,11 @@ export default function AttendanceTable() {
                         <div className={styles.statText}>
                             <p>O'rtacha davomat</p>
                             <p className={`${styles.statValue} ${styles.green}`}>
-                                {/* This calculation should reflect the actual loaded attendance for all students */}
-                                {students.length > 0
-                                    ? Math.round(
-                                        students.reduce((acc, student) => acc + calculateAttendanceStats(student.id), 0) /
-                                        students.length,
-                                    )
-                                    : 0}
-                                %
+                                {/* Group Average attendance */}
+                                {calculateAverageAttendance(filterType)}%
                             </p>
                         </div>
-                        <div className={`${styles.statIcon} ${styles.green}`} />
+                        <div className={`${styles.statIcon} ${styles.green}`}/>
                     </div>
                 </div>
 
@@ -816,7 +991,7 @@ export default function AttendanceTable() {
                                 {presentCount}
                             </p>
                         </div>
-                        <div className={`${styles.statIcon} ${styles.blue}`} />
+                        <div className={`${styles.statIcon} ${styles.blue}`}/>
                     </div>
                 </div>
 
@@ -828,7 +1003,7 @@ export default function AttendanceTable() {
                                 {absentCount}
                             </p>
                         </div>
-                        <div className={`${styles.statIcon} ${styles.red}`} />
+                        <div className={`${styles.statIcon} ${styles.red}`}/>
                     </div>
                 </div>
             </div>

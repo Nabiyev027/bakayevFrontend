@@ -354,8 +354,20 @@
   position: sticky;
   left: 0;
   z-index: 10;
-  background: inherit;
-  min-width: 200px;
+  min-width: 220px;
+  width: 220px;
+  font-size: 20px;
+  background: #00D594;
+  color: white;
+}
+
+.stickyColumn2 {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--gray-200);
+  color: #f96000 !important;
+  font-size: 20px;
 }
 
 .dateHeader {
@@ -404,24 +416,11 @@
   gap: var(--spacing-md);
 }
 
-.avatar {
-  width: 2rem;
-  height: 2rem;
-  background: #dbeafe;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-color);
-  font-weight: 600;
-  font-size: var(--font-size-sm);
-}
-
 .studentInfo span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 150px;
+  /*overflow: hidden;*/
+  /*text-overflow: ellipsis;*/
+  /*white-space: nowrap;*/
+  width: 100%;
 }
 
 .rollNumber {
@@ -757,14 +756,13 @@
 }
 
 .reasonText {
-  font-size: var(--font-size-xs);
-  color: var(--danger-color);
-  background: #fee2e2;
-  border: 1px solid #fecaca;
+  font-size: var(--font-size-base);
+  color: var(--warning-color);
   border-radius: var(--spacing-xs);
   padding: 0.125rem var(--spacing-xs);
   display: inline-block;
-  font-weight: 500;
+  font-family: "SansSerif", sans-serif;
+  font-weight: 800;
   max-width: 100%;
   word-wrap: break-word;
   line-height: 1.2;
@@ -793,6 +791,42 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+.attendanceGreen {
+  font-size: var(--font-size-sm);
+  color: var(--success-color);
+  border-radius: var(--spacing-xs);
+  padding: 0.125rem var(--spacing-xs);
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+  font-weight: 700;
+  font-family: "SansSerif", sans-serif;
+}
+
+.attendanceRed{
+  font-size: var(--font-size-sm);
+  color: var(--danger-color);
+  border-radius: var(--spacing-xs);
+  padding: 0.125rem var(--spacing-xs);
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+  font-weight: 700;
+  font-family: "SansSerif", sans-serif;
+}
+
+.attendanceGray {
+  font-size: var(--font-size-sm);
+  color: var(--gray-500);
+  border-radius: var(--spacing-xs);
+  padding: 0.125rem var(--spacing-xs);
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+  font-weight: 700;
+  font-family: "SansSerif", sans-serif;
 }
 
 .reasonBadge {

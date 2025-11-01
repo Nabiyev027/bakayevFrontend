@@ -1,11 +1,11 @@
 import "./selectRoles.scss";
 import React, { useEffect, useState } from 'react';
-import mainRres from "../../Images/Logos/mainReception.png"
-import res from "../../Images/Logos/reception.png"
-import admin from "../../Images/Logos/administrator.png"
-import student from "../../Images/Logos/student2.png"
-import teacher from "../../Images/Logos/teacher.png"
-import {useNavigate} from "react-router-dom";
+import mainRres from "../../Images/Logos/mainReception.png";
+import res from "../../Images/Logos/reception.png";
+import admin from "../../Images/Logos/administrator.png";
+import student from "../../Images/Logos/student2.png";
+import teacher from "../../Images/Logos/teacher.png";
+import { useNavigate } from "react-router-dom";
 
 function SelectRoles() {
     const [roles, setRoles] = useState([]);
@@ -27,33 +27,41 @@ function SelectRoles() {
     const getReadableRole = (role) => {
         switch (role) {
             case "ROLE_RECEPTION":
-                return { name: "Reception", path: res };
+                return { displayName: "Reception", path: res };
             case "ROLE_MAIN_RECEPTION":
-                return { name: "Main Reception", path: mainRres };
+                return { displayName: "Main Reception", path: mainRres };
             case "ROLE_TEACHER":
-                return { name: "Teacher", path: teacher };
+                return { displayName: "Teacher", path: teacher };
             case "ROLE_STUDENT":
-                return { name: "Student", path: student };
+                return { displayName: "Student", path: student };
             case "ROLE_ADMIN":
-                return { name: "Admin", path: admin };
+                return { displayName: "Admin", path: admin };
             default:
-                return { name: role.replace("ROLE_", "").toLowerCase(), path: "" };
+                return { displayName: role.replace("ROLE_", ""), path: "" };
         }
     };
 
     function selectRole(role) {
-        const readableRole = getReadableRole(role);
-        localStorage.setItem("selectedRole", JSON.stringify(readableRole.name));
-        if(readableRole.name === "Teacher") {
-            navigate("/teacher");
-        }else if(readableRole.name === "Student") {
-            navigate("/student");
-        }else if(readableRole.name === "Admin") {
-            navigate("/admin");
-        }else if(readableRole.name === "Reception") {
-            navigate("/reception");
-        }else if(readableRole.name === "Main Reception") {
-            navigate("/reception");
+        // localStorage'ga ROLE_* formatda saqlanadi
+        localStorage.setItem("selectedRole", role);
+
+        // role ga qarab navigatsiya qilamiz
+        switch (role) {
+            case "ROLE_TEACHER":
+                navigate("/teacher");
+                break;
+            case "ROLE_STUDENT":
+                navigate("/student");
+                break;
+            case "ROLE_ADMIN":
+                navigate("/admin");
+                break;
+            case "ROLE_RECEPTION":
+            case "ROLE_MAIN_RECEPTION":
+                navigate("/reception");
+                break;
+            default:
+                console.warn("Noma’lum rol:", role);
         }
     }
 
@@ -63,13 +71,13 @@ function SelectRoles() {
 
             <div className={roles.length === 1 ? "single" : "wrap-role-cards"}>
                 {roles.map((role, index) => {
-                    const readableRole = getReadableRole(role);
+                    const { displayName, path } = getReadableRole(role);
                     return (
                         <div key={index} className="role-card">
-                            <h1>{readableRole.name}</h1>
-                            {readableRole.path && <img src={readableRole.path} alt={readableRole.name} width="80" />}
-                            <button onClick={()=>selectRole(role)}>
-                                Continue as {readableRole.name}
+                            <h1>{displayName}</h1>
+                            {path && <img src={path} alt={displayName} width="80" />}
+                            <button onClick={() => selectRole(role)}>
+                                Continue as {displayName}
                             </button>
                         </div>
                     );
