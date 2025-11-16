@@ -5,7 +5,7 @@ import BCouncil from "../../../Images/Logos/pngwing.com.png";
 import {Carousel} from "react-responsive-carousel";
 import Comments from "../Comment2/Comments"
 import {useOutletContext} from "react-router-dom";
-import {toast,ToastContainer} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import axios from "axios";
 import {useLang} from "../../AdminPages/interfaceA/langConfig/LangContext";
 import ApiCall from "../../../Utils/ApiCall";
@@ -14,9 +14,7 @@ function Private() {
     const {isOpen, setIsOpen} = useOutletContext();
 
     // 1) Read initial lang from localStorage
-    const [selectedLang, setSelectedLang] = useState(
-        localStorage.getItem("lang") || "UZ"
-    );
+    const [selectedLang, setSelectedLang] = useState(localStorage.getItem("lang") || "UZ");
 
     // 2) Listen for Navbar’s languageChanged event
     useEffect(() => {
@@ -30,88 +28,73 @@ function Private() {
     // 3) Title/text lookup
     const texts = {
         UZ: {
-            header: (
-                <>
+            header: (<>
                     <span>IELTS</span> yordamida <br/>
                     kelajakdagi o’z <br/>
                     <span>maqsad</span> laringizga <br/>
                     erishing!
-                </>
-            ),
+                </>),
             btn: "Sinov darsiga yozilish!",
             sect1: "Bizning manzilimiz",
-            sect2: (
-                <>
+            sect2: (<>
                     Nima bizni boshqalardan <br/>
                     ajratib turadi
-                </>
-            ),
+                </>),
             sect3: "Biz Haqimizda",
             sect5: "Ba'zi o'quvchilarimizning izohlari",
-            aboutT1:"Muvaffaqiyatli talabalar",
-            aboutT2:"O'rtacha IELTS natijasi",
-            aboutT3:"Yillik tajriba",
-            aboutT4:"Muvaffaqiyat darajasi",
-        },
-        EN: {
-            header: (
-                <>
+            aboutT1: "Muvaffaqiyatli talabalar",
+            aboutT2: "O'rtacha IELTS natijasi",
+            aboutT3: "Yillik tajriba",
+            aboutT4: "Muvaffaqiyat darajasi",
+        }, EN: {
+            header: (<>
                     Achieve your <span>goals</span> <br/>
                     of the future with <br/>
                     the help of <span>IELTS</span>!
-                </>
-            ),
+                </>),
             btn: "Sign Up for a Trial Class!",
             sect1: "Our Locations",
             sect2: "What Sets Us Apart",
             sect3: "About Us",
             sect5: "Some Student Testimonials",
-            aboutT1:"Successful students",
-            aboutT2:"Average IELTS score",
-            aboutT3:"Years of experience",
-            aboutT4:"Success rate",
-        },
-        RU: {
-            header: (
-                <>
+            aboutT1: "Successful students",
+            aboutT2: "Average IELTS score",
+            aboutT3: "Years of experience",
+            aboutT4: "Success rate",
+        }, RU: {
+            header: (<>
                     Достигайте своих <span>целей</span> <br/>
                     будущего с помощью <br/>
                     <span>IELTS</span>!
-                </>
-            ),
+                </>),
             btn: "Записаться на пробное занятие!",
             sect1: "Наши локации",
             sect2: "Что выделяет нас",
             sect3: "О нас",
             sect5: "Отзывы студентов",
-            aboutT1:"Успешные студенты",
-            aboutT2:"Средний балл IELTS",
-            aboutT3:"Стаж работы",
-            aboutT4:"Уровень успеваемости",
+            aboutT1: "Успешные студенты",
+            aboutT2: "Средний балл IELTS",
+            aboutT3: "Стаж работы",
+            aboutT4: "Уровень успеваемости",
         },
     };
 
     const t = texts[selectedLang];
 
     // (Your informs, comments, modal logic all unchanged)
-    const [informs] = useState([
-        {
-            img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F1.png&w=96&q=75",
-            title: "Sifatli ta'lim",
-            desc: "Bizning darslar qiziqarli va maroqli tarzda o'tiladi...",
-        },
-        {
-            img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F2.png&w=96&q=75",
-            title: "Tajribali ustozlar",
-            desc: "Darslar British Council sertifikatiga ega ustozlar tomonidan olib boriladi...",
-        },
-        {
-            img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F3.png&w=96&q=75",
-            title: "Interaktiv metodlar",
-            desc: "Gapirish ko'nikmasini rivojlantirish uchun interaktiv usullar qo'llaniladi...",
-        },
-    ]);
-
+    const [informs] = useState([{
+        img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F1.png&w=96&q=75",
+        title: "Sifatli ta'lim",
+        desc: "Bizning darslar qiziqarli va maroqli tarzda o'tiladi...",
+    }, {
+        img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F2.png&w=96&q=75",
+        title: "Tajribali ustozlar",
+        desc: "Darslar British Council sertifikatiga ega ustozlar tomonidan olib boriladi...",
+    }, {
+        img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F3.png&w=96&q=75",
+        title: "Interaktiv metodlar",
+        desc: "Gapirish ko'nikmasini rivojlantirish uchun interaktiv usullar qo'llaniladi...",
+    },]);
 
 
     const [newComment, setNewComment] = useState({firstName: "", lastName: "", text: "", rate: 0});
@@ -122,8 +105,8 @@ function Private() {
     const [videoModal, setVideoModal] = useState(false);
     const [selVideoUrl, setSelVideoUrl] = useState("");
 
-    const [differences,setDifferences] = useState([]);
-    const [comments,setComments] = useState([]);
+    const [differences, setDifferences] = useState([]);
+    const [comments, setComments] = useState([]);
 
     const {lang, isReady} = useLang();
 
@@ -134,7 +117,7 @@ function Private() {
         getAboutSect();
         getDifferenceSect()
         getComments()
-    },[selectedLang])
+    }, [selectedLang])
 
     async function getHeaderInfo() {
         try {
@@ -177,41 +160,37 @@ function Private() {
     }
 
 
-
     function toggleModal() {
         setActiveModal(p => !p);
         setNewComment({firstName: "", lastName: "", text: "", rate: 0});
     }
 
-    function showVideo(url){
+    function showVideo(url) {
         setSelVideoUrl(url)
         setVideoModal(true)
     }
 
-    function toggleVideoModal(){
+    function toggleVideoModal() {
         setVideoModal(!videoModal);
         setSelVideoUrl("")
     }
 
-    function handlePostMessage(){
-        try{
-            axios.post("http://localhost:8080/comment", newComment).then(res=>{
+    function handlePostMessage() {
+        try {
+            axios.post("http://localhost:8080/comment", newComment).then(res => {
                 toast.success(res.data);
                 toggleModal()
             })
-        }catch(err){
-            const message =
-                err.response?.data || "Xatolik yuz berdi";
+        } catch (err) {
+            const message = err.response?.data || "Xatolik yuz berdi";
             toast.warn(message);
         }
     }
 
-    return (
-        <div className="wrapper-home">
+    return (<div className="wrapper-home">
             <ToastContainer/>
 
-            {activeModal && (
-                <div className="custom-modal-overlay" onClick={toggleModal}>
+            {activeModal && (<div className="custom-modal-overlay" onClick={toggleModal}>
                     <div
                         className="custom-modal-content"
                         onClick={(e) => e.stopPropagation()}
@@ -247,12 +226,13 @@ function Private() {
                                     onChange={(e) => {
                                         const words = e.target.value.trim().split(/\s+/); // bo'shliqlar bo'yicha bo'lish
                                         if (words.length <= 50) {
-                                            setNewComment({ ...newComment, text: e.target.value });
+                                            setNewComment({...newComment, text: e.target.value});
                                         }
                                     }}
                                     value={newComment.text}
                                 ></textarea>
-                                <small>{newComment.text.trim().split(/\s+/).filter(w => w !== "").length}/50 words</small>
+                                <small>{newComment.text.trim().split(/\s+/).filter(w => w !== "").length}/50
+                                    words</small>
                             </label>
                             <label>
                                 <h3>Rating (1 - 5)</h3>
@@ -265,11 +245,9 @@ function Private() {
                             <button onClick={handlePostMessage} className={"btn"}>save</button>
                         </div>
                     </div>
-                </div>
-            )}
+                </div>)}
 
-            {videoModal && (
-                <div className="custom-modal-video-overlay" onClick={toggleVideoModal}>
+            {videoModal && (<div className="custom-modal-video-overlay" onClick={toggleVideoModal}>
                     <div
                         className="custom-modal-video-content"
                         onClick={(e) => e.stopPropagation()}
@@ -279,21 +257,39 @@ function Private() {
                         </button>
                         <div className="custom-modal-video-body">
                             <video key={selVideoUrl} className="video-card" controls>
-                                <source src={`${BaseUrl}${selVideoUrl}`} type="video/mp4" />
+                                <source src={`${BaseUrl}${selVideoUrl}`} type="video/mp4"/>
                                 Brauzeringiz videoni qo‘llab-quvvatlamaydi.
                             </video>
                         </div>
                     </div>
-                </div>
-            )}
+                </div>)}
 
             <div className="container-1"
                  style={{
-                backgroundImage: `url('${BaseUrl}${headerInfo.imgUrl}')`,
-            }}>
+                     backgroundImage: `url('${BaseUrl}${headerInfo.imgUrl}')`,
+                 }}>
                 <header className="header">
                     <div className="head-box">
-                        <h2>{headerInfo.title}</h2>
+                        <h2>
+                            {headerInfo?.title
+                                ?.split(" ")
+                                .reduce((acc, word, i) => {
+                                    const index = Math.floor(i / 3);
+                                    if (!acc[index]) acc[index] = [];
+                                    acc[index].push(word);
+                                    return acc;
+                                }, [])
+                                .map((group, i) => (<span key={i}>
+        {group.map((word, j) => (<React.Fragment key={j}>
+            <span className={word.toLowerCase() === "ielts" ? "red-word" : ""}>
+              {word}
+            </span>{" "}
+            </React.Fragment>))}
+                                        <br/>
+      </span>))}
+                        </h2>
+
+
                     </div>
                     <img src={BCouncil} className="ico" alt="#british council"/>
                     <button onClick={() => setIsOpen((p) => !p)} className="btn">
@@ -360,81 +356,79 @@ function Private() {
                     </div>
 
                     <div className="grid-boxes">
-                        {differences&&differences.map((item, index) => (
-                            <div className="card-grid" key={index}>
+                        {differences && differences.map((item, index) => (<div className="card-grid" key={index}>
                                 <img src={`${BaseUrl}${item.imgUrl}`} alt={`img-${index}`}/>
                                 <h3>{item.title}</h3>
                                 <p>{item.description}</p>
-                            </div>
-                        ))}
+                            </div>))}
                     </div>
                 </div>
             </section>
 
-            <section className="sect-3">
-                <div className="container-2">
-                    <section className="about-us">
+        <section className="sect-3">
+            <div className="container-2">
+                <section className="about-us">
 
-                        <div className="about-us__header">
-                            <h2 className="about-us__title">{t.sect3}</h2>
-                        </div>
+                    <div className="about-us__header">
+                        <h2 className="about-us__title">{t.sect3}</h2>
+                    </div>
 
-                        <div className="about-us__content">
-                            <div className="about-us__left">
-                                <div className="about-us__image-container">
-                                    <img src={`${BaseUrl}${aboutSection.imgUrl}`} alt="IELTS wooden blocks"
-                                         className="about-us__image"/>
-                                    <div className="about-us__image-overlay"></div>
-                                </div>
-
-                                <div className="about-us__text">
-                                    <p>
-                                        {aboutSection.desc1}
-                                    </p>
-                                    <p>
-                                        {aboutSection.desc2}
-                                    </p>
-                                </div>
+                    <div className="about-us__content">
+                        <div className="about-us__left">
+                            <div className="about-us__image-container">
+                                <img src={`${BaseUrl}${aboutSection.imgUrl}`} alt="IELTS wooden blocks"
+                                     className="about-us__image"/>
+                                <div className="about-us__image-overlay"></div>
                             </div>
 
-                            <div className="about-us__right">
-                                <div className="about-us__video-container">
+                            <div className="about-us__text">
+                                <p>
+                                    {aboutSection.desc1}
+                                </p>
+                                <p>
+                                    {aboutSection.desc2}
+                                </p>
+                            </div>
+                        </div>
 
-                                    <img onClick={()=>showVideo(aboutSection.videoUrl)} src={`${BaseUrl}${aboutSection.videoThumbnailUrl}`} alt=""/>
+                        <div className="about-us__right">
+                            <div className="about-us__video-container">
 
-                                    <div className="video-play-overlay">
-                                        <div className="play-button">
-                                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                                <path d="M8 5v14l11-7z"/>
-                                            </svg>
-                                        </div>
+                                <img onClick={()=>showVideo(aboutSection.videoUrl)} src={`${BaseUrl}${aboutSection.videoThumbnailUrl}`} alt=""/>
+
+                                <div className="video-play-overlay">
+                                    <div className="play-button">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M8 5v14l11-7z"/>
+                                        </svg>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-                        <div className="about-us__stats">
-                            <div className="stat-item">
-                                <div className="stat-number">{aboutSection.successfulStudents}</div>
-                                <div className="stat-label">{t.aboutT1}</div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-number">{aboutSection.averageScore}</div>
-                                <div className="stat-label">{t.aboutT2}</div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-number">{aboutSection.yearsExperience}</div>
-                                <div className="stat-label">{t.aboutT3}</div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-number">{aboutSection.successRate}</div>
-                                <div className="stat-label">{t.aboutT4}</div>
-                            </div>
+                    </div>
+
+                    <div className="about-us__stats">
+                        <div className="stat-item">
+                            <div className="stat-number">{aboutSection.successfulStudents}</div>
+                            <div className="stat-label">{t.aboutT1}</div>
                         </div>
-                    </section>
-                </div>
-            </section>
+                        <div className="stat-item">
+                            <div className="stat-number">{aboutSection.averageScore}</div>
+                            <div className="stat-label">{t.aboutT2}</div>
+                        </div>
+                        <div className="stat-item">
+                            <div className="stat-number">{aboutSection.yearsExperience}</div>
+                            <div className="stat-label">{t.aboutT3}</div>
+                        </div>
+                        <div className="stat-item">
+                            <div className="stat-number">{aboutSection.successRate}</div>
+                            <div className="stat-label">{t.aboutT4}</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
 
             <section className="sect-5">
                 <div className="container-2">
@@ -444,7 +438,7 @@ function Private() {
                     </div>
 
                     <div className="wrap-comments">
-                        <Comments comments={comments} />
+                        <Comments comments={comments}/>
                     </div>
 
                     <button onClick={toggleModal} className={"btn-comment"}>
@@ -455,8 +449,7 @@ function Private() {
             </section>
 
 
-        </div>
-    );
+        </div>);
 }
 
 export default Private;

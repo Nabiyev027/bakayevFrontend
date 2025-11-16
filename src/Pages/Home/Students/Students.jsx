@@ -66,9 +66,10 @@ function Students() {
                     <div
                         key={item.id || item.name}
                         onClick={() => selectStudent(item)}
-                        className={`circle ${selStudent?.name === item.name ? "active" : ""}`}
+                        className={`wrap-stu ${selStudent?.name === item.name ? "active" : ""}`}
                     >
                       <img className="img" src={`${BaseUrl}${item.imgUrl}`} alt={item.name} />
+                      <h4>{item.name}</h4>
                     </div>
                 ))}
               </div>

@@ -1,12 +1,5 @@
-/* teachers.scss faylidagi barcha stillar bu yerga ko'chirildi */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 .teachers-page {
-    min-height: 100vh;
+    min-height: 80vh;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
     overflow-x: hidden;
@@ -15,9 +8,8 @@
 .hero-section {
     position: relative;
     padding: 60px 20px;
-    min-height: 100vh;
+    min-height: max-content;
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
@@ -72,7 +64,7 @@
 .hero-section .hero-content {
     position: relative;
     z-index: 2;
-    max-width: 1400px;
+    max-width: 1560px;
     width: 100%;
     margin: 0 auto;
 }
@@ -100,12 +92,14 @@
 
 .teachers-pills-container {
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 15px;
-    margin-bottom: 80px;
-    flex-wrap: wrap;
-    padding: 20px;
+    overflow-x: scroll;
+    scrollbar-width: none;
+    width: 100%;
+    justify-content: center;
+    margin: 30px auto;
+    padding: 20px 1rem;
 }
 
 .teacher-pill {
@@ -130,7 +124,7 @@
 
 .teacher-pill.inactive {
     padding: 8px;
-    width: 60px;
+    min-width: max-content;
     opacity: 0.7;
 }
 
@@ -160,9 +154,7 @@
     object-fit: cover;
 }
 
-.teacher-pill.active .pill-image {
-    margin-right: 15px;
-}
+
 
 .teacher-pill .pill-info {
     display: flex;
@@ -209,13 +201,25 @@
 .teacher-profile {
     position: relative;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    gap: 50px;
+}
+
+.teacher-profile .name-card {
+    width: 100%;
+    padding: 40px;
+    background-color: white;
+    color: #ff9a56;
+    border: 2.4px solid #ff9a56;
+    border-radius: 25px;
+    text-align: center;
 }
 
 .teacher-profile .profile-image-container {
     position: relative;
     width: 400px;
-    height: 400px;
+    height: 480px;
 }
 
 .teacher-profile .profile-background {
@@ -365,7 +369,7 @@
 
 
 .features-section {
-    padding: 100px 20px;
+    padding: 80px 15px;
     background: white;
 }
 
@@ -512,13 +516,41 @@
         height: 300px;
         margin: 0 auto;
     }
+
+    .name-card{
+        max-width: max-content;
+        margin: 0 auto;
+        padding: 10px 1.5rem !important;
+    }
+
+    .description-content p{
+        font-size: 24px !important;
+    }
+
+    .stat-card .stat-label {
+        font-size: 22px !important;
+    }
+
+    .features-section{
+        padding: 30px 1rem;
+    }
+
+    .features-grid{
+        gap: 20px !important;
+    }
+
+    .feature-card p{
+        font-size: 20px !important;
+    }
+
 }
 
 @media (max-width: 768px) {
     .teachers-pills-container {
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
         gap: 10px;
+        overflow-x: scroll;
     }
 
     .teacher-pill.active {
@@ -526,7 +558,8 @@
     }
 
     .main-title {
-        font-size: 2.5rem;
+        font-size: 32px !important;
+        margin-bottom: 40px !important;
     }
 
     .stats-grid {
@@ -541,15 +574,174 @@
 
 @media (max-width: 480px) {
     .main-title {
-        font-size: 2rem;
+        font-size: 24px !important;
+    }
+
+    .main-content{
+        display: block;
     }
 
     .hero-section {
         padding: 40px 15px;
     }
 
+    .teacher-profile{
+        margin-bottom: 15px !important;
+    }
+
     .teacher-pill.active {
-        min-width: 180px;
+        min-width: 150px;
         font-size: 0.9rem;
+    }
+
+    .teachers-pills-container {
+        min-width: 100% !important;
+        margin-bottom: 20px !important;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+        overflow-x: scroll;
+    }
+
+    .profile-image-container {
+        width: max-content !important;
+        height: max-content !important;
+    }
+
+    .profile-glow{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .profile-image{
+        width: 250px !important;
+        height: 300px !important;
+        overflow: scroll !important;
+        background-color: #00D594 !important;
+    }
+
+    .profile-image img{
+        display: block !important;
+    }
+
+    .name-card{
+        padding: 1.5rem 0.5rem !important;
+    }
+
+    .stats-grid{
+        gap: 14px !important;
+    }
+
+    .stat-value{
+        font-size: 20px !important;
+    }
+
+    .features-section{
+        padding: 20px 15px !important;
+    }
+
+    .features-section .features-grid {
+        gap: 20px;
+    }
+
+    .feature-card{
+        padding: 22px 18px !important;
+    }
+
+    .description-card{
+        padding: 22px;
+    }
+
+}
+
+@media (max-width: 375px) {
+    .main-title {
+        font-size: 22px !important;
+    }
+
+    .main-content{
+        display: block;
+    }
+
+    .hero-section {
+        padding: 20px 15px !important;
+    }
+
+    .teacher-profile{
+        margin-bottom: 15px !important;
+        font-size: 14px;
+    }
+
+    .teacher-pill.active {
+        text-align: start !important;
+        min-width: max-content !important;
+        font-size: 0.8rem !important;
+        padding: 12px !important;
+    }
+
+    .teachers-pills-container {
+        min-width: 100% !important;
+        margin-bottom: 20px !important;
+        margin-top: -15px;
+        justify-content: start;
+        align-items: center;
+        gap: 10px;
+        overflow-x: scroll;
+        padding: 5px !important;
+    }
+
+    .profile-image-container {
+        display: flex !important;
+        width: max-content !important;
+        height: max-content !important;
+    }
+
+    .profile-glow{
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .profile-image{
+        width: 250px !important;
+        height: 300px !important;
+        overflow: scroll !important;
+        background-color: #00D594 !important;
+    }
+
+    .profile-image img{
+        display: block !important;
+    }
+
+    .stats-grid{
+        gap: 14px !important;
+    }
+
+    .stats-card{
+
+    }
+
+    .stat-value{
+        font-size: 20px !important;
+    }
+
+    .features-section{
+        padding: 20px 15px !important;
+    }
+
+    .features-section .features-grid {
+        gap: 20px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .feature-card{
+        width: 100% !important;
+        padding: 22px 18px !important;
+    }
+
+    .description-card{
+        padding: 22px;
     }
 }

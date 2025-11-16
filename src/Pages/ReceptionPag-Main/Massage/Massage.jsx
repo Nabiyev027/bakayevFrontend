@@ -54,7 +54,7 @@ export default function Massage() {
 
   async function getStudentsByGroup() {
     try {
-      const res = await ApiCall(`/user/student?groupId=${formData.groupId}`, {
+      const res = await ApiCall(`/user/studentsForMessage?groupId=${selGroupId}`, {
         method: "GET",
       });
       setStudents(res.data);

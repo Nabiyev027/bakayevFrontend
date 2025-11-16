@@ -244,7 +244,7 @@
 
   .container-1 {
     margin: 0 auto;
-    height: 860px; // Ekran balandligiga moslashish
+    height: 90vh; // Ekran balandligiga moslashish
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center; // Rasmni markazga joylashtiradi
@@ -252,39 +252,46 @@
 
     .header {
       max-width: 1540px;
-      padding: 0 20px;
       margin: 0 auto;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: start;
+      padding: 1.5rem 2rem;
 
       .ico {
         width: 200px;
         position: absolute;
-        top: 0;
+        top: -5%;
         right: 20px;
         mix-blend-mode: difference; /* Orqa fon rangiga qarab rang o'zgaradi */
         filter: invert(1); /* Rasm rangini teskari qiladi */
       }
 
       .head-box {
-        padding: 2rem;
+
 
         h2 {
+          width: 80%;
           color: white;
           font-size: 76px;
-          margin-top: 4rem;
+          margin-top: 5.5rem;
           text-shadow: 5px 5px 10px black;
 
-          span {
-            color: red;
-          }
         }
+
+        .red-word {
+          color: red;
+          font-weight: bold;
+        }
+
+
       }
 
       .btn {
-        position: absolute;
-        top: 460px;
-        left: 55px;
         padding: 1rem 1.2rem;
+        margin-top: 1.2rem;
         border-radius: 50px;
         border: none;
         font-size: 25px;
@@ -303,6 +310,190 @@
           scale: 1.1;
         }
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+
+    .container-1{
+
+      .header {
+        height: 100%;
+        padding: 1rem 2rem !important;
+
+        .ico {
+          width: 150px !important;
+          position: absolute;
+          top: -2% !important;
+          right: 20px;
+          mix-blend-mode: difference; /* Orqa fon rangiga qarab rang o'zgaradi */
+          filter: invert(1); /* Rasm rangini teskari qiladi */
+        }
+
+        .head-box {
+
+
+          h2 {
+            width: 100% !important;
+            font-size: 68px !important;
+            margin-top: 4rem !important;
+            text-shadow: 5px 5px 10px black;
+
+          }
+
+          .red-word {
+            color: red;
+            font-weight: bold;
+          }
+
+
+        }
+
+        .btn {
+          padding: 1rem 1.2rem;
+          margin: 0 auto !important;
+          margin-top: 15% !important;
+          border: none;
+          font-size: 25px;
+          font-weight: 600;
+          box-shadow: 5px 5px 7px 3px white;
+          color: white;
+          background-image: linear-gradient(90deg, #f9d184, #ffaa22);
+          cursor: pointer;
+
+          &:hover {
+            box-shadow: 5px 5px 7px 3px gray;
+            color: red;
+          }
+
+          &:active {
+            scale: 1.1;
+          }
+        }
+      }
+
+    }
+
+
+  }
+
+  @media (max-width: 480px) {
+    .container-1{
+
+      .header {
+        padding: 1rem 1.5rem !important;
+
+        .ico {
+          width: 140px !important;
+          top: -2% !important;
+          mix-blend-mode: difference; /* Orqa fon rangiga qarab rang o'zgaradi */
+          filter: invert(1); /* Rasm rangini teskari qiladi */
+        }
+
+        .head-box {
+
+
+          h2 {
+            width: 100% !important;
+            font-size: 42px !important;
+            line-height: 60px !important;
+            margin-top: 4rem !important;
+            text-shadow: 5px 5px 10px black !important;
+
+          }
+
+          .red-word {
+            color: red;
+            font-weight: bold;
+          }
+
+
+        }
+
+        .btn {
+          padding: 1rem 1.2rem;
+          margin: 0 auto !important;
+          margin-top: 15% !important;
+          border: none;
+          font-size: 20px !important;
+          font-weight: 600;
+          box-shadow: none !important;
+          color: red !important;
+          background-image: linear-gradient(90deg, #f9d184, #ffaa22);
+          cursor: pointer;
+
+          &:hover {
+            box-shadow: 5px 5px 7px 3px gray;
+            color: red;
+          }
+
+          &:active {
+            scale: 1.1;
+          }
+        }
+      }
+
+    }
+
+  }
+
+  @media (max-width: 320px) {
+    .container-1{
+
+      .header {
+        padding: 0.5rem 0.8rem !important;
+
+        .ico {
+          width: 100px !important;
+          top: -3% !important;
+          mix-blend-mode: normal; /* Orqa fon rangiga qarab rang o'zgaradi */
+          filter: invert(1); /* Rasm rangini teskari qiladi */
+          color: white;
+        }
+
+        .head-box {
+
+
+          h2 {
+            width: 100% !important;
+            font-size: 28px !important;
+            line-height: 40px !important;
+            margin-top: 3.5rem !important;
+            text-shadow: 5px 5px 10px black !important;
+
+          }
+
+          .red-word {
+            color: red;
+            font-weight: bold;
+          }
+
+
+        }
+
+        .btn {
+          padding: 0.8rem;
+          margin: 0 auto !important;
+          margin-top: 15% !important;
+          border: none;
+          font-size: 18px !important;
+          font-weight: 600;
+          box-shadow: none !important;
+          color: red !important;
+          background-image: linear-gradient(90deg, #f9d184, #ffaa22);
+          cursor: pointer;
+
+          &:hover {
+            box-shadow: 5px 5px 7px 3px gray;
+            color: red;
+          }
+
+          &:active {
+            scale: 1.1;
+          }
+        }
+      }
+
     }
   }
 
@@ -348,6 +539,7 @@
       margin: 0 auto;
       max-width: 1560px;
 
+
       .head-text {
 
         &::before {
@@ -386,6 +578,59 @@
             background: #ffaa22;
             border-radius: 2px;
           }
+        }
+
+        @media (max-width: 768px) {
+
+          &__title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+          &__title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
         }
 
         &__content {
@@ -720,7 +965,6 @@
       margin: 0 auto;
       max-width: 1528px;
 
-
       .head-text {
 
         &::before {
@@ -759,6 +1003,59 @@
             background-color: #ffaa22;
             border-radius: 2px;
           }
+        }
+
+        @media (max-width: 768px) {
+
+          &__title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+          &__title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
         }
 
         &__content {
@@ -1093,6 +1390,59 @@
             background-color: #ffaa22;
             border-radius: 2px;
           }
+
+        }
+
+        @media (max-width: 768px) {
+
+          &__title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
+        }
+
+        @media (max-width: 480px) {
+
+          &__title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
         }
 
         &__content {
@@ -1104,15 +1454,25 @@
           margin-bottom: 80px;
 
           @media (max-width: 768px) {
+            display: block;
             grid-template-columns: 1fr;
-            gap: 40px;
+            gap: 35px;
           }
+
+          @media (max-width: 768px) {
+            display: block;
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+
+
         }
 
         &__left {
           display: flex;
           flex-direction: column;
           gap: 30px;
+
         }
 
         &__image-container {
@@ -1156,6 +1516,7 @@
         }
 
         &__text {
+
           p {
             font-size: 1.3rem;
             line-height: 1.8;
@@ -1178,13 +1539,37 @@
             &:last-child {
               margin-bottom: 0;
             }
+
+            @media (max-width: 768px) {
+              font-size: 20px;
+              line-height: 1.6;
+
+            }
+
+            @media (max-width: 480px) {
+              font-size: 18px;
+              line-height: 1.4;
+
+            }
+
           }
+
+
+
         }
 
         &__right {
           display: flex;
           justify-content: center;
           align-items: center;
+
+          @media (max-width: 768px) {
+            margin-top: 1rem;
+          }
+
+          @media (max-width: 480px) {
+            margin-top: 1rem;
+          }
         }
 
         &__video-container {
@@ -1200,6 +1585,7 @@
             transform: translateY(-5px);
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
           }
+
         }
 
         .video-wrapper {
@@ -1309,7 +1695,7 @@
 
         // Responsive design
         @media (max-width: 768px) {
-          padding: 60px 0;
+          //padding: 60px 0;
 
           &__content {
             margin-bottom: 60px;
@@ -1375,6 +1761,7 @@
 
       .about-us__video-container {
         animation-delay: 0.3s;
+        width: 100%;
 
         .video-card{
           width: 100%;
@@ -1383,7 +1770,31 @@
           justify-content: center;
           align-items: center;
           object-fit: cover;
+
+
         }
+
+        @media (max-width: 768px) {
+
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+        }
+
+        @media (max-width: 480px) {
+          height: 500px;
+
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+        }
+
 
       }
 
@@ -1402,7 +1813,6 @@
 
     .container-2 {
       margin: 2rem auto;
-      margin-top: 4rem;
       max-width: 1560px;
       text-align: center;
 
@@ -1446,6 +1856,58 @@
             background-color: #ffaa22;
             border-radius: 2px;
           }
+        }
+
+        @media (max-width: 768px) {
+
+          &__title {
+            font-size: 30px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
+        }
+
+        @media (max-width: 480px) {
+
+          &__title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffaa22;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+            display: inline-block;
+
+            &::after {
+              content: '';
+              position: absolute;
+              bottom: -10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 80px;
+              height: 4px;
+              background: #ffaa22;
+              border-radius: 2px;
+            }
+          }
+
         }
 
         &__content {
@@ -1680,6 +2142,7 @@
           .stat-number {
             font-size: 2rem;
           }
+
         }
 
         @media (max-width: 480px) {
@@ -1717,7 +2180,28 @@
           scale: 0.95;
         }
 
+        @media (max-width: 768px) {
+          margin-top: 1rem;
+          padding: 0.8rem;
+          font-size: 18px;
+          font-weight: 800;
+          border-radius: 12px;
+
+
+        }
+
+        @media (max-width: 480px) {
+          margin-top: 1rem;
+          padding: 0.8rem;
+          font-size: 16px;
+          font-weight: 800;
+          border-radius: 12px;
+        }
+
       }
+
+
+
     }
   }
 }

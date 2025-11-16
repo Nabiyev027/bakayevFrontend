@@ -104,6 +104,14 @@
 
   @media (max-width: 991px) {
     .container {
+      height: 10vh !important;
+
+      img {
+        height: 65px;
+        cursor: pointer;
+        margin-left: -20px;
+      }
+
       .desktop-menu,
       .btn {
         display: none;

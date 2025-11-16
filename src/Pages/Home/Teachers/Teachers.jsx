@@ -182,6 +182,9 @@ export default function Teachers() {
                   </div>
                   <div className="profile-glow"></div>
                 </div>
+                <div className={"name-card"}>
+                  <h1>{teacherData?.firstName + " " + teacherData?.lastName}</h1>
+                </div>
               </div>
 
               {/* Stats Grid */}
