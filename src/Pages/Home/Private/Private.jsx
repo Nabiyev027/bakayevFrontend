@@ -231,6 +231,7 @@ function Private() {
                                     }}
                                     value={newComment.text}
                                 ></textarea>
+                                <br/>
                                 <small>{newComment.text.trim().split(/\s+/).filter(w => w !== "").length}/50
                                     words</small>
                             </label>

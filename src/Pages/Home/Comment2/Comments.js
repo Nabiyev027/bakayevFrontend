@@ -11,7 +11,6 @@ const ImageCarousel = ({comments}) => {
 
     const [currentSlide, setCurrentSlide] = useState(0)
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const [centerMode, setCenterMode] = useState(windowWidth > 1024)
     // Effect to handle the resize event
     useEffect(() => {
         // Function to update the state with the current window width
@@ -28,38 +27,31 @@ const ImageCarousel = ({comments}) => {
         };
     }, []);
 
-    useEffect(() => {
-        setCenterMode(windowWidth > 1024)
-    }, [windowWidth]);
 
     let settings = {
         dots: false,
         infinite: true,
         speed: 1000,
-        autoplaySpeed: 3000,
-        slidesToShow: Math.min(3, comments.length),
+        slidesToShow: 3,
         slidesToScroll: 1,
-        centerPadding: "0%",
-        beforeChange: (current, next) => {
-            setCurrentSlide(next)
-        },
 
         responsive: [
             {
                 breakpoint: 1024,
                 settings: {
-                    slidesToShow: 2,
-                    centerMode: false,
-                }
-            }, {
-                breakpoint: 700,
-                settings: {
-                    centerMode: false,
-                    slidesToShow: 1,
+                    slidesToShow: 2
                 }
             },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 1
+                }
+            }
         ]
     };
+
+
 
     return (
         <div className="carousel-container">

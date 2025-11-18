@@ -2,28 +2,28 @@
   width: 100%;
   margin: 40px auto 0;
   padding: 0 0.5rem;
-
 }
 
-.slick-list{
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.slick-list {
+  height: auto !important;
 }
 
-.slick-slide{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: max-content !important;
+.slick-track {
+  height: auto !important;
+  display: flex !important;
+}
 
-  div{
-    align-items: center;
-    margin-right: -5px !important;
-  }
+.slick-slide {
+  height: auto !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
 
+.slick-slide > div {
+  width: 100%;
+  display: flex !important;
+  justify-content: center !important;
 }
 
 .commentCard {
@@ -99,6 +99,10 @@
 
 }
 
+
+
+
+
 .commentCard2 {
   margin-top: 130px;
   margin-left: 10px;
@@ -118,20 +122,6 @@
   transform: translateY(-90px);
   height: 400px;
   scale: 1.1;
-}
-
-.slick-track {
-  height: 600px;
-}
-
-.slick-slide div {
-  height: 500px;
-  display: flex;
-  justify-content: center;;
-}
-
-.slick-slide {
-  height: 500px;
 }
 
 

@@ -99,7 +99,8 @@
       }
 
       .text-area{
-        width: 500px;
+        min-width: 300px;
+        width: 100%;
         height: 220px;
         border-radius: 15px;
         resize: unset;
@@ -520,9 +521,6 @@
 
   /* Responsive */
   @media (max-width: 576px) {
-    .custom-modal-content {
-      padding: 1.5rem;
-    }
 
     .custom-modal-title {
       font-size: 1.5rem;
