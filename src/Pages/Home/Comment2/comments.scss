@@ -50,11 +50,15 @@
       width: 100%;
       height: 22%;
       display: flex !important;
+      align-items: center;
       justify-content: space-between;
       color: #141D30;
       //height: max-content !important;
 
       .circle{
+        display: flex;
+        align-items: center;
+        justify-content: center;
         min-width: 60px;
         height: 60px;
         background-color: #141D30;
@@ -145,6 +149,7 @@
   cursor: pointer;
 
 }
+
 
 .commentName {
   font-weight: 700;
@@ -322,12 +327,13 @@
 
 .slick-prev {
   left: -15px;
+  z-index: 2;
 
 
 }
 
 .slick-next {
-  right: -15px;
+  right: -10px;
 
 
 }

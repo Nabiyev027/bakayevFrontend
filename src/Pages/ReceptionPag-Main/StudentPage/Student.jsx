@@ -12,8 +12,11 @@ function Student() {
     const [editingIndex, setEditingIndex] = useState(null);
     const [editedStudent, setEditedStudent] = useState({});
     const [infoStudent, setInfoStudent] = useState(null);
-    const [groups, setGroups] = useState([]);
+    const [filialGroups, setFilialGroups] = useState([]);
+    const [studentFilialGroups, setStudentFilialGroups] = useState([]);
+    const [selGroupId, setSelGroupId] = useState("all");
     const [branches, setBranches] = useState([]);
+    const [selBranchId, setSelBranchId] = useState("all");
     const [newPassword, setNewPassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selId, setSelId] = useState("");
@@ -21,10 +24,17 @@ function Student() {
     const BaseUrl = "http://localhost:8080";
 
     useEffect(() => {
-        getGroups()
         getStudents()
+    }, [selBranchId, selGroupId]);
+
+    useEffect(() => {
         getFilials()
     }, []);
+
+    useEffect(() => {
+        setSelGroupId("all")
+        getFilialGroups()
+    }, [selBranchId]);
 
     async function getFilials() {
         try {
@@ -35,28 +45,76 @@ function Student() {
         }
     }
 
-    async function getGroups() {
+    async function getFilialGroups() {
         try {
-            const res = await ApiCall("/group/getNames", {method: "GET"})
-            setGroups(res.data);
+            if(!selBranchId || selBranchId === "all") {
+                const res = await ApiCall("/group/getNames", {method: "GET"})
+                setFilialGroups(res.data);
+            }else {
+                const res = await ApiCall(`/group?filialId=${selBranchId}`, {method: "GET"})
+                setFilialGroups(res.data);
+            }
+
         } catch (error) {
-            console.log(error);
+            toast.error(error.response.data)
+        }
+    }
+
+    async function getStudentFilialGroups(filialId) {
+
+        if (!filialId) {
+            setStudentFilialGroups([]);
+            return;
+        }
+
+        try {
+                const res = await ApiCall(`/group?filialId=${filialId}`, {method: "GET"})
+                setStudentFilialGroups(res.data);
+        } catch (error) {
+            toast.error(error.response.data)
         }
     }
 
     async function getStudents() {
         try {
-            const res = await ApiCall("/user/students", {method: "GET"});
+            const res = await ApiCall(`/user/students?filialId=${selBranchId}&groupId=${selGroupId}`, {method: "GET"});
             setStudents(res.data);
         } catch (error) {
             console.log(error);
         }
     }
 
-    const handleInputChange = (e) => {
-        const {name, value} = e.target;
-        setEditedStudent({...editedStudent, [name]: value});
+    const handleInputChange = async (e) => {
+        const { name, value } = e.target;
+
+        setEditedStudent(prev => ({ ...prev, [name]: value }));
+
+        // faqat branchId o'zgarganda ishlasin
+        if (name === "branchId") {
+
+            await getStudentFilialGroups(value);
+
+            // Agar user yana eski (talabaning asl) filialini tanlasa
+            if (value === editedStudent.filialNameDto?.id) {
+                // original groupIds qayta o'rnatamiz
+                const originalGroupIds = (editedStudent.groups || []).map(g => g.id);
+
+                setEditedStudent(prev => ({
+                    ...prev,
+                    groupIds: originalGroupIds
+                }));
+            } else {
+                // Agar boshqa filial tanlasa — guruhlarni tozalash
+                setEditedStudent(prev => ({
+                    ...prev,
+                    branchId: value,
+                    groupIds: []
+                }));
+            }
+        }
     };
+
+
 
     const handleCheckboxChange = (e, isEditing = false) => {
         const {value, checked} = e.target;
@@ -107,7 +165,7 @@ function Student() {
         setEditedStudent({});
     }
 
-    const handleEdit = (idx) => {
+    const handleEdit = async (idx) => {
         const student = students[idx];
 
         // Guruhga biriktirilgan o‘qituvchilar ID‑lar ro‘yxati
@@ -122,6 +180,8 @@ function Student() {
             branchId: student.filialNameDto?.id || "",
 
         });
+
+        await getStudentFilialGroups(student.filialNameDto?.id);
     };
 
     async function handleDelete(st) {
@@ -211,16 +271,21 @@ function Student() {
 
             <h2>Students</h2>
             <div className="student-header">
-                <select id="branch" className="filial-select">
+                <select className="filial-select"
+                    onChange={(e)=> setSelBranchId(e.target.value)}
+                >
                     <option value="all">All filials</option>
                     {
                         branches?.map((b) => <option value={b.id} key={b.id}>{b.name}</option>)
                     }
                 </select>
-                <select className="group-select">
+                <select
+                        className="group-select"
+                        onChange={(e)=>setSelGroupId(e.target.value)}
+                >
                     <option value="all">All Groups</option>
                     {
-                        groups?.map((g) => <option value={g.id} key={g.id}>{g.name}</option>)
+                        filialGroups?.map((g) => <option value={g.id} key={g.id}>{g.name}</option>)
                     }
                 </select>
             </div>
@@ -322,7 +387,7 @@ function Student() {
                             <td>
                                 {editingIndex === i ? (
                                     <div className="table-group-checkboxes">
-                                        {groups?.map((g) => (
+                                        {studentFilialGroups?.map((g) => (
                                             <label key={g.id}>
                                                 <input
                                                     className="inp-check"

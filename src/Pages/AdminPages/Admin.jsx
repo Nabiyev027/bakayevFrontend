@@ -78,7 +78,7 @@ function Admin() {
               className="box"
             >
               <FaRegIdCard />
-              <h3>Reception qo'shish</h3>
+              <h3>Add reception</h3>
             </div>
 
             <div
@@ -89,7 +89,7 @@ function Admin() {
               className="box"
             >
               <GrGroup />
-              <h3>Guruhlar</h3>
+              <h3>Groups</h3>
             </div>
             <div
                 onClick={() => {
@@ -109,7 +109,7 @@ function Admin() {
               className="box"
             >
               <BsCashCoin />
-              <h3>To'lovlar</h3>
+              <h3>Payments</h3>
             </div>
             <div
               onClick={() => {
@@ -147,7 +147,7 @@ function Admin() {
               className="box"
             >
               <MdOutlineSettings />
-              <h3>Sozlamalar</h3>
+              <h3>Settings</h3>
             </div>
           </div>
           <div
@@ -158,7 +158,7 @@ function Admin() {
             className="box-2"
           >
             <ImExit />
-            <h3>Chiqish</h3>
+            <h3>Exit</h3>
           </div>
         </div>
 

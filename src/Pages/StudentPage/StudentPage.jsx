@@ -95,7 +95,7 @@ function StudentPage() {
               className="box"
             >
               <GiWhiteBook />
-              <h3>Darslar</h3>
+              <h3>Lessons</h3>
             </div>
             <div
               onClick={() => {
@@ -105,7 +105,7 @@ function StudentPage() {
               className="box"
             >
               <BsCashCoin />
-              <h3>To'lovlar</h3>
+              <h3>Payments</h3>
             </div>
             <div
               onClick={() => {
@@ -125,7 +125,7 @@ function StudentPage() {
               className="box"
             >
               <MdOutlineSettings />
-              <h3>Sozlamalar</h3>
+              <h3>Settings</h3>
             </div>
           </div>
           <div
@@ -136,7 +136,7 @@ function StudentPage() {
             className="box-2"
           >
             <ImExit />
-            <h3>Chiqish</h3>
+            <h3>Exit</h3>
           </div>
         </div>
 

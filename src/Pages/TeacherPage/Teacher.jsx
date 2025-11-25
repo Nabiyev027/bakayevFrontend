@@ -76,7 +76,7 @@ export default function Teachers() {
                 className="box"
               >
                 <GrGroup />
-                <h3>Guruhlar</h3>
+                <h3>Groups</h3>
               </div>
             </div>
             <div className="wrap-bars">
@@ -88,7 +88,7 @@ export default function Teachers() {
                 className="box"
               >
                 <GiWhiteBook />
-                <h3>Darslar</h3>
+                <h3>Lessons</h3>
               </div>
             </div>
 
@@ -101,7 +101,7 @@ export default function Teachers() {
                 className="box"
               >
                 <MdEditDocument />
-                <h3>Imtihon</h3>
+                <h3>Exams</h3>
               </div>
             </div>
 
@@ -115,7 +115,7 @@ export default function Teachers() {
             className="box-2"
           >
             <ImExit />
-            <h3>Chiqish</h3>
+            <h3>Exit</h3>
           </div>
         </div>
 

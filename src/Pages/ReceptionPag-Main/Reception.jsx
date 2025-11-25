@@ -76,7 +76,7 @@ function Reception() {
                             className="box"
                         >
                             <FaRegIdCard/>
-                            <h3>Ro'yxatdan o'tkazish</h3>
+                            <h3>Registration</h3>
                         </div>
                         <div
                             onClick={() => {
@@ -86,7 +86,7 @@ function Reception() {
                             className="box"
                         >
                             <GrGroup/>
-                            <h3>Guruhlar</h3>
+                            <h3>Groups</h3>
                         </div>
                         <div
                             onClick={() => {
@@ -116,7 +116,7 @@ function Reception() {
                             className="box"
                         >
                             <TbPresentationAnalytics/>
-                            <h3>Davomat</h3>
+                            <h3>Attendance</h3>
                         </div>
                         <div
                             onClick={() => {
@@ -126,7 +126,7 @@ function Reception() {
                             className="box"
                         >
                             <BsCashCoin/>
-                            <h3>To'lovlar</h3>
+                            <h3>Payments</h3>
                         </div>
                         <div
                             onClick={() => {
@@ -156,7 +156,7 @@ function Reception() {
                             className="box"
                         >
                             <MdOutlineSettings/>
-                            <h3>Sozlamalar</h3>
+                            <h3>Settings</h3>
                         </div>
                     </div>
                     <div
@@ -167,7 +167,7 @@ function Reception() {
                         className="box-2"
                     >
                         <ImExit/>
-                        <h3>Chiqish</h3>
+                        <h3>Exit</h3>
                     </div>
                 </div>
 
