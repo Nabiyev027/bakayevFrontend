@@ -14,6 +14,7 @@ function TeacherMain() {
     const [infoTeacher, setInfoTeacher] = useState(null);
     const [groups, setGroups] = useState([]);
     const [branches, setBranches] = useState([]);
+    const [selBranchId, setSelBranchId] = useState("all");
     const [newPassword, setNewPassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selId, setSelId] = useState("");
@@ -21,10 +22,12 @@ function TeacherMain() {
     const BaseUrl = "http://localhost:8080";
 
     useEffect(() => {
-        getGroups()
-        getTeachers()
         getFilials()
     }, []);
+
+    useEffect(() => {
+        getTeachers()
+    }, [selBranchId]);
 
     async function getFilials() {
         try {
@@ -35,18 +38,40 @@ function TeacherMain() {
         }
     }
 
-    async function getGroups() {
+    async function getGroupsByFilials(filialIds) {
         try {
-            const res = await ApiCall("/group/getNames", {method: "GET"})
-            setGroups(res.data);
-        } catch (error) {
-            console.log(error);
+            if (!filialIds || filialIds.length === 0) {
+                setGroups({});
+                return;
+            }
+
+            const query = filialIds.join(",");
+            const res = await ApiCall(`/group/getByFilials?ids=${query}`, { method: "GET" });
+
+            const grouped = {};
+
+            res.data.forEach(g => {
+                if (!grouped[g.filialId]) {
+                    grouped[g.filialId] = {
+                        filialName: g.filialName,
+                        groups: []
+                    };
+                }
+                grouped[g.filialId].groups.push(g);
+            });
+
+            setGroups(grouped);
+
+        } catch (err) {
+            console.log(err);
         }
     }
 
+
+
     async function getTeachers() {
         try {
-            const res = await ApiCall("/user/teacherWithData", {method: "GET"});
+            const res = await ApiCall(`/user/teachers?filialId=${selBranchId}`, {method: "GET"});
             setTeachers(res.data);
         } catch (error) {
             console.log(error);
@@ -76,22 +101,38 @@ function TeacherMain() {
         }
     };
 
+
     const handleCheckboxChangeBranches = (e, isEditing = false) => {
-        const {value, checked} = e.target;
-        // const selected = isEditing && [...editedTeacher.branchIds]
-        const selected = isEditing ? [...editedTeacher.branchIds] : [];
+        const { value, checked } = e.target;
+        let selectedBranches = isEditing ? [...editedTeacher.branchIds] : [];
+        let selectedGroups = isEditing ? [...editedTeacher.groupIds] : [];
 
         if (checked) {
-            if (!selected.includes(value)) selected.push(value);
-        }else {
-            const index = selected.indexOf(value);
-            if (index > -1) selected.splice(index, 1);
+            if (!selectedBranches.includes(value)) selectedBranches.push(value);
+            // Tanlangan filial bo‘yicha gruppalarni olish
+            getGroupsByFilials(selectedBranches);
+        } else {
+            // Filial uncheck bo‘lsa
+            const branchIndex = selectedBranches.indexOf(value);
+            if (branchIndex > -1) selectedBranches.splice(branchIndex, 1);
+
+            // Shu filialga tegishli gruppalarni uncheck qilish
+            Object.keys(groups).forEach(filialId => {
+                if (filialId === value) {
+                    groups[filialId].groups.forEach(g => {
+                        const groupIndex = selectedGroups.indexOf(g.id);
+                        if (groupIndex > -1) selectedGroups.splice(groupIndex, 1);
+                    });
+                }
+            });
         }
 
-        if (isEditing) {
-            setEditedTeacher({...editedTeacher, branchIds: selected});
-        }
-    }
+        setEditedTeacher({
+            ...editedTeacher,
+            branchIds: selectedBranches,
+            groupIds: selectedGroups,
+        });
+    };
 
     async function handleSave() {
         console.log(editedTeacher);
@@ -124,21 +165,24 @@ function TeacherMain() {
         setEditedTeacher({});
     }
 
+
     const handleEdit = (idx) => {
         const teacher = teachers[idx];
 
-        // Guruhga biriktirilgan o‘qituvchilar ID‑lar ro‘yxati
         const groupIds = (teacher.groups || []).map(g => g.id);
         const branchIds = (teacher.branches || []).map(b => b.id);
 
         setEditingIndex(idx);
         setEditedTeacher({
             ...teacher,
-            groupIds,              // checkboxlar uchun ['id1', 'id2', …]
+            groupIds,
             branchIds,
-
         });
+
+        // ⬅️ O‘qituvchiga tegishli filiallardan gruppalarni olib kelamiz
+        getGroupsByFilials(branchIds);
     };
+
 
     async function handleDelete(st) {
         if (window.confirm(`Are you confirm delete ${st.firstName} ${st.lastName}`)) {
@@ -226,16 +270,12 @@ function TeacherMain() {
 
             <h2>Teachers</h2>
             <div className="teacherM-header">
-                <select id="branch" className="filial-select">
+                <select id="branch" className="filial-select"
+                    onChange={(e)=>setSelBranchId(e.target.value)}
+                >
                     <option value="all">All filials</option>
                     {
                         branches?.map((b) => <option value={b.id} key={b.id}>{b.name}</option>)
-                    }
-                </select>
-                <select className="group-select">
-                    <option value="all">All Groups</option>
-                    {
-                        groups?.map((g) => <option value={g.id} key={g.id}>{g.name}</option>)
                     }
                 </select>
             </div>
@@ -330,23 +370,33 @@ function TeacherMain() {
                             <td>
                                 {editingIndex === i ? (
                                     <div className="table-group-checkboxes">
-                                        {groups?.map((g) => (
-                                            <label key={g.id}>
-                                                <input
-                                                    className="inp-check"
-                                                    type="checkbox"
-                                                    value={g.id}
-                                                    checked={editedTeacher.groupIds.includes(g.id)}
-                                                    onChange={(e) => handleCheckboxChange(e, true)}
-                                                />
-                                                {g.name}
-                                            </label>
-                                        ))}
+
+                                        {Object.keys(groups)
+                                            .filter(filialId => editedTeacher.branchIds.includes(filialId)) // ⬅ faqat tanlangan filiallar
+                                            .map(filialId => (
+                                                <div key={filialId} className="filial-block">
+                                                    <h4 className="filial-title">📍 {groups[filialId].filialName}</h4>
+                                                    {groups[filialId].groups.map(g => (
+                                                        <label key={g.id} className="group-item">
+                                                            <input
+                                                                className="inp-check"
+                                                                type="checkbox"
+                                                                value={g.id}
+                                                                checked={editedTeacher.groupIds.includes(g.id)}
+                                                                onChange={(e) => handleCheckboxChange(e, true)}
+                                                            />
+                                                            {g.name}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            ))}
+
                                     </div>
                                 ) : (
                                     t.groups?.map((g) => <h4 key={g.id}>{g.name}</h4>)
                                 )}
                             </td>
+
                             <td>
                                 {
                                     editingIndex === i ? (

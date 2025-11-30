@@ -5,6 +5,7 @@ import res from "../../Images/Logos/reception.png";
 import admin from "../../Images/Logos/administrator.png";
 import student from "../../Images/Logos/student2.png";
 import teacher from "../../Images/Logos/teacher.png";
+import superAdmin from "../../Images/Logos/superAdmin.png";
 import { useNavigate } from "react-router-dom";
 
 function SelectRoles() {
@@ -36,6 +37,8 @@ function SelectRoles() {
                 return { displayName: "Student", path: student };
             case "ROLE_ADMIN":
                 return { displayName: "Admin", path: admin };
+            case "ROLE_SUPER_ADMIN":
+                return {displayName: "Super Admin", path: superAdmin};
             default:
                 return { displayName: role.replace("ROLE_", ""), path: "" };
         }
@@ -55,6 +58,9 @@ function SelectRoles() {
                 break;
             case "ROLE_ADMIN":
                 navigate("/admin");
+                break;
+            case "ROLE_SUPER_ADMIN":
+                navigate("/superAdmin");
                 break;
             case "ROLE_RECEPTION":
             case "ROLE_MAIN_RECEPTION":

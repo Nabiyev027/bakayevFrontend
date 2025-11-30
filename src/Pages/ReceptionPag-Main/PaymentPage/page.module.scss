@@ -15,7 +15,7 @@
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 0rem 1rem;
 }
 
 .header {
@@ -52,40 +52,111 @@
   color: transparent;
 }
 
-.subtitle {
-  color: #6b7280;
-  font-size: 1.125rem;
-}
+/* Bu uslublar .statsGrid ga mos keladi */
 
 .statsGrid {
+  /* Moslashuvchan Grid: 4 ustunni 250px dan kam bo'lmaguncha ushlab turadi */
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  padding: 20px 0;
 }
 
 .statsCard {
-  border: none;
-  border-radius: 1rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  color: white;
+  position: relative;
+  border-radius: 16px; /* Yumaloq burchaklar */
+  color: #ffffff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Yengil soya */
+}
 
-  &.statsCardGreen {
-    background: linear-gradient(to right, #10b981, #059669);
-  }
+/* Hover effekti: Karta biroz yuqoriga ko'tariladi va soyasi kuchayadi */
+.statsCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
 
-  &.statsCardBlue {
-    background: linear-gradient(to right, #3b82f6, #2563eb);
-  }
+/* Karta ichidagi kontentni sozlash */
+.statsCardContent {
+  padding: 24px; /* Katta ichki oraliq */
+  position: relative;
+  z-index: 2; /* Kontentni fon ustida ushlab turish */
+}
 
-  &.statsCardPurple {
-    background: linear-gradient(to right, #8b5cf6, #7c3aed);
+/* Keraksiz ichki div'ni (statsCardInner) oddiygina qoldiramiz, uslub berish shart emas */
+/* .statsCardInner { } */
+
+
+/* --- Ranglar va Gradientlar --- */
+
+.statsCardGreen {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Chuqur yashil gradient */
+}
+
+.statsCardBlue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); /* Kuchli ko'k gradient */
+}
+
+.statsCardPurple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); /* Yoqimli binafsha gradient */
+}
+
+.statsCardCyan {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); /* Tirik moviy (cyan) gradient */
+}
+
+
+/* --- Tipografiya (Yozuv uslubi) --- */
+
+.statsLabel {
+  font-size: 1rem; /* Kichikroq label */
+  font-weight: 500;
+  opacity: 0.8; /* Yengil rang */
+  margin-bottom: 12px;
+  letter-spacing: 0.5px; /* Harflar orasidagi masofa */
+}
+
+.statsValue {
+  /* H4 teglari statsValue ichida joylashgan */
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* H4 lar orasidagi bo'shliq */
+}
+
+.statsValue h4 {
+  margin: 0; /* Standart h4 marginlarini o'chiramiz */
+  line-height: 1.2;
+}
+
+.statsValue h4:first-child {
+  /* COUNT uchun kattaroq va qalinroq yozuv */
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.statsValue h4:last-child {
+  /* AMOUNT uchun biroz kichikroq yozuv */
+  font-size: 1.3rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+
+/* --- Kichik ekranlar uchun moslashuv (Responsive) --- */
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr); /* O'rta ekranlarda 2 ustun */
+    gap: 16px;
   }
 }
 
-.statsCardContent {
-  padding: 1.5rem;
+@media (max-width: 550px) {
+  .statsGrid {
+    grid-template-columns: 1fr; /* Kichik ekranlarda 1 ustun */
+  }
 }
 
 .statsCardInner {

@@ -39,6 +39,8 @@ import {LangProvider} from "./Pages/AdminPages/interfaceA/langConfig/LangContext
 import Rating from "./Pages/TeacherPage/ratingExam/Rating";
 import AttendanceGroupForReception from "./Pages/ReceptionPag-Main/Attendance/AttendanceR";
 import AttendanceGroup from "./Pages/TeacherPage/groupAttendance/AttendanceG";
+import SuperAdmin from "./Pages/SuperAdminPage/SuperAdmin";
+import AdminsControl from "./Pages/SuperAdminPage/AdminsControl/AdminsControl";
 
 
 function App() {
@@ -99,6 +101,9 @@ function App() {
                     <Route path="/admin/interface" element={<InterfaceA/>}/>
                     <Route path={"/admin/employer"} element={<Employer/>}/>
                     <Route path={"/admin/branch"} element={<Branch/>}/>
+                </Route>
+                <Route path={"/superAdmin"} element={<SuperAdmin/>} >
+                    <Route path={"/superAdmin/adminsControl"} element={<AdminsControl/>} />
                 </Route>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>

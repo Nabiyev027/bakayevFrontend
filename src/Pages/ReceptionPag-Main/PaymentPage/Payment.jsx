@@ -1,59 +1,50 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./page.module.scss";
 
 import { PaymentForm } from "./components/payment-form"
 import { PaymentsList } from "./components/payments-list"
-import { CreditCard, DollarSign, GraduationCap } from "lucide-react"
 import styles from "./page.module.scss"
+import ApiCall from "../../../Utils/ApiCall";
+import {toast} from "react-toastify";
 
 export default function Payment() {
+
+    const useRole = localStorage.getItem("selectedRole");
+    const userId = localStorage.getItem("userId");
+    const [paymentYearly, setPaymentYearly] = useState({});
+    const [paymentMonthly, setPaymentMonthly] = useState({});
+    const [paymentWeekly, setPaymentWeekly] = useState({});
+    const [paymentDaily, setPaymentDaily] = useState({});
+
+    useEffect(() => {
+        const id = useRole === "ROLE_RECEPTION" ? userId.toString() : "all";
+        console.log("Role:", useRole, "Sending ID:", id);
+
+        getPaymentsAmountByFilial(id);
+    }, [useRole, userId]);
+
+    async function getPaymentsAmountByFilial(id) {
+        try {
+            const res = await ApiCall(`/payment/paymentsAmount/${id}`, { method: "GET" });
+            setPaymentYearly(res.data[0])
+            setPaymentMonthly(res.data[1])
+            setPaymentWeekly(res.data[2])
+            setPaymentDaily(res.data[3])
+        } catch (err) {
+            toast.error(err.response?.data || "Error to get paymentAmount info");
+        }
+    }
+
     const [activeTab, setActiveTab] = useState("new-payment")
 
-
-    const [payments, setPayments] = useState([
-        {
-            id: "1",
-            studentName: "Alisher Karimov",
-            courseName: "Frontend Development",
-            amount: 1500000,
-            paymentMethod: "card",
-            date: "2024-01-15",
-            status: "completed",
-        },
-        {
-            id: "2",
-            studentName: "Malika Tosheva",
-            courseName: "Backend Development",
-            amount: 1800000,
-            paymentMethod: "cash",
-            date: "2024-01-14",
-            status: "completed",
-        },
-        {
-            id: "3",
-            studentName: "Bobur Rahimov",
-            courseName: "Mobile Development",
-            amount: 2000000,
-            paymentMethod: "card",
-            date: "2024-01-13",
-            status: "pending",
-        },
-    ])
 
     const addPayment = (payment) => {
         const newPayment = {
             ...payment,
             id: Date.now().toString(),
         }
-        setPayments((prev) => [newPayment, ...prev])
     }
 
-    const totalAmount = payments.filter((p) => p.status === "completed").reduce((sum, p) => sum + p.amount, 0)
-
-    const todayPayments = payments.filter((p) => {
-        const today = new Date().toISOString().split("T")[0]
-        return p.date === today && p.status === "completed"
-    }).length
 
   return (
       <div className={styles.paymentPageRec}>
@@ -62,24 +53,24 @@ export default function Payment() {
                   {/* Header */}
                   <div className={styles.header}>
                       <div className={styles.headerContent}>
-                          <div className={styles.headerIcon}>
-                              <GraduationCap className={styles.icon} />
-                          </div>
-                          <h1 className={styles.title}>Kurs To'lovlari</h1>
+
+                          <h1 className={styles.title}>Students payments</h1>
                       </div>
-                      <p className={styles.subtitle}>Talabalar uchun kurs to'lovlarini boshqarish tizimi</p>
+
                   </div>
 
-                  {/* Stats Cards */}
                   <div className={styles.statsGrid}>
                       <div className={`${styles.statsCard} ${styles.statsCardGreen}`}>
                           <div className={styles.statsCardContent}>
                               <div className={styles.statsCardInner}>
                                   <div>
-                                      <p className={styles.statsLabel}>Jami Tushum</p>
-                                      <p className={styles.statsValue}>{totalAmount.toLocaleString()} so'm</p>
+                                      <p className={styles.statsLabel}>Yearly</p>
+                                      <p className={styles.statsValue}>
+                                          {/* Bu yerda ma'lumotlar kiritiladi */}
+                                          <h4>Count: {paymentYearly.numPayments} </h4>
+                                          <h4>Amount: {paymentYearly.paymentAmount} </h4>
+                                      </p>
                                   </div>
-                                  <DollarSign className={styles.statsIcon} />
                               </div>
                           </div>
                       </div>
@@ -88,10 +79,12 @@ export default function Payment() {
                           <div className={styles.statsCardContent}>
                               <div className={styles.statsCardInner}>
                                   <div>
-                                      <p className={styles.statsLabel}>Bugungi To'lovlar</p>
-                                      <p className={styles.statsValue}>{todayPayments}</p>
+                                      <p className={styles.statsLabel}>Monthly</p>
+                                      <p className={styles.statsValue}>
+                                          <h4>Count: {paymentMonthly.numPayments} </h4>
+                                          <h4>Amount: {paymentMonthly.paymentAmount} </h4>
+                                      </p>
                                   </div>
-                                  <CreditCard className={styles.statsIcon} />
                               </div>
                           </div>
                       </div>
@@ -100,10 +93,26 @@ export default function Payment() {
                           <div className={styles.statsCardContent}>
                               <div className={styles.statsCardInner}>
                                   <div>
-                                      <p className={styles.statsLabel}>Jami To'lovlar</p>
-                                      <p className={styles.statsValue}>{payments.length}</p>
+                                      <p className={styles.statsLabel}>Weekly</p>
+                                      <p className={styles.statsValue}>
+                                          <h4>Count: {paymentWeekly.numPayments} </h4>
+                                          <h4>Amount: {paymentWeekly.paymentAmount} </h4>
+                                      </p>
                                   </div>
-                                  <GraduationCap className={styles.statsIcon} />
+                              </div>
+                          </div>
+                      </div>
+
+                      <div className={`${styles.statsCard} ${styles.statsCardCyan}`}>
+                          <div className={styles.statsCardContent}>
+                              <div className={styles.statsCardInner}>
+                                  <div>
+                                      <p className={styles.statsLabel}>Daily</p>
+                                      <p className={styles.statsValue}>
+                                          <h4>Count: {paymentDaily.numPayments} </h4>
+                                          <h4>Amount: {paymentDaily.paymentAmount} </h4>
+                                      </p>
+                                  </div>
                               </div>
                           </div>
                       </div>
@@ -119,13 +128,13 @@ export default function Payment() {
                                           className={`${styles.tabsTrigger} ${activeTab === "new-payment" ? styles.active : ""}`}
                                           onClick={() => setActiveTab("new-payment")}
                                       >
-                                          Yangi To'lov
+                                          New Payment
                                       </button>
                                       <button
                                           className={`${styles.tabsTrigger} ${activeTab === "payments-list" ? styles.active : ""}`}
                                           onClick={() => setActiveTab("payments-list")}
                                       >
-                                          To'lovlar Ro'yxati
+                                          Payments List
                                       </button>
                                   </div>
                               </div>

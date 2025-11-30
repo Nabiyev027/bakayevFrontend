@@ -15,8 +15,8 @@ function Employer() {
     const [roles, setRoles] = useState([]);
     const [branches, setBranches] = useState([]);
     const [employers, setEmployers] = useState([]);
-    const [selRoleId, setSelRoleId] = useState("");
-    const [selBranchId, setSelBranchId] = useState("");
+    const [selRoleId, setSelRoleId] = useState("all");
+    const [selBranchId, setSelBranchId] = useState("all");
     const [filteredEmployers, setFilteredEmployers] = useState([]);
     const [newPassword, setNewPassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,8 +28,11 @@ function Employer() {
     useEffect(() => {
         getFilials()
         getEmpRoles()
-        getEmployers()
     },[])
+
+    useEffect(()=>{
+        getEmployers()
+    },[selBranchId, selRoleId])
 
     async function getFilials() {
         try {
@@ -52,7 +55,7 @@ function Employer() {
 
     async function getEmployers() {
         try {
-            const res = await ApiCall("/user/employer", {method: "GET"})
+            const res = await ApiCall(`/user/employer?filialId=${selBranchId}&roleId=${selRoleId}`, {method: "GET"})
             console.log(res.data)
             setEmployers(res.data)
         }catch(error) {
@@ -80,21 +83,23 @@ function Employer() {
     };
 
     const handleCheckboxChange = (e, isEditing = false) => {
-        const {value, checked} = e.target;
-        const selected = isEditing
-            && [...editedEmployer.groupIds]
+        const { value, checked } = e.target;
+
+        // Role IDs bilan ishlaymiz
+        let selectedRoles = isEditing ? [...editedEmployer.roleIds] : [];
 
         if (checked) {
-            if (!selected.includes(value)) selected.push(value);
+            if (!selectedRoles.includes(value)) selectedRoles.push(value);
         } else {
-            const index = selected.indexOf(value);
-            if (index > -1) selected.splice(index, 1);
+            selectedRoles = selectedRoles.filter(id => id !== value);
         }
 
-        if (isEditing) {
-            setEditedEmployer({...editedEmployer, groupIds: selected});
-        }
+        setEditedEmployer({
+            ...editedEmployer,
+            roleIds: selectedRoles
+        });
     };
+
 
 
     function handleCancel() {
@@ -103,21 +108,23 @@ function Employer() {
     }
 
     const handleEdit = (idx) => {
-        const teacher = teachers[idx];
+        const emp = employers[idx];   // <-- to‘g‘ri massiv
 
-        // Guruhga biriktirilgan o‘qituvchilar ID‑lar ro‘yxati
-        const groupIds = (teacher.groups || []).map(g => g.id);
+        // Filiallar ID-lari
+        const branchIds = (emp.filialNameDtos || []).map(b => b.id);
+
+        // Role ID-lari
+        const roleIds = (emp.roles || []).map(r => r.id);
 
         setEditingIndex(idx);
         setEditedEmployer({
-            ...teacher,
-            groupIds,              // checkboxlar uchun ['id1', 'id2', …]
-
-            // select uchun hozirgi filial va xona ID‑larini ham kiritib qo‘yish foydali
-            branchId: teacher.filialNameDto?.id || "",
-
+            ...emp,
+            branchIds,
+            roleIds,
         });
     };
+
+
 
     async function handleDelete(st) {
         if (window.confirm(`Are you confirm delete ${st.firstName} ${st.lastName}`)) {
@@ -172,6 +179,67 @@ function Employer() {
         setSelectedEmployerlogin("")
     }
 
+    const handleCheckboxChangeBranches = (e) => {
+        const { value, checked } = e.target;
+
+        // ROLE_RECEPTION tekshiruvi
+        const isReception = editedEmployer.roleIds.includes(
+            roles.find(r => r.name === "ROLE_RECEPTION")?.id
+        );
+
+        let selected = [...editedEmployer.branchIds];
+
+        if (isReception) {
+            // Agar ROLE_RECEPTION bo‘lsa faqat bitta checkbox tanlansin
+            if (checked) {
+                selected = [value]; // faqat yangi tanlangan branch qoladi
+            } else {
+                selected = []; // agar uncheck qilinsa bo‘sh qoladi
+            }
+        } else {
+            // ROLE_RECEPTION bo‘lmasa, oddiy multiple select
+            if (checked) {
+                if (!selected.includes(value)) selected.push(value);
+            } else {
+                selected = selected.filter(id => id !== value);
+            }
+        }
+
+        setEditedEmployer({
+            ...editedEmployer,
+            branchIds: selected
+        });
+    };
+
+
+
+    async function handleSave() {
+        console.log(editedEmployer);
+        if (editedEmployer.firstName === "" || editedEmployer.lastName === "" || editedEmployer.phone === "") {
+            alert("Please fill all blanks")
+        }
+
+        try {
+            const res = await ApiCall(`/user/employer/${editedEmployer.id}`, {method: "PUT"}, {
+                firstName: editedEmployer.firstName,
+                lastName: editedEmployer.lastName,
+                phone: editedEmployer.phone,
+                username: editedEmployer.username,
+                filialIds: editedEmployer.branchIds,
+                roleIds: editedEmployer.roleIds,
+
+            });
+
+            if (res.data) {
+                await getEmployers();
+                setEditingIndex(null);
+                setEditedEmployer({});
+            }
+        } catch (err) {
+            console.log(err.message);
+        }
+    }
+
     return (
         <div className="employer-page">
             <ToastContainer />
@@ -205,13 +273,17 @@ function Employer() {
 
             <h2>Employers</h2>
             <div className="employer-header">
-                <select id="branch" className="filial-select">
+                <select id="branch" className="filial-select"
+                    onChange={(e)=>setSelBranchId(e.target.value)}
+                >
                     <option value="all">Select Branch</option>
                     {
                         branches?.map((b) => <option value={b.id} key={b.id}>{b.name}</option>)
                     }
                 </select>
-                <select className="role-select">
+                <select className="role-select"
+                        onChange={(e)=>setSelRoleId(e.target.value)}
+                >
                     <option value="all">Select Role</option>
                     {
                         roles?.map((r) => <option value={r.id} key={r.id}>{
@@ -233,8 +305,8 @@ function Employer() {
                         <th>Lastname</th>
                         <th>Phone</th>
                         <th>Filial</th>
-                        <th>Role</th>
-                        <th>login</th>
+                        <th>Roles</th>
+                        <th>Login</th>
                         <th>Password</th>
                         <th>Actions</th>
                     </tr>
@@ -289,21 +361,25 @@ function Employer() {
                             </td>
                             <td>
                                 {editingIndex === i ? (
-                                    <select
-                                        name="branchId"
-                                        className={"select-g"}
-                                        value={editedEmployer.branchId}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option  value="">SelectBranch</option>
+                                    <div className={"table-group-checkboxes"}>
                                         {
-                                            branches&&branches.map((b,i) => <option key={i} value={b?.id}>
-                                                {b?.name}
-                                            </option>)
+                                            branches?.map((b) => (
+                                                <label key={b.id}>
+                                                    <input
+                                                        className={"inp-check"}
+                                                        type="checkbox"
+                                                        value={b.id}
+                                                        checked={editedEmployer.branchIds.includes(b.id)}
+                                                        onChange={(e)=>handleCheckboxChangeBranches(e, true)}
+                                                    />
+                                                    {b.name}
+                                                </label>
+                                            ))
                                         }
-                                    </select>
-                                ):(
-                                    t.filialNameDto != null ? t.filialNameDto.name : "No"
+                                    </div>
+                                ) : (
+
+                                    t.filialNameDtos?.map((b) => <h4 key={b.id}>{b.name}</h4>)
                                 )}
                             </td>
                             <td>
@@ -323,7 +399,9 @@ function Employer() {
                                         ))}
                                     </div>
                                 ) : (
-                                    t.groups?.map((g) => <h4>{g.name}</h4>)
+                                    t.roles?.map((r) => <h4>
+                                            {r.name.replace("ROLE_", "").replace("_", " ")}
+                                    </h4>)
                                 )}
                             </td>
                             <td>
@@ -346,7 +424,7 @@ function Employer() {
                             <td>
                                 {editingIndex === i ? (
                                     <div className="actions-t">
-                                        <div className={"t-btn-check btn-t"}>
+                                        <div className={"t-btn-check btn-t"} onClick={handleSave}>
                                             <FaCheck/>
                                         </div>
                                         <div className={"t-btn-cancel btn-t"} onClick={handleCancel}>
