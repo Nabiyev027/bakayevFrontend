@@ -36,8 +36,8 @@ export function PaymentForm() {
 
     // 🔹 Filialni olish
     useEffect(() => {
-        if (selectedRole === "ROLE_MAIN_RECEPTION") getFilials();
-        else getFilialByReceptionId();
+        if (selectedRole === "ROLE_RECEPTION") getFilialByReceptionId();
+        else getFilials();
     }, []);
 
     // 🔹 Filial tanlanganda guruhlarni olish
@@ -76,7 +76,7 @@ export function PaymentForm() {
             });
             setGroups(res.data);
         } catch (err) {
-            toast.error(err.response?.data || "Guruhlarni olishda xatolik");
+            toast.error(err.response?.data || "Error to get Groups!");
         }
     }
 
@@ -87,7 +87,7 @@ export function PaymentForm() {
             });
             setStudents(res.data);
         } catch (err) {
-            toast.error(err.response?.data || "Talabalarni olishda xatolik");
+            toast.error(err.response?.data || "Error to get students!");
         }
     }
 
@@ -105,19 +105,19 @@ export function PaymentForm() {
             case "branch":
                 return formData.branchId
                     ? branches.find((b) => b.id === formData.branchId)?.name
-                    : "Filialni tanlang";
+                    : "Select Branch";
             case "group":
                 return formData.groupId
                     ? groups.find((g) => g.id === formData.groupId)?.name
                     : formData.branchId
-                        ? "Guruhni tanlang"
-                        : "Avval filialni tanlang";
+                        ? "Select Group"
+                        : "The first need to choose branch";
             case "student":
                 return formData.studentId
                     ? students.find((s) => s.id === formData.studentId)?.name
                     : formData.groupId
-                        ? "Talabani tanlang"
-                        : "Avval guruhni tanlang";
+                        ? "Select Student"
+                        : "The first need to choose group";
             default:
                 return "";
         }
@@ -153,7 +153,7 @@ export function PaymentForm() {
                 paymentMethod: "card",
             });
         } catch (err) {
-            toast.error(err.response?.data || "Xatolik yuz berdi");
+            toast.error(err.response?.data || "Error to add Payment");
         }
     };
 
@@ -163,7 +163,7 @@ export function PaymentForm() {
             <ToastContainer />
             <div className={styles.filtersGrid}>
                 {/* Filial tanlash */}
-                {selectedRole === "ROLE_MAIN_RECEPTION" &&
+                {(selectedRole === "ROLE_MAIN_RECEPTION" || selectedRole === "ROLE_ADMIN") &&
                     <div className={styles.fieldGroup}>
                         <label className={styles.label}>
                             <Building className={styles.labelIcon} />

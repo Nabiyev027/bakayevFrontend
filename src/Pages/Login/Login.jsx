@@ -4,6 +4,7 @@ import {FaEye, FaEyeSlash, FaLock, FaUser} from "react-icons/fa";
 
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import {toast, ToastContainer} from "react-toastify";
 
 const LoginCard = () => {
     const [isShow, setIsShow] = useState(false);
@@ -23,7 +24,8 @@ const LoginCard = () => {
 
                 navigate("/selectRoles");
 
-
+            }).catch(err => {
+                toast.error(err.response?.data)
             })
 
     }
@@ -32,6 +34,7 @@ const LoginCard = () => {
 
     return (
         <div className="login-wrapper">
+            <ToastContainer/>
             <div className={"login-container"}>
                 <div className="login-card">
                     <h2>Login</h2>

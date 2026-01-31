@@ -113,6 +113,20 @@
     font-weight: bold;
   }
 
+  th:first-child{
+    width: 4%;
+  }
+
+  th:nth-child(2){
+    width: 8%;
+  }
+  th:nth-child(9){
+    width: 8%;
+  }
+  th:nth-child(10){
+    width: 8%;
+  }
+
   td img {
     width: 40px;
     height: 40px;
@@ -125,21 +139,39 @@
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    width: 120px;
     font-size: 14px;
     text-align: center;
+  }
+
+  .table-group-checkboxes{
+
+    label{
+
+      .inp-check{
+        width: 20px;
+        height: 20px;
+      }
+
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      text-wrap: nowrap;
+    }
+
   }
 
   .input-edit {
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    width: 120px;
+    width: 120%;
     font-size: 14px;
     text-align: center;
+    background-color: #fbc472;
 
     &:focus {
       border-color: #f96000;
+      background-color: white;
       outline: none;
       box-shadow: 0 0 5px #f9600073;
     }
@@ -155,6 +187,17 @@
     color: #fff;
     border: none;
     border-radius: 6px;
+  }
+
+  .select-s{
+    padding: 6px 10px;
+    width: 100%;
+    height: 30px;
+    border-radius: 3px;
+
+    &:focus{
+      outline: none;
+    }
   }
 
   .actions-s{
@@ -243,8 +286,7 @@
   .student-header .search-input,
   .student-header .group-select,
   .student-header .select-box {
-    width: 100% !important;
-    max-width: 300px;
+    width: 100%;
   }
   .group-select {
     margin-left: 0 !important;

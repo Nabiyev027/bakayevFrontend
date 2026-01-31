@@ -98,9 +98,45 @@
         border: 1px solid white;
       }
 
+      .table-group-checkboxes{
+
+        label{
+          display: flex;
+          align-items: center;
+          font-size: 16px;
+          gap: 3px;
+          text-wrap: nowrap;
+          width: max-content;
+          margin: 3px 0;
+
+          .inp-check{
+            width: 20px;
+            height: 20px;
+          }
+
+        }
+
+      }
+
       th:first-child{
+        width: 5%;
+      }
+      th:nth-child(2){
         width: 7%;
       }
+
+      tr{
+
+        td:nth-child(7){
+          overflow-x: auto ;
+        }
+
+      }
+
+      th:last-child{
+        width: 10%;
+      }
+
 
       th,
       td {
@@ -108,7 +144,7 @@
         padding: 14px;
         border-bottom: 1px solid #eee;
         font-size: 16px;
-        word-wrap: break-word;
+
       }
 
       td img {
@@ -123,8 +159,8 @@
         padding: 6px 10px;
         border-radius: 6px;
         border: 1px solid #ccc;
-        width: 120px;
-        font-size: 14px;
+        width: 100%;
+        font-size: 16px;
         text-align: center;
 
         &:focus {

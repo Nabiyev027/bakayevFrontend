@@ -140,47 +140,177 @@
   }
 }
 
-.students-table{
-  max-width: 1500px !important;
+
+.studentR-table {
+  max-width: 1300px;
   width: 100%;
-  min-height: 500px;
-  border-radius: 15px;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: fixed;
 
-  .sM-thead{
-    background-color: #1e293b !important;
-    font-size: 20px;
+  th,
+  td {
+    text-align: center;
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    word-wrap: break-word;
+  }
 
-    th{
-      padding: 5px !important;
+  th:first-child{
+    width: 5%;
+  }
+
+  th {
+    background-color: #f96000;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  td .inp-g{
+    background-color: #ffc392;
+    border: 1px solid #f96000;
+  }
+
+  td img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f96000;
+  }
+
+  td input {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 110%;
+    height: 38px;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  td .inp-check-box{
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .table-group-checkboxes{
+    width: 110%;
+
+    label{
+      display: flex;
+      align-items: center;
+      margin: 3px 0;
     }
 
-    th:first-child{
-      width:6%;
-    }
-
-    th:nth-child(2){
-      width: 26%;
-    }
-
-    th:nth-child(5) {
-      width: 10%;
-    }
-
-    th:nth-child(6) {
-      width: 20%;
-    }
-    th:last-child {
-      width: 10%;
+    .inp-check{
+      width: 20px;
+      height: 20px;
     }
 
   }
 
-  .sM-tbody{
-    background-color: #a8a8a8;
-    height: 100%;
-    overflow-y: scroll;
+  .change-p-btn{
+    background-color: #1e293b;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
   }
 
+  .input-edit {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 120px;
+    font-size: 14px;
+    text-align: center;
+
+    &:focus {
+      border-color: #f96000;
+      outline: none;
+      box-shadow: 0 0 5px #f9600073;
+    }
+  }
+
+  tr:hover {
+    background-color: #fff5ec;
+  }
+
+  .actions-t{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+    gap: 5px;
+
+    .btn-t{
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      font-size: 20px;
+      color: #fff;
+
+
+      &:hover{
+        cursor: pointer;
+        box-shadow: 0px 0px 12px 1px black;
+
+      }
+    }
+
+    .t-btn-edit{
+      background-color: orange;
+    }
+
+    .t-btn-delete{
+      background-color: red;
+    }
+
+    .t-btn-check{
+      background-color: greenyellow;
+    }
+
+    .t-btn-cancel{
+      background-color: gray;
+    }
+
+  }
+
+  .expanded-row {
+    background-color: #f9f9f9;
+
+    td {
+      padding: 12px;
+    }
+
+    .expanded-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      p {
+        flex: 1 1 45%;
+        margin: 4px 0;
+
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
 }
 
 .select-container {
@@ -200,33 +330,6 @@
     &:focus {
       box-shadow: 0 0 8px rgba(249, 96, 0, 0.5);
     }
-  }
-}
-
-.students-table {
-  width: 100%;
-  max-width: 1300px;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-  th,
-  td {
-    border: 1px solid #d94e00;
-    padding: 0.75rem;
-    text-align: center;
-  }
-  thead {
-    background: #f96000;
-    color: white;
-  }
-  tbody tr.even {
-    background: #fff;
-  }
-  tbody tr.odd {
-    background: #fff8f5;
-  }
-  .no-data {
-    text-align: center;
-    font-style: italic;
   }
 }
 

@@ -16,10 +16,10 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
+    padding-bottom: 1rem;
 
     .setting-box {
-      width: 800px;
-      height: 100%;
+      width: 50%;
       border: solid 2px #f96000;
       border-radius: 20px;
       padding: 2rem;
@@ -176,6 +176,162 @@
           background: darken(#f96000, 10%);
         }
       }
+    }
+
+    .setting-box:first-child{
+      $primary-color: #007bff; // Ko'k
+      $secondary-color: #6c757d; // Kulrang
+      $bg-color: #f8f9fa; // Ochiq kulrang
+      $card-bg: #ffffff; // Oq
+      $border-color: #dee2e6;
+      $shadow-color: rgba(0, 0, 0, 0.1);
+
+      .user-settings-card {
+        width: 95%;
+        max-width: 900px; // Katta ekranlarda maksimal kenglik
+        height: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: $card-bg;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column; // Kichik ekranlar uchun ustun tartibi
+        gap: 20px; // Bo'limlar orasidagi bo'shliq
+        overflow-y: auto;
+
+        h2 {
+          color: $secondary-color;
+          font-size: 1.5em;
+          margin-bottom: 15px;
+          border-bottom: 2px solid $border-color;
+          padding-bottom: 5px;
+        }
+
+        // Bo'limlar stillari (Profil va Parol)
+        .profile-section,
+        .password-section {
+          padding: 20px;
+          border: 1px solid $border-color;
+          border-radius: 8px;
+          background-color: $bg-color;
+        }
+
+        // Profil Sarlavhasi va Rasm (Yangilangan)
+        .profile-header {
+          display: flex;
+          flex-direction: column; // Rasm va yuklash tugmasini ustun qilib joylashtirish
+          align-items: center;
+          margin-bottom: 20px;
+          padding-bottom: 20px;
+          border-bottom: 1px dashed $border-color;
+          width: 100%;
+
+          .icon{
+            color: gray;
+            width: 100px;
+            height: 100px;
+          }
+
+          .user-avatar-wrapper {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 3px solid $primary-color;
+          }
+
+          .user-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; // Rasmni doira ichiga sig'dirish
+            display: block;
+          }
+
+          .avatar-upload-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .upload-label {
+              cursor: pointer;
+              color: $primary-color;
+              border: 1px solid $primary-color;
+              padding: 5px 15px;
+              border-radius: 20px;
+              transition: background-color 0.3s;
+              font-size: 0.9em;
+
+              &:hover {
+                background-color: lighten($primary-color, 40%);
+              }
+            }
+            .file-name {
+              margin-top: 5px;
+              font-size: 0.8em;
+              color: $secondary-color;
+              font-style: italic;
+            }
+          }
+        }
+
+        .form-group {
+          margin-bottom: 15px;
+
+          label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: $secondary-color;
+          }
+
+          input[type="text"],
+          input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid $border-color;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+
+            &:focus {
+              border-color: $primary-color;
+              box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
+              outline: none;
+            }
+          }
+        }
+
+        // Saqlash tugmasi stillari
+        .save-button {
+          display: block; // To'liq kenglik
+          width: 100%;
+          padding: 10px;
+          background-color: $primary-color;
+          color: $card-bg;
+          border: none;
+          border-radius: 6px;
+          font-size: 1.1em;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.1s;
+
+          &:hover {
+            background-color: darken($primary-color, 10%);
+          }
+
+          &:active {
+            transform: scale(0.99);
+          }
+        }
+
+
+
+      }
+
     }
 
   }

@@ -91,9 +91,6 @@ function generateWeeksInMonth(month, year) {
 export default function AttendanceGroup() {
     const resId = localStorage.getItem("userId");
     const selectedRole = localStorage.getItem("selectedRole");
-    // Mock data is removed, these would come from your backend.
-    const [mockGroups, setMockGroups] = useState([])
-    const [mockStudents, setMockStudents] = useState([])
     // State for selected group (will need to be initialized from backend groups)
     const [selectedGroup, setSelectedGroup] = useState(null);
     const [groups, setGroups] = useState([])
@@ -144,7 +141,6 @@ export default function AttendanceGroup() {
 
 
     async function getFilials() {
-
         try {
             const res = await ApiCall("/filial/getAll",{method:"GET"});
             setFilials(res.data);
@@ -335,13 +331,13 @@ export default function AttendanceGroup() {
 
     const getPeriodInfo = () => {
         if (filterType === "monthly") {
-            return `${selectedMonthName} ${selectedYear} - ${dataToDisplay.length} kun`
+            return `${selectedMonthName} ${selectedYear} - ${dataToDisplay.length} day`
         } else if (filterType === "weekly") {
             const weeksInMonth = generateWeeksInMonth(selectedMonth, selectedYear)
             const selectedWeekData = weeksInMonth.find((week) => week.number === selectedWeek)
-            return `${selectedMonthName} ${selectedYear}, ${selectedWeekData?.fullLabel || `${selectedWeek}-hafta`} - haftalik ko'rinish`
+            return `${selectedMonthName} ${selectedYear}, ${selectedWeekData?.fullLabel || `${selectedWeek}-week`} - weekly`
         } else {
-            return `${selectedDay} ${selectedMonthName} ${selectedYear} - kunlik ko'rinish`
+            return `${selectedDay} ${selectedMonthName} ${selectedYear} - daily`
         }
     }
 
@@ -608,14 +604,15 @@ export default function AttendanceGroup() {
                 </div>
                 <div className={styles.cardContent}>
                     <div className={styles.filtersContainer}>
+
                         <div className={styles.filterGroup}>
                             <label className={styles.filterLabel}>
                                 <Users size={16}/>
-                                Guruhni tanlang
+                                Select Brach and Group
                             </label>
                             <div className={styles.flexContainer}>
                                 {
-                                    selectedRole === "ROLE_MAIN_RECEPTION" && <select
+                                    (selectedRole === "ROLE_MAIN_RECEPTION" || selectedRole==="ROLE_ADMIN") && <select
                                         className={styles.select}
                                         value={selectedFilial?.id || ""} // Handle null selectedGroup initially
                                         onChange={(e) => {
@@ -659,7 +656,7 @@ export default function AttendanceGroup() {
                         <div className={styles.filterGroup}>
                             <label className={styles.filterLabel}>
                                 <Calendar size={16}/>
-                                Vaqt davri
+                                Time period
                             </label>
                             <select
                                 className={styles.select}
@@ -677,7 +674,7 @@ export default function AttendanceGroup() {
                             <div className={styles.filterGroup}>
                                 <label className={styles.filterLabel}>
                                     <Calendar size={16}/>
-                                    Yil, oy va kunni tanlang
+                                    Select Year, month, day
                                 </label>
                                 <div className={styles.dateSelector}>
                                     <select
@@ -843,13 +840,13 @@ export default function AttendanceGroup() {
                                             className={`${styles.bulkButton} ${styles.present}`}
                                             onClick={() => markAllForDate("present")}
                                         >
-                                            Hammasi kelgan
+                                            All present
                                         </button>
                                         <button
                                             className={`${styles.bulkButton} ${styles.absent}`}
                                             onClick={() => markAllForDate("absent")}
                                         >
-                                            Hammasi kelmagan
+                                            All absent
                                         </button>
                                     </div>
                                 ))}
@@ -867,7 +864,7 @@ export default function AttendanceGroup() {
                         <table className={styles.table}>
                             <thead className={styles.tableHead}>
                             <tr>
-                                <th className={styles.stickyColumn + " "}>Talaba</th>
+                                <th className={styles.stickyColumn + " "}>Student</th>
                                 {filterType === "daily" && <th className={styles.center}>Phone</th>}
                                 {filterType === "daily" && <th className={styles.center}>Reason</th>}
                                 {dataToDisplay.map((day, index) => {
@@ -877,7 +874,7 @@ export default function AttendanceGroup() {
                                     return (
                                         <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
             <span className={styles.dateType}>
-                {filterType === "daily" ? "Sana" : filterType === "weekly" ? "" : "Kun"}
+                {filterType === "daily" ? "Date" : filterType === "weekly" ? "" : "Day"}
             </span>
                                             <span className={styles.dateValue}>
                 {filterType === "weekly" ? (
@@ -895,7 +892,7 @@ export default function AttendanceGroup() {
                                     );
                                 })}
 
-                                <th className={styles.center}>Davomat %</th>
+                                <th className={styles.center}>Attendance %</th>
                             </tr>
                             </thead>
                             <tbody className={styles.tableBody}>
@@ -946,11 +943,11 @@ export default function AttendanceGroup() {
                             </span>
                             <button onClick={saveChanges} className={styles.saveButton}>
                                 <Save size={16}/>
-                                Saqlash
+                                Save
                             </button>
                             <button onClick={cancelEditing} className={styles.cancelButton}>
                                 <X size={16}/>
-                                Bekor qilish
+                                Cancel
                             </button>
                         </div>
                     )}
@@ -961,7 +958,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>Jami talabalar</p>
+                            <p>All students</p>
                             <p className={styles.statValue}>{students.length}</p> {/* Use 'students' state */}
                         </div>
                         <div className={`${styles.statIcon} ${styles.blue}`}>
@@ -973,7 +970,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>O'rtacha davomat</p>
+                            <p>Average attendance</p>
                             <p className={`${styles.statValue} ${styles.green}`}>
                                 {/* Group Average attendance */}
                                 {calculateAverageAttendance(filterType)}%
@@ -986,7 +983,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>Tanlangan kunda kelganlar</p>
+                            <p>Arrivals on the selected day</p>
                             <p className={`${styles.statValue} ${styles.blue}`}>
                                 {presentCount}
                             </p>
@@ -998,7 +995,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>Tanlangan kunda kelmaganlar</p>
+                            <p>Those who did not arrive on the selected day</p>
                             <p className={`${styles.statValue} ${styles.red}`}>
                                 {absentCount}
                             </p>

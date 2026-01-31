@@ -25,18 +25,22 @@ export function PaymentsList() {
 
     const [selectedPayment, setSelectedPayment] = useState(null);
 
-
-    // Get current month's start and end dates
     const getCurrentMonthRange = () => {
-        const now = new Date()
-        const start = new Date(now.getFullYear(), now.getMonth(), 1)
-        const end = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+        const now = new Date();
+
+        // Hozirgi oyning 1-sanasi
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // Keyingi oyning oxirgi sanasi:
+        // new Date(y, m+2, 0) → m+2 oyning 0-kuni = m+1 oyning oxiri
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
         return {
             start: start.toISOString().split("T")[0],
             end: end.toISOString().split("T")[0],
-        }
-    }
+        };
+    };
+
 
     const [filters, setFilters] = useState({
         filialId: "",
@@ -83,12 +87,13 @@ export function PaymentsList() {
     })
 
     useEffect(() => {
-        if (selectedRole === "ROLE_MAIN_RECEPTION") {
-            getFilials()
-        } else {
+        if (selectedRole === "ROLE_RECEPTION") {
             getFilialByReceptionId();
+        } else {
+            getFilials()
         }
     }, []);
+
 
 
     useEffect(() => {
@@ -131,6 +136,12 @@ export function PaymentsList() {
         try {
             const res = await ApiCall(`/filial/getOne/${resId}`, {method: "GET"});
             setSelBranch(res.data);
+
+            setFilters(prev => ({
+                ...prev,
+                filialId: res.data.id    // 🔥 filtrga biriktiramiz → getTeacherByFilial ishlaydi
+            }));
+
         } catch (err) {
             const errorMsg = err.response?.data || err.message || "Filial not found";
             toast.error(errorMsg);
@@ -259,7 +270,7 @@ export function PaymentsList() {
                 <div className={styles.selectFilters}>
 
                     {
-                        selectedRole === "ROLE_MAIN_RECEPTION" && <div className={styles.selectGroup}>
+                        (selectedRole === "ROLE_MAIN_RECEPTION" || selectedRole==="ROLE_ADMIN") && <div className={styles.selectGroup}>
                             <label className={styles.label}>
                                 <BookOpen className={styles.labelIcon}/>
                                 Filial
@@ -404,7 +415,7 @@ export function PaymentsList() {
                         <div className={styles.dateGroup}>
                             <label className={styles.label}>
                                 <Calendar className={styles.labelIcon}/>
-                                Dan
+                                From:
                             </label>
                             <input
                                 type="date"
@@ -416,7 +427,7 @@ export function PaymentsList() {
                         <div className={styles.dateGroup}>
                             <label className={styles.label}>
                                 <Calendar className={styles.labelIcon}/>
-                                Gacha
+                                To:
                             </label>
                             <input
                                 type="date"
@@ -460,9 +471,8 @@ export function PaymentsList() {
                             <div className={styles.emptyIcon}>
                                 <BookOpen className={styles.emptySearchIcon}/>
                             </div>
-                            <h3 className={styles.emptyTitle}>To'lovlar topilmadi</h3>
-                            <p className={styles.emptyDescription}>Filter shartlaringizni o'zgartiring yoki yangi to'lov
-                                qo'shing</p>
+                            <h3 className={styles.emptyTitle}>Payments not found!</h3>
+                            <p className={styles.emptyDescription}>Change your filter conditions or add a new payment</p>
                         </div>
                     ) : (
                         <div className={styles.tableWrapper}>
@@ -530,14 +540,6 @@ export function PaymentsList() {
                                         <td className={styles.amount}>{payment?.paidAmount} so'm</td>
                                         <td className={styles.amount}>{payment?.discountAmount} so'm</td>
                                         <td>
-                                            {/*<span*/}
-                                            {/*    className={`${styles.methodBadge} ${payment.paymentMethod === "card" ? styles.cardBadge : styles.cashBadge}`}*/}
-                                            {/*>*/}
-                                            {/*  <div className={styles.badgeContent}>*/}
-                                            {/*    {getPaymentMethodIcon(payment.paymentMethod)}*/}
-                                            {/*      {payment.paymentMethod === "CARD" ? "Karta" : "Naqd"}*/}
-                                            {/*  </div>*/}
-                                            {/*</span>*/}
                                             <button
                                                 className={styles.showTransactionBtn}
                                                 onClick={() => setSelectedPayment(payment)}

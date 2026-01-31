@@ -114,8 +114,6 @@ function Student() {
         }
     };
 
-
-
     const handleCheckboxChange = (e, isEditing = false) => {
         const {value, checked} = e.target;
         const selected = isEditing
@@ -370,10 +368,11 @@ function Student() {
                                 {editingIndex === i ? (
                                     <select
                                         name="branchId"
-                                        className={"select-g"}
+                                        className={"select-s"}
                                         value={editedStudent.branchId}
                                         onChange={handleInputChange}
                                     >
+                                        <option value="">Select branch</option>
                                         {
                                             branches&&branches.map((b) => <option key={b.id} value={b.id}>
                                                 {b?.name}

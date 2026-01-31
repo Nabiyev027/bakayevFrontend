@@ -255,6 +255,7 @@ export default function LessonsT() {
                   setSelectedGroup(group);
                 }}
             >
+              <option value="" disabled >Select Group</option>
               {groups.map((g) => (
                   <option key={g.id} value={g.id}>
                     {g.name}

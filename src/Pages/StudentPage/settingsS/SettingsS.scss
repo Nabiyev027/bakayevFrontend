@@ -1,6 +1,5 @@
-.setting-page {
+.setting-page-s {
   font-family: "NotoSerif", sans-serif;
-
   background-color: white;
   width: 100%;
   height: 100%;
@@ -12,248 +11,197 @@
   align-items: center;
   padding: 2rem;
   overflow-y: hidden;
-}
-.setting-title {
-  color: #f96000;
-}
-.setting-card {
-  width: 750px;
-  height: 700px;
-  border-radius: 20px;
-  margin-top: 20px;
-  border: solid 3px #f96000;
-}
 
-.avatar {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: solid 3px #f96000;
-  overflow: hidden;
-  cursor: pointer;
-  margin-bottom: 20px;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .avatar-overlay {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    font-size: 14px;
-    padding: 5px 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  &:hover .avatar-overlay {
-    opacity: 1;
-  }
-}
-
-.setting-page {
   .setting-title {
     font-size: 2rem;
     font-weight: bold;
-    color: #333;
     margin-bottom: 2rem;
   }
 
-  .setting-card {
+  $primary-color: #007bff; // Ko'k
+  $secondary-color: #6c757d; // Kulrang
+  $bg-color: #f8f9fa; // Ochiq kulrang
+  $card-bg: #ffffff; // Oq
+  $border-color: #dee2e6;
+  $shadow-color: rgba(0, 0, 0, 0.1);
+
+  .user-settings-card {
+    width: 95%;
+    max-width: 900px; // Katta ekranlarda maksimal kenglik
+    height: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: $card-bg;
+    border-radius: 12px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 2rem;
-    .info-row {
+    flex-direction: column; // Kichik ekranlar uchun ustun tartibi
+    gap: 20px; // Bo'limlar orasidagi bo'shliq
+    overflow-y: auto;
+
+    h2 {
+      color: $secondary-color;
+      font-size: 1.5em;
+      margin-bottom: 15px;
+      border-bottom: 2px solid $border-color;
+      padding-bottom: 5px;
+    }
+
+    // Bo'limlar stillari (Profil va Parol)
+    .profile-section,
+    .password-section {
+      padding: 20px;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      background-color: $bg-color;
+    }
+
+    // Profil Sarlavhasi va Rasm (Yangilangan)
+    .profile-header {
       display: flex;
+      flex-direction: column; // Rasm va yuklash tugmasini ustun qilib joylashtirish
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px dashed $border-color;
+      width: 100%;
 
-      .label {
-        text-align: center;
-        font-weight: bold;
-        font-size: 22px;
-        margin-right: 10px;
+      .icon{
+        color: gray;
         width: 100px;
-        text-align: right;
+        height: 100px;
       }
 
-      .value {
-        font-size: 32px;
-        margin-right: 10px;
-        flex-grow: 1;
+      .user-avatar-wrapper {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 10px;
+        border: 3px solid $primary-color;
       }
 
-      .input-edit {
-        padding: 8px 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 16px;
-        width: 180px;
+      .user-avatar {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // Rasmni doira ichiga sig'dirish
+        display: block;
       }
 
-      .action-btn {
-        padding: 8px 12px;
-        background-color: #f96000;
-        color: #fff;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        margin-left: 5px;
-        transition: background-color 0.3s ease;
+      .avatar-upload-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-        &:hover {
-          background-color: #f98000;
-        }
+        .upload-label {
+          cursor: pointer;
+          color: $primary-color;
+          border: 1px solid $primary-color;
+          padding: 5px 15px;
+          border-radius: 20px;
+          transition: background-color 0.3s;
+          font-size: 0.9em;
 
-        &.cancel {
-          background-color: #6c757d;
           &:hover {
-            background-color: #5a6268;
+            background-color: lighten($primary-color, 40%);
           }
         }
+        .file-name {
+          margin-top: 5px;
+          font-size: 0.8em;
+          color: $secondary-color;
+          font-style: italic;
+        }
       }
     }
 
-    .error-message {
-      color: #dc3545;
-      font-size: 14px;
-      text-align: center;
+    .form-group {
+      margin-bottom: 15px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: $secondary-color;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid $border-color;
+        border-radius: 6px;
+        font-size: 1em;
+        transition: border-color 0.3s, box-shadow 0.3s;
+
+        &:focus {
+          border-color: $primary-color;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.25);
+          outline: none;
+        }
+      }
     }
-  }
-}
 
-.password-inputs {
-  margin-right: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-// Responsive styles for SettingsS
-
-@media (max-width: 1024px) {
-  .setting-page {
-    overflow: hidden;
-  }
-  .setting-card {
-    width: 100% !important;
-    height: auto;
-    padding: 1.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .setting-page {
-    padding: 1rem;
-    overflow-y: scroll !important;
-  }
-
-  .setting-title {
-    font-size: 1.75rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .setting-card {
-    width: 100% !important;
-    padding: 1rem;
-    margin-top: 1rem;
-  }
-
-  .avatar {
-    width: 80px;
-    height: 80px;
-    margin-bottom: 1rem;
-
-    .avatar-overlay {
-      font-size: 12px;
-    }
-  }
-
-  .info-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
-
-    .label {
+    // Saqlash tugmasi stillari
+    .save-button {
+      display: block; // To'liq kenglik
       width: 100%;
-      text-align: left;
-      font-size: 18px;
+      padding: 10px;
+      background-color: $primary-color;
+      color: $card-bg;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+
+      &:active {
+        transform: scale(0.99);
+      }
     }
 
-    .value {
-      font-size: 24px;
+
+
+  }
+
+  // --- Responsive qismi ---
+  @media (min-width: 768px) {
+    .user-settings-card {
+      // ...
     }
 
-    .input-edit {
-      width: 100%;
+    .profile-section, .password-section {
+      // ...
     }
 
-    .action-btn {
-      font-size: 12px;
-      padding: 6px 10px;
+    // Katta ekranlarda rasm va inputni yonma-yon qilib joylashtirish
+    .profile-header {
+      flex-direction: row; // Rasm va yuklash tugmasi yonma-yon
+      justify-content: flex-start;
+      gap: 20px;
+
+      .user-avatar-wrapper {
+        margin-bottom: 0; // Bo'shliqni yo'qotish
+      }
+
+      .avatar-upload-group {
+        align-items: flex-start; // Matnlarni chapga tekislash
+      }
+    }
+
+    .save-button.profile-save, .save-button.password-save {
+      width: auto;
+      float: right;
     }
   }
+
 }
 
-@media (max-width: 480px) {
-  .setting-page {
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    overflow: scroll !important;
 
-    .setting-title {
-      margin-bottom: 4px !important;
-    }
-  }
-
-  .setting-card {
-    width: 100% !important;
-    height: 580px !important;
-    padding: 1rem;
-  }
-  .setting-title {
-    font-size: 1.5rem;
-  }
-
-  .avatar {
-    width: 60px;
-    height: 60px;
-
-    .avatar-overlay {
-      font-size: 10px;
-      padding: 3px 0;
-    }
-  }
-
-  .info-row {
-    .label {
-      font-size: 16px;
-    }
-
-    .value {
-      font-size: 20px;
-    }
-
-    .input-edit {
-      font-size: 14px;
-      padding: 6px 8px;
-    }
-
-    .action-btn {
-      font-size: 11px;
-      padding: 5px 8px;
-    }
-  }
-}

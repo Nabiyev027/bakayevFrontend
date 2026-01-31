@@ -51,20 +51,20 @@ function SelectRoles() {
         // role ga qarab navigatsiya qilamiz
         switch (role) {
             case "ROLE_TEACHER":
-                navigate("/teacher");
+                navigate("/teacher/group");
                 break;
             case "ROLE_STUDENT":
                 navigate("/student");
                 break;
             case "ROLE_ADMIN":
-                navigate("/admin");
+                navigate("/admin/addREC");
                 break;
             case "ROLE_SUPER_ADMIN":
                 navigate("/superAdmin");
                 break;
             case "ROLE_RECEPTION":
             case "ROLE_MAIN_RECEPTION":
-                navigate("/reception");
+                navigate("/reception/register");
                 break;
             default:
                 console.warn("Noma’lum rol:", role);

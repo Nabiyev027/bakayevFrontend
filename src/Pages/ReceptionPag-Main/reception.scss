@@ -8,6 +8,11 @@
     align-items: center;
     justify-content: space-between;
     height: 10vh;
+    position: relative;
+
+    h1{
+      color: #f96000 !important;
+    }
 
     .wrap-logo {
       display: flex;
@@ -27,20 +32,19 @@
       padding-right: 1rem;
 
       h2 {
-        color: #f96000;
+        color: #f96000 !important;
       }
 
       .circle {
         display: none !important;
-        background-color: white;
-        color: #f96000;
-        font-size: 40px;
-        padding: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50px;
       }
+
+      @media (max-width: 768px) {
+        h2{
+          display: none;
+        }
+      }
+
     }
 
     .burger {
@@ -54,34 +58,66 @@
         display: block;
       }
     }
+
+    .close-btn {
+      display: none;
+      position: absolute;
+      right: 0.5rem;
+
+      @media (max-width: 480px) {
+        right: 0rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        border: 1.5px solid #fff;
+        border-radius: 50px;
+        width: 40px;
+        height: 40px;
+        font-size: 30px;
+        margin-right: 1rem;
+        cursor: pointer;
+        z-index: 2000;
+      }
+    }
+
+
   }
 
   .wrap-page {
     display: flex;
     height: 90vh;
+    position: relative;
+
+    /* 🔥 Mobil uchun overlay */
+    &.active-overlay::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 900;
+    }
 
     .sidebar {
-      z-index: 1000 !important;
-      width: 140px !important;
+      z-index: 1000;
+      width: 140px;
       background-color: black;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
       overflow-y: auto;
-      overflow-x: hidden;
       padding: 1rem 0.5rem;
       transition: transform 0.3s ease-in-out;
-
-      @media (max-width: 768px) {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 220px;
-        height: 100%;
-        transform: translateX(-100%);
-        z-index: 1000;
-      }
+      gap: 1rem;
 
       .wrap-bars {
         display: flex;
@@ -89,6 +125,9 @@
         align-items: center;
         gap: 1rem;
 
+        .userName{
+          display: none;
+        }
 
         .box {
           width: 100px;
@@ -102,15 +141,25 @@
           color: #f96000;
           gap: 10px;
 
+          &.active-menu {
+            background: rgba(249, 96, 0, 0.2);
+            border-left: 4px solid #f96000;
+            color: white;
+
+            h3, svg {
+              color: white !important;
+            }
+          }
+
           h3 {
             font-size: 18px;
             font-weight: 500;
           }
-        }
 
-        .box:hover {
-          color: white;
-          cursor: pointer;
+          &:hover {
+            color: white;
+            cursor: pointer;
+          }
         }
       }
 
@@ -125,22 +174,16 @@
         font-size: 40px;
         color: white;
         gap: 10px;
-        margin-top: 1rem;
+
+        &:hover {
+          cursor: pointer;
+          color: #f96000;
+        }
 
         h3 {
           font-size: 18px;
+          font-weight: 500;
         }
-      }
-
-      .box-2:hover {
-        cursor: pointer;
-        color: #f96000;
-      }
-
-      .box-2:active {
-        border-radius: 15px;
-        box-shadow: 0 0 20px 3px white inset;
-        transform: scale(0.9);
       }
     }
 
@@ -148,41 +191,159 @@
       width: 100%;
       padding: 1rem;
       background-color: #f9b03a;
-      overflow-x: hidden;
-      overflow-y: hidden;
     }
 
-    @media (min-width: 769px) {
+    /* 🔥 Mobil versiyada sidebar chapdan chiqib kiradigan bo‘ladi */
+    @media (max-width: 768px) {
       .sidebar {
-        padding: 20px !important;
-        z-index: 1000 !important;
-        transform: translateX(0) !important;
-        position: relative !important;
+        width: 50% !important;
+        background-color: red;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        transform: translateX(-100%); /** Yopiq holat */
+        padding: 1rem 2rem;
+
+        .active-menu {
+          background: rgba(249, 96, 0, 0.2);
+          border-left: 4px solid #f96000;
+          color: white;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+
+          h3, svg {
+            color: white !important;
+          }
+        }
+
+
+
+
+        .wrap-bars{
+          width: 100%;
+          display: flex;
+          text-align: start;
+          align-items: start;
+
+          .box{
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-right: auto;
+            height: max-content;
+            flex-direction: row;
+            justify-content: start;
+
+            h3{
+              font-size: 22px;
+            }
+
+          }
+
+          .userName{
+            display: inline;
+            font-size: 30px;
+            color: #fff;
+          }
+
+        }
+
+        .box-2{
+          width: 100%;
+          height: max-content;
+          justify-content: start;
+          flex-direction: row;
+          margin-left: 0.4rem;
+          margin-right: auto;
+
+          h3{
+            font-size: 22px;
+            font-weight: 500;
+          }
+
+          &:active{
+            box-shadow: none;
+          }
+        }
       }
-      .wrap-page.active-overlay .content-bar::before {
-        display: none;
+
+      .sidebar.active {
+        transform: translateX(0); /** Ochiq holat */
       }
     }
-  }
-}
 
-@media (max-width: 768px) {
-  .nav-rec{
+    @media (max-width: 480px) {
+      .sidebar {
+        width: 75% !important;
+        background-color: red;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        transform: translateX(-100%); /** Yopiq holat */
+        padding: 1rem 2rem;
 
-    .wrap-name{
-      h2{
-        display: none;
+        .active-menu {
+          background: rgba(249, 96, 0, 0.2);
+          border-left: 4px solid #f96000;
+          color: white;
+          border-top-right-radius: 10px;
+          border-bottom-right-radius: 10px;
+
+          h3, svg {
+            color: white !important;
+          }
+        }
+
+
+
+
+        .wrap-bars{
+          width: 100%;
+          display: flex;
+          text-align: start;
+          align-items: start;
+
+          .box{
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-right: auto;
+            height: max-content;
+            flex-direction: row;
+            justify-content: start;
+
+            h3{
+              font-size: 22px;
+            }
+
+          }
+
+          .userName{
+            display: inline;
+            font-size: 30px;
+            color: #fff;
+          }
+
+        }
+
+        .box-2{
+          width: 100%;
+          height: max-content;
+          justify-content: start;
+          flex-direction: row;
+          margin-left: 0.5rem;
+          margin-right: auto;
+
+          h3{
+            font-size: 22px;
+            font-weight: 500;
+          }
+
+          &:active{
+            box-shadow: none;
+          }
+        }
       }
     }
-
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-rec {
-    height: 80px !important;
-  }
-  .circle {
-    display: none !important;
   }
 }

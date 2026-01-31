@@ -309,11 +309,11 @@ function TeacherMain() {
                             <td>
                                 {editingIndex === i ? (
                                     <input
+                                        className={"inp-g"}
                                         name="firstName"
                                         type={"text"}
                                         value={editedTeacher.firstName}
                                         onChange={handleInputChange}
-                                        className="input-edit"
                                     />
                                 ) : (
                                     t.firstName
@@ -322,10 +322,10 @@ function TeacherMain() {
                             <td>
                                 {editingIndex === i ? (
                                     <input
+                                        className={"inp-g"}
                                         name="lastName"
                                         value={editedTeacher.lastName}
                                         onChange={handleInputChange}
-                                        className="input-edit"
                                     />
                                 ) : (
                                     t.lastName
@@ -334,11 +334,11 @@ function TeacherMain() {
                             <td>
                                 {editingIndex === i ? (
                                     <input
+                                        className={"inp-g"}
                                         name="phone"
                                         type="text"
                                         value={editedTeacher.phone}
                                         onChange={handleInputChange}
-                                        className="input-edit"
                                     />
                                 ) : (
                                     t.phone
@@ -401,10 +401,10 @@ function TeacherMain() {
                                 {
                                     editingIndex === i ? (
                                         <input
+                                            className={"inp-g"}
                                             name="username"
                                             value={editedTeacher.username}
                                             onChange={handleInputChange}
-                                            className="input-edit"
                                         />
                                     ) : (
                                         t.username

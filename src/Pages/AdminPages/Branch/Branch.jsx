@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./branch.scss";
 import ApiCall from "../../../Utils/ApiCall";
+import {IoLocation} from "react-icons/io5";
+import {toast, ToastContainer} from "react-toastify";
 
 function Branch() {
   const BASE_URL = "http://localhost:8080";
@@ -54,46 +56,58 @@ function Branch() {
   };
 
   const saveBranch = async () => {
-    if (!filial.name || !filial.location || !filial.description){
+    // ⚠️ Muhim! Foydalanuvchi interfeysini to'sib qo'ymaslik uchun keyingi bosqichda buni o'zgartirish kerak.
+    if (!filial.name || !filial.location || !filial.description) {
       alert("Please enter all required fields");
+      return;
     }
+
     const formData = new FormData();
     formData.append("name", filial.name);
     formData.append("location", filial.location);
     formData.append("description", filial.description);
-    formData.append("image", imageFile);
 
-    if(editBranch) {
-      try {
-        await ApiCall(`/filial/update/${selectedBranch.id}`, {method: "PUT"}, formData);
-        resetForm();
-        await getBranches()
-      } catch (err) {
-        console.log("Filial saqlanmadi");
-      }
-    }else {
-      try {
-        await ApiCall("/filial", {method: "POST"}, formData);
-        resetForm();
-        await getBranches()
-      } catch (err) {
-        console.log("Filial saqlanmadi");
-      }
+    // 💡 imageFile mavjud bo'lsa, qo'shamiz
+    if (imageFile) {
+      formData.append("image", imageFile);
     }
 
-    setShowBranchModal(false);
+    // Tahrirlash/Qo'shish logikasi
+    try {
+      const method = editBranch ? "PUT" : "POST";
+      const url = editBranch ? `/filial/update/${selectedBranch.id}` : "/filial";
 
+      await ApiCall(url, { method: method }, formData);
+
+      // Muvaffaqiyatli xabar ko'rsatish
+      toast.success(`Branch ${editBranch ? 'updated' : 'added'} successfully!`);
+
+    } catch (err) {
+      // ❌ Eng muhim qismi: Server xatolarini foydalanuvchiga ko'rsatish
+      console.error("Filial saqlanmadi (API xatosi):", err);
+      // Serverdan kelgan xato xabarini ko'rsatishga harakat qiling
+      const errorMessage = err.response?.data?.message || "An error occurred while saving the branch.";
+      toast.error(errorMessage);
+      return; // Muvaffaqiyatsiz bo'lsa, formani yopmaslik kerak
+    }
+
+    // Muvaffaqiyatli yakunlanganda
+    resetForm();
+    await getBranches();
+    setShowBranchModal(false);
   };
+
 
   const deleteBranch = async (id) => {
     try {
       const res = await ApiCall(`/filial/delete/${id}`, {method: "DELETE"})
       await getBranches()
-      console.log(res.data)
+      toast.success(res.data)
     } catch (err) {
-      console.log(err.message);
+      toast.error(err.response.data);
     }
   }
+
   const toggleExpand = (id) =>
     setExpandedBranch(expandedBranch === id ? null : id);
 
@@ -169,11 +183,20 @@ function Branch() {
 
   function updateBranch(branch) {
     setSelectedBranch(branch);
-    setImageFile(branch.image);
-    setFilial({...filial, name:branch.name, location:branch.location, description:branch.description});
-    setEditBranch(true);
-    openBranchModal()
+
+    setFilial({
+      name: branch.name,
+      location: branch.location,
+      description: branch.description
+    });
+
+    setImageFile(null); // ✅ Tahrirlash rejimida yangi rasm tanlanmaguncha "imageFile" null bo'ladi
+    setSelectedImage(null); // ✅ Rasm previewni tozalash
+
+    setEditBranch(true); // ✅ Tahrirlash rejimini yoqish
+    openBranchModal();
   }
+
 
   function updateRoom(branch,room) {
     setSelectedRoom(room);
@@ -184,11 +207,15 @@ function Branch() {
 
   function cancelSaveBranch() {
     setShowBranchModal(false)
+    setEditBranch(false);
     resetForm()
   }
 
   return (
     <div className="branch-page">
+
+      <ToastContainer />
+
       <h1>Branches</h1>
       <button className="btn-add" onClick={openBranchModal}>
         + Add Branch
@@ -211,7 +238,20 @@ function Branch() {
             <div className="card-header">
               <div>
                 <h2>{branch.name}</h2>
-                <p>{branch.location}</p>
+                <a className={"location"}
+                   onClick={(e) => {
+                     e.preventDefault();
+                     navigator.clipboard.writeText(branch.location)
+                         .then(() => {
+                           toast.success("Location copied!");
+                         })
+                         .catch(err => {
+                           console.error("Copy failed:", err);
+                         });
+                   }}
+                >
+                  <IoLocation /> Location
+                </a>
               </div>
               <div className="actions">
                 <button onClick={() => updateBranch(branch)}>Edit</button>

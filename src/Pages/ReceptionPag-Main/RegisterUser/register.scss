@@ -98,8 +98,8 @@
           }
 
           select{
-            max-width: 300px;
-            width: 100%;
+            width: 300px;
+
             height: 50px;
             border: 2px solid #f96000;
             border-radius: 15px;
@@ -153,26 +153,6 @@
           }
         }
 
-        .btn-save {
-          background-color: black;
-          color: #f96000;
-          font-weight: 600;
-          font-size: 32px;
-          padding: 0.6rem 2.2rem;
-          border: none;
-          border-radius: 50px;
-
-          &:hover {
-            cursor: pointer;
-            border: 2px solid orange;
-          }
-
-          &:active {
-            scale: 0.95;
-            color: white;
-          }
-        }
-
         .box2 {
           position: relative;
 
@@ -201,6 +181,26 @@
         }
       }
     }
+
+    .btn-save {
+      background-color: black;
+      color: #f96000;
+      font-weight: 600;
+      font-size: 32px;
+      padding: 0.6rem 2.2rem;
+      border: none;
+      border-radius: 50px;
+
+      &:hover {
+        cursor: pointer;
+        border: 2px solid orange;
+      }
+
+      &:active {
+        scale: 0.95;
+        color: white;
+      }
+    }
   }
 }
 
@@ -215,7 +215,10 @@
   .register-page {
     padding: 20px !important;
     overflow-y: scroll;
+
   }
+
+
   /* Stack the two sections vertically */
   .register-page .form .sect-reg {
     height: max-content !important;
@@ -232,6 +235,11 @@
     padding: 1rem !important;
     box-sizing: border-box;
     height: auto !important;
+
+    label{
+      width: 300px;
+    }
+
   }
 
   /* Ensure box1 and box2 inside info-card are full‐width columns */
@@ -242,6 +250,12 @@
     width: 100% !important;
     gap: 1rem !important;
     padding: 0 !important;
+
+
+    label{
+      width: 100% !important;
+    }
+
   }
 
   /* Make every input, select and button full‐width */

@@ -2,44 +2,44 @@
 
 import {useEffect, useState} from "react"
 import styles from "./attendanceG.module.css"
-import {Calendar, Users, Filter, Download, Edit, Save, X, Plus} from "lucide-react"
+import {Calendar, Users, Filter, Edit, Save, X, Plus} from "lucide-react"
 import "./AttendanceG.scss"
-import apiCall from "../../../Utils/ApiCall";
 import {toast, ToastContainer} from "react-toastify";
 import ApiCall from "../../../Utils/ApiCall";
+import {useOutletContext} from "react-router-dom";
 
 // Months in Uzbek (can remain as it's UI specific)
 const months = [
-    {value: 0, name: "Yanvar"},
-    {value: 1, name: "Fevral"},
-    {value: 2, name: "Mart"},
-    {value: 3, name: "Aprel"},
+    {value: 0, name: "January"},
+    {value: 1, name: "February"},
+    {value: 2, name: "March"},
+    {value: 3, name: "April"},
     {value: 4, name: "May"},
-    {value: 5, name: "Iyun"},
-    {value: 6, name: "Iyul"},
-    {value: 7, name: "Avgust"},
-    {value: 8, name: "Sentabr"},
-    {value: 9, name: "Oktabr"},
-    {value: 10, name: "Noyabr"},
-    {value: 11, name: "Dekabr"},
+    {value: 5, name: "June"},
+    {value: 6, name: "July"},
+    {value: 7, name: "August"},
+    {value: 8, name: "September"},
+    {value: 9, name: "October"},
+    {value: 10, name: "November"},
+    {value: 11, name: "December"},
 ]
 
 // Weekdays in Uzbek (can remain as it's UI specific)
 const weekdays = [
-    "Yakshanba", // Sunday
-    "Dushanba", // Monday
-    "Seshanba", // Tuesday
-    "Chorshanba", // Wednesday
-    "Payshanba", // Thursday
-    "Juma", // Friday
-    "Shanba", // Saturday
+    "Sunday", // Sunday
+    "Monday", // Monday
+    "Tuesday", // Tuesday
+    "Wednesday", // Wednesday
+    "Thursday", // Thursday
+    "Friday", // Friday
+    "Saturday", // Saturday
 ]
 
 // Generate years (can remain as it's UI specific)
 const generateYears = () => {
     const currentYear = new Date().getFullYear()
     const years = []
-    for (let i = currentYear - 2; i <= currentYear + 1; i++) {
+    for (let i = currentYear - 1; i <= currentYear + 1; i++) {
         years.push(i)
     }
     return years
@@ -77,7 +77,7 @@ function generateWeeksInMonth(month, year) {
             number: weekNumber,
             startDay: startDay.getMonth() === (month - 1) ? startDay.getDate() : 1,
             endDay: endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate(),
-            fullLabel: `${weekNumber}-hafta (${startDay.getMonth() === (month - 1) ? startDay.getDate() : 1}–${endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate()})`
+            fullLabel: `${weekNumber}-week (${startDay.getMonth() === (month - 1) ? startDay.getDate() : 1}–${endDay.getMonth() === (month - 1) ? endDay.getDate() : lastDayOfMonth.getDate()})`
         });
 
         current.setDate(current.getDate() + 7);
@@ -87,14 +87,11 @@ function generateWeeksInMonth(month, year) {
     return weeks;
 }
 
-
-
 export default function AttendanceGroup() {
-    const teacherId = localStorage.getItem("userId");
-    // Mock data is removed, these would come from your backend.
-    const [mockGroups, setMockGroups] = useState([])
-    const [mockStudents, setMockStudents] = useState([])
-    // State for selected group (will need to be initialized from backend groups)
+
+    const { teacherId } = useOutletContext();
+
+
     const [selectedGroup, setSelectedGroup] = useState(null) // Initialize with null or a default from backend
     const [groups, setGroups] = useState([]) // State to store groups fetched from backend
 
@@ -104,7 +101,7 @@ export default function AttendanceGroup() {
     const [selectedDay, setSelectedDay] = useState(new Date().getDate())
     const today = new Date().getDate();
     const [selectedWeek, setSelectedWeek] = useState(1)
-    const weekDays = ["Yakshanba", "Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba"];
+    const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 
     // attendanceData will now be fetched from the backend based on filters
@@ -116,9 +113,14 @@ export default function AttendanceGroup() {
     // Array for absent reasons (can be fetched from backend or hardcoded if static)
     const absentReasons = ["Illness", "Family reason", "Transport problem", "Other reason", "No reason"]
 
+
     useEffect(() => {
-        getTeacherGroups();
-    }, []); // faqat bir marta chaqiriladi
+        if(teacherId){
+            getTeacherGroups();
+        }
+
+    }, [teacherId]);
+
 
     useEffect(() => {
         if (selectedGroup && selectedGroup.id) {
@@ -128,7 +130,7 @@ export default function AttendanceGroup() {
 
     const getTeacherGroups = async () => {
         try {
-            const res = await apiCall(`/group/teacher/${teacherId}`, {method: "GET"});
+            const res = await ApiCall(`/group/teacher/${teacherId}`, {method: "GET"});
             setGroups(res.data);
 
             if (res.data.length > 0) {
@@ -166,7 +168,7 @@ export default function AttendanceGroup() {
                 url += `&year=${selectedYear}&month=${selectedMonth + 1}`;
             }
 
-            const res = await apiCall(url, {method: "GET"});
+            const res = await ApiCall(url, {method: "GET"});
             if (res.data) {
                 setAttendanceData(res.data);
             } else {
@@ -286,8 +288,8 @@ export default function AttendanceGroup() {
     // `groups` array will be populated from backend
 
     const selectedGroupName = selectedGroup
-        ? groups.find((group) => group.id === selectedGroup.id)?.name || "Guruh tanlanmagan"
-        : "Guruh tanlanmagan";
+        ? groups.find((group) => group.id === selectedGroup.id)?.name || "Groups not selected"
+        : "group not selected";
     const selectedMonthName = months.find((month) => month.value === selectedMonth)?.name
     const dataToDisplay = isEditing ? editingData : attendanceData;
     const students = dataToDisplay[0]?.attendance || [];
@@ -297,13 +299,13 @@ export default function AttendanceGroup() {
 
     const getPeriodInfo = () => {
         if (filterType === "monthly") {
-            return `${selectedMonthName} ${selectedYear} - ${dataToDisplay.length} kun`
+            return `${selectedMonthName} ${selectedYear} - ${dataToDisplay.length} day`
         } else if (filterType === "weekly") {
             const weeksInMonth = generateWeeksInMonth(selectedMonth, selectedYear)
             const selectedWeekData = weeksInMonth.find((week) => week.number === selectedWeek)
-            return `${selectedMonthName} ${selectedYear}, ${selectedWeekData?.fullLabel || `${selectedWeek}-hafta`} - haftalik ko'rinish`
+            return `${selectedMonthName} ${selectedYear}, ${selectedWeekData?.fullLabel || `${selectedWeek}-wek`} - weekly`
         } else {
-            return `${selectedDay} ${selectedMonthName} ${selectedYear} - kunlik ko'rinish`
+            return `${selectedDay} ${selectedMonthName} ${selectedYear} - daily`
         }
     }
 
@@ -314,10 +316,6 @@ export default function AttendanceGroup() {
         const dataForPeriod = dataToDisplay; // This is already filtered by filterType and selected date/week/month
 
         if (dataForPeriod.length > 0) {
-            // For daily view, it's just one day. For weekly/monthly, average over the days shown
-            // For stats, we usually want totals for the specific selected period (e.g., this exact day, or average across days in week/month)
-            // For simplicity, let's assume the stats cards refer to the *last day loaded in dataToDisplay* if it's a multi-day view (weekly/monthly).
-            // A more precise approach would be to calculate averages or sums based on the filter.
             const lastDayData = dataForPeriod[dataForPeriod.length - 1];
             if (lastDayData && lastDayData.attendance) {
                 Object.values(lastDayData.attendance).forEach(att => {
@@ -353,16 +351,16 @@ export default function AttendanceGroup() {
 
             // 3️⃣ Natijani tekshiramiz
             if (response.status === 200) {
-                toast.success("Davomat muvaffaqiyatli saqlandi!");
+                toast.success("Attendance saved successfully.");
                 setIsEditing(false);
                 setEditedAttendance([]);
                 getAttendanceData(selectedGroup);
             } else {
-                toast.error("Xatolik: " + response.data);
+                toast.error("Error: " + response.data);
             }
         } catch (err) {
             console.error(err);
-            toast.error("Server bilan bog‘lanishda xatolik");
+            toast.error(err.response?.data || "Error to save changes");
         }
     }
 
@@ -545,8 +543,8 @@ export default function AttendanceGroup() {
             <ToastContainer/>
             <div className={styles.header}>
                 <div className={styles.headerContent}>
-                    <h1 className={"white-text"}>Talabalar Davomat Jadvali</h1>
-                    <p className={"white-text"}>Talabalar davomatini kuzatish va boshqarish</p>
+                    <h1 className={"white-text"}>Students attendance table</h1>
+                    <p className={"white-text"}>Track and manage student attendance</p>
                 </div>
                 <div style={{display: "flex", gap: "0.5rem"}}>
                     {(filterType === "daily" && Number(selectedDay) === today) && (
@@ -555,14 +553,9 @@ export default function AttendanceGroup() {
                             onClick={isEditing ? cancelEditing : startEditing}
                         >
                             {isEditing ? <X size={16} /> : <Edit size={16} />}
-                            {isEditing ? "Bekor qilish" : "Tahrirlash"}
+                            {isEditing ? "Cancel" : "Edit"}
                         </button>
                     )}
-                    {/* TODO: Add export functionality here (e.g., export to CSV) */}
-                    <button className={styles.exportButton}>
-                        <Download size={16}/>
-                        Export
-                    </button>
                 </div>
             </div>
 
@@ -570,7 +563,7 @@ export default function AttendanceGroup() {
                 <div className={styles.cardHeader}>
                     <h2 className={styles.cardTitle}>
                         <Filter size={20}/>
-                        Filtrlar
+                        Filters
                     </h2>
                 </div>
                 <div className={styles.cardContent}>
@@ -578,7 +571,7 @@ export default function AttendanceGroup() {
                         <div className={styles.filterGroup}>
                             <label className={styles.filterLabel}>
                                 <Users size={16}/>
-                                Guruhni tanlang
+                                Select Group
                             </label>
                             <select
                                 className={styles.select}
@@ -591,7 +584,7 @@ export default function AttendanceGroup() {
 
                                 disabled={isEditing || groups.length === 0} // Disable if editing or no groups loaded
                             >
-                                <option value="" disabled>Guruhni tanlang</option>
+                                <option value="" disabled>Select group</option>
                                 {/* Placeholder */}
                                 {groups.map((group) => ( // Use 'groups' state
                                     <option key={group.id} value={group.id}>
@@ -604,7 +597,7 @@ export default function AttendanceGroup() {
                         <div className={styles.filterGroup}>
                             <label className={styles.filterLabel}>
                                 <Calendar size={16}/>
-                                Vaqt davri
+                                Time period
                             </label>
                             <select
                                 className={styles.select}
@@ -612,9 +605,9 @@ export default function AttendanceGroup() {
                                 onChange={(e) => handleFilterChange(e.target.value)}
                                 disabled={isEditing}
                             >
-                                <option value="daily">Kunlik ko'rinish</option>
-                                <option value="weekly">Haftalik ko'rinish</option>
-                                <option value="monthly">Oylik ko'rinish</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
                             </select>
                         </div>
 
@@ -622,7 +615,7 @@ export default function AttendanceGroup() {
                             <div className={styles.filterGroup}>
                                 <label className={styles.filterLabel}>
                                     <Calendar size={16}/>
-                                    Yil, oy va kunni tanlang
+                                    Select year, month and day
                                 </label>
                                 <div className={styles.dateSelector}>
                                     <select
@@ -749,7 +742,7 @@ export default function AttendanceGroup() {
                     </div>
 
                     <div className={styles.selectedPeriodInfo}>
-                        <h4 className={styles.periodTitle}>Tanlangan davr:</h4>
+                        <h4 className={styles.periodTitle}>Selected period:</h4>
                         <p className={styles.periodDetails}>{getPeriodInfo()}</p>
                     </div>
                 </div>
@@ -759,18 +752,18 @@ export default function AttendanceGroup() {
                 <div className={styles.cardHeader}>
                     <div className={styles.tableHeader}>
                         <h2 className={styles.cardTitle}>
-                            Davomat jadvali - {selectedGroupName}
+                            Attendance table - {selectedGroupName}
                             {isEditing &&
-                                <span style={{color: "#f59e0b", marginLeft: "0.5rem"}}>(Tahrirlash rejimi)</span>}
+                                <span style={{color: "#f59e0b", marginLeft: "0.5rem"}}>(editing...)</span>}
                         </h2>
                         <div className={styles.legend}>
                             <div className={styles.legendItem}>
                                 <div className={`${styles.statusDot} ${styles.present}`}/>
-                                <span>Kelgan</span>
+                                <span>Present</span>
                             </div>
                             <div className={styles.legendItem}>
                                 <div className={`${styles.statusDot} ${styles.absent}`}/>
-                                <span>Kelmagan</span>
+                                <span>Absent</span>
                             </div>
                         </div>
                     </div>
@@ -788,16 +781,17 @@ export default function AttendanceGroup() {
                                             className={`${styles.bulkButton} ${styles.present}`}
                                             onClick={() => markAllForDate("present")}
                                         >
-                                            Hammasi kelgan
+                                            All present
                                         </button>
                                         <button
                                             className={`${styles.bulkButton} ${styles.absent}`}
                                             onClick={() => markAllForDate("absent")}
                                         >
-                                            Hammasi kelmagan
+                                            All absent
                                         </button>
                                     </div>
                                 ))}
+
                                 {dataToDisplay.length > 10 && (
                                     <p style={{fontSize: "0.75rem", color: "#6b7280"}}>
                                         ... va yana {dataToDisplay.length - 10} ta kun
@@ -822,7 +816,7 @@ export default function AttendanceGroup() {
                                     return (
                                         <th key={index} className={`${styles.center} ${styles.dateHeader}`}>
             <span className={styles.dateType}>
-                {filterType === "daily" ? "Sana" : filterType === "weekly" ? "" : "Kun"}
+                {filterType === "daily" ? "Date" : filterType === "weekly" ? "" : "Kun"}
             </span>
                                             <span className={styles.dateValue}>
                 {filterType === "weekly" ? (
@@ -906,7 +900,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>Jami talabalar</p>
+                            <p>All students</p>
                             <p className={styles.statValue}>{students.length}</p> {/* Use 'students' state */}
                         </div>
                         <div className={`${styles.statIcon} ${styles.blue}`}>
@@ -918,7 +912,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>O'rtacha davomat</p>
+                            <p>Average attendance</p>
                             <p className={`${styles.statValue} ${styles.green}`}>
                                 {/* Group Average attendance */}
                                 {calculateAverageAttendance(filterType)}%
@@ -931,7 +925,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>Tanlangan kunda kelganlar</p>
+                            <p>Arrivals on the selected day</p>
                             <p className={`${styles.statValue} ${styles.blue}`}>
                                 {presentCount}
                             </p>
@@ -943,7 +937,7 @@ export default function AttendanceGroup() {
                 <div className={styles.statCard}>
                     <div className={styles.statContent}>
                         <div className={styles.statText}>
-                            <p>Tanlangan kunda kelmaganlar</p>
+                            <p>Those who did not arrive on the selected day</p>
                             <p className={`${styles.statValue} ${styles.red}`}>
                                 {absentCount}
                             </p>

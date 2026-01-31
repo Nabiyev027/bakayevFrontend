@@ -1,14 +1,14 @@
-
-import "./superAdmin.scss"
+import "../ReceptionPag-Main/reception.scss"
 import { FaHeadset, FaBars } from "react-icons/fa";
 import { ImExit } from "react-icons/im";
 import logo from "../../Images/Logos/logoO.png";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import ApiCall from "../../Utils/ApiCall";
 import { useEffect, useState } from "react";
-import {GrUserAdmin} from "react-icons/gr";
+import { GrUserAdmin } from "react-icons/gr";
+import { MdOutlineSettings } from "react-icons/md";
 
-// Helper to decode JWT without external library
+// JWT decode helper
 function parseJwt(token) {
     try {
         const base64Url = token.split(".")[1];
@@ -29,7 +29,9 @@ function parseJwt(token) {
 function SuperAdmin() {
     const [user, setUser] = useState({});
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [activeMenu, setActiveMenu] = useState(""); // Active menu state
     const navigate = useNavigate();
+    const location = useLocation(); // current path
     const userToken = localStorage.getItem("token");
 
     useEffect(() => {
@@ -45,23 +47,25 @@ function SuperAdmin() {
         }
     }, [userToken]);
 
+    // Automatically highlight menu based on current path
+    useEffect(() => {
+        if (location.pathname.includes("adminsControl")) setActiveMenu("adminsControl");
+        else if (location.pathname.includes("setting")) setActiveMenu("setting");
+        else setActiveMenu("");
+    }, [location.pathname]);
 
-    const toggleSidebar = () => {
-        if (sidebarOpen) setSidebarOpen(false);
-        else setSidebarOpen(true);
-    };
-
+    const toggleSidebar = () => setSidebarOpen((open) => !open);
     const closeSidebar = () => setSidebarOpen(false);
 
     return (
-        <div className="wrapper-superAdmin">
+        <div className="wrapper-reception">
             <div className="nav-rec">
                 <div className="wrap-logo">
                     <img src={logo} alt="logo" />
                     <h1>Super Admin</h1>
                 </div>
                 <div className="wrap-name">
-                    <h2>{user.fullName}</h2>
+                    <h2>{user.username}</h2>
                     <div className="circle">
                         <FaHeadset />
                     </div>
@@ -73,29 +77,39 @@ function SuperAdmin() {
 
             <div className={`wrap-page ${sidebarOpen ? "active-overlay" : ""}`}>
                 <div
-                    className="sidebar"
+                    className={`sidebar ${sidebarOpen ? "active" : ""}`}
                     style={
                         window.innerWidth <= 768
-                            ? {
-                                transform: sidebarOpen
-                                    ? "translateX(0)"
-                                    : "translateX(-100%)",
-                            }
+                            ? { transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)" }
                             : {}
                     }
                 >
                     <div className="wrap-bars">
                         <div
                             onClick={() => {
+                                setActiveMenu("adminsControl");
                                 navigate("/superAdmin/adminsControl");
                                 closeSidebar();
                             }}
-                            className="box"
+                            className={`box ${activeMenu === "adminsControl" ? "active-menu" : ""}`}
                         >
                             <GrUserAdmin />
                             <h3>Admins control</h3>
                         </div>
+
+                        <div
+                            onClick={() => {
+                                setActiveMenu("setting");
+                                navigate("/superAdmin/setting");
+                                closeSidebar();
+                            }}
+                            className={`box ${activeMenu === "setting" ? "active-menu" : ""}`}
+                        >
+                            <MdOutlineSettings />
+                            <h3>Setting</h3>
+                        </div>
                     </div>
+
                     <div
                         onClick={() => {
                             navigate("/");

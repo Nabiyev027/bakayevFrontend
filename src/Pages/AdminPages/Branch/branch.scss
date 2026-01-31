@@ -75,15 +75,19 @@
   margin: 0;
 }
 
-.card-header p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #666;
+.card-header .location {
+  height: 20px !important;
+  color: red;
+  border: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.2rem;
 }
+
 
 .actions button {
   margin-bottom: 3px;
-
   background: transparent;
   border: 2px solid #f96000;
   color: #f96000;

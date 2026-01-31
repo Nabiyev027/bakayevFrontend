@@ -106,34 +106,19 @@
     word-wrap: break-word;
   }
 
-  td{
-
-    .filial-block {
-      margin-bottom: 12px;
-      padding: 8px;
-      background: #f7f7f7;
-      border-radius: 8px;
-    }
-
-    .filial-title {
-      font-weight: 600;
-      color: #444;
-      margin-bottom: 6px;
-    }
-
-    .group-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-
+  th:first-child{
+    width: 5%;
   }
 
   th {
     background-color: #f96000;
     color: #fff;
     font-weight: bold;
+  }
+
+  td .inp-g{
+    background-color: #ffc392;
+    border: 1px solid #f96000;
   }
 
   td img {
@@ -148,9 +133,34 @@
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    width: 120px;
-    font-size: 14px;
+    width: 110%;
+    height: 38px;
+    font-size: 16px;
     text-align: center;
+  }
+
+  .table-group-checkboxes{
+    width: 110%;
+
+    label{
+      display: flex;
+      align-items: center;
+      margin: 3px 0;
+    }
+
+    .inp-check{
+      width: 20px;
+      height: 20px;
+    }
+
+  }
+
+  .change-p-btn{
+    background-color: #1e293b;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
   }
 
   .input-edit {
@@ -170,14 +180,6 @@
 
   tr:hover {
     background-color: #fff5ec;
-  }
-
-  .change-p-btn{
-    background-color: darkblue;
-    padding: 6px 10px;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
   }
 
   .actions-t{

@@ -65,10 +65,38 @@
     word-wrap: break-word;
   }
 
+  th:first-child{
+    width: 5%;
+  }
+
   th {
     background-color: #f96000;
     color: #fff;
     font-weight: bold;
+  }
+
+  td .inp-g{
+    background-color: #ffc392;
+    border: 1px solid #f96000;
+  }
+
+  td{
+
+    .filial-select {
+      width: 130px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: 0.3s;
+
+      &:focus {
+        border-color: #f96000;
+        outline: none;
+        box-shadow: 0 0 5px #f9600073;
+      }
+    }
+
   }
 
   td img {
@@ -83,8 +111,9 @@
     padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    width: 120px;
-    font-size: 14px;
+    width: 110%;
+    height: 38px;
+    font-size: 16px;
     text-align: center;
   }
 
@@ -148,6 +177,27 @@
 
     .g-btn-cancel{
       background-color: gray;
+    }
+
+  }
+
+  td{
+    .table-checkboxes{
+
+      label{
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+        gap: 3px;
+        margin: 2px 0;
+
+        .inp-check{
+          width: 25px;
+          height: 25px;
+        }
+
+      }
+
     }
 
   }
@@ -356,33 +406,6 @@
   .addBtn {
     font-size: 13px !important;
     padding: 6px 10px !important;
-  }
-}
-
-/* Tablets */
-@media (max-width: 992px) {
-  .group-page {
-    padding: 1rem !important;
-  }
-  .branch-selectG {
-    position: static;
-    margin-bottom: 1rem;
-  }
-  .table-boxx {
-    max-height: 400px;
-  }
-  .GroupTable thead th,
-  .GroupTable tbody td {
-    padding: 0.4rem !important;
-    font-size: 13px !important;
-  }
-  .GroupTable {
-    width: 8%;
-  }
-  .actions button {
-    min-width: 50px;
-    height: 28px;
-    font-size: 11px;
   }
 }
 

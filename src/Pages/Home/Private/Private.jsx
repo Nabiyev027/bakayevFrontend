@@ -81,22 +81,7 @@ function Private() {
 
     const t = texts[selectedLang];
 
-    // (Your informs, comments, modal logic all unchanged)
-    const [informs] = useState([{
-        img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F1.png&w=96&q=75",
-        title: "Sifatli ta'lim",
-        desc: "Bizning darslar qiziqarli va maroqli tarzda o'tiladi...",
-    }, {
-        img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F2.png&w=96&q=75",
-        title: "Tajribali ustozlar",
-        desc: "Darslar British Council sertifikatiga ega ustozlar tomonidan olib boriladi...",
-    }, {
-        img: "https://ieltszone.uz/_next/image?url=%2Fimages%2FwhyChooseUs%2F3.png&w=96&q=75",
-        title: "Interaktiv metodlar",
-        desc: "Gapirish ko'nikmasini rivojlantirish uchun interaktiv usullar qo'llaniladi...",
-    },]);
-
-
+    const [locations, setLocations] = useState([]);
     const [newComment, setNewComment] = useState({firstName: "", lastName: "", text: "", rate: 0});
     const [activeModal, setActiveModal] = useState(false);
     const [aboutSection, setAboutSection] = useState({});
@@ -118,6 +103,20 @@ function Private() {
         getDifferenceSect()
         getComments()
     }, [selectedLang])
+
+    useEffect(() => {
+        getLocation()
+    }, []);
+
+    async function getLocation() {
+        try {
+            const res = await ApiCall("/filial/location", {method: "GET"});
+            setLocations(res.data);
+        }catch (err){
+            const message = err.response?.data || "Ma'lumot mavjud emas";
+            toast.warn(message);
+        }
+    }
 
     async function getHeaderInfo() {
         try {
@@ -280,15 +279,20 @@ function Private() {
                                     acc[index].push(word);
                                     return acc;
                                 }, [])
-                                .map((group, i) => (<span key={i}>
-        {group.map((word, j) => (<React.Fragment key={j}>
-            <span className={word.toLowerCase() === "ielts" ? "red-word" : ""}>
+                                .map((group, i) => (
+                                    <span key={i}>
+        {group.map((word, j) => (
+            <React.Fragment key={j}>
+            <span className={/ielts/i.test(word) ? "red-word" : ""}>
               {word}
             </span>{" "}
-            </React.Fragment>))}
-                                        <br/>
-      </span>))}
+            </React.Fragment>
+        ))}
+                                        <br />
+      </span>
+                                ))}
                         </h2>
+
 
 
                     </div>
@@ -319,32 +323,25 @@ function Private() {
                         interval={2000}
                     >
                         {/* slides unchanged */}
-                        <div className={"card-wrap"}>
-                            <img src={img} alt="Manzil 1"/>
-                            <div className="mapswrapper">
-                                <iframe
-                                    title="Manzil 1 xarita"
-                                    width="600"
-                                    height="450"
-                                    loading="lazy"
-                                    allowFullScreen
-                                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Bakayev&zoom=10&maptype=roadmap"
-                                ></iframe>
-                            </div>
-                        </div>
-                        <div className={"card-wrap"}>
-                            <div className="mapswrapper">
-                                <iframe
-                                    title="Manzil 2 xarita"
-                                    width="600"
-                                    height="450"
-                                    loading="lazy"
-                                    allowFullScreen
-                                    src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=Bakayev&zoom=10&maptype=roadmap"
-                                ></iframe>
-                            </div>
-                            <img src={img} alt="Manzil 2"/>
-                        </div>
+                        {
+                            locations && locations.map((location, i) => (
+                                <div className={"card-wrap"}>
+                                    <img src={`${BaseUrl+location.imageUrl}`} alt="Manzil 1"/>
+                                    <div className="mapswrapper">
+                                        <iframe
+                                            title="Manzil 1 xarita"
+                                            width="600"
+                                            height="450"
+                                            loading="lazy"
+                                            allowFullScreen
+                                            src={location.location}
+                                        ></iframe>
+                                    </div>
+                                </div>
+                            ))
+                        }
+
+
                     </Carousel>
                 </div>
             </section>

@@ -1,0 +1,323 @@
+:root {
+  --label-width: 120px;
+  --hour-width: 240px;     // 1 soat
+  --quarter-width: 60px;   // 15 daqiqa
+}
+
+/* ================= PAGE ================= */
+
+.schedule-page {
+  font-family: "NotoSerif", sans-serif;
+  font-size: 22px;
+  color: #333;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 0 12px 3px gray;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  overflow: auto;
+}
+
+/* ================= HEADER ================= */
+
+.schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 3px solid #2c3e50;
+  padding-bottom: 15px;
+
+  .filial-select {
+    width: 200px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.3s;
+
+    &:focus {
+      border-color: #f96000;
+      outline: none;
+      box-shadow: 0 0 5px #f9600073;
+    }
+  }
+
+  .interval-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+
+    &:focus {
+      border-color: #f96000;
+      outline: none;
+      box-shadow: 0 0 5px #f9600073;
+    }
+
+    label{
+      color: #f96000;
+      font-size: 18px;
+    }
+
+    select{
+      width: 200px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+
+  }
+
+
+
+
+}
+
+
+/* ================= TABS ================= */
+
+.tabs {
+  display: flex;
+}
+
+.tab {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #666;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: 0.3s;
+
+  &:hover {
+    color: #2c3e50;
+  }
+
+  &.active {
+    color: #2c3e50;
+    border-bottom-color: #2c3e50;
+  }
+}
+
+/* ================= CONTENT ================= */
+
+.schedule-content {
+  display: flex;
+  gap: 30px;
+
+  overflow-x: scroll;
+
+}
+
+.schedule-table {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+
+}
+
+/* ================= TIME HEADER ================= */
+
+.time-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+}
+
+
+.time-header-hours{
+  font-size: 18px;
+  padding: 1rem;
+}
+/* LABEL (ROOM / TIME) */
+
+.time-header-label,
+.room-label {
+  width: var(--label-width);
+  min-width: var(--label-width);
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  border-right: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.room-label{
+  background-color: #f96000;
+  color: white;
+}
+
+/* HOURS ROW */
+
+.time-header-hours {
+  display: flex;
+  position: sticky;
+  top: 0;
+  background: #f9f9f9;
+  border-bottom: 2px solid #ddd;
+  z-index: 10;
+}
+
+
+.hours-row {
+  display: flex;
+  width: max-content;
+}
+
+.hour-slot {
+  width: var(--hour-width);
+  min-width: var(--hour-width);
+  padding: 12px 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  border-right: 2px solid #999;
+}
+
+/* ================= GRID (15 min) ================= */
+
+.time-header-grid {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+}
+
+.grid-row {
+  display: flex;
+  width: max-content;
+}
+
+.grid-slot {
+  width: var(--quarter-width);
+  min-width: var(--quarter-width);
+  border-right: 1px solid #e0e0e0;
+}
+
+/* ================= TIME TEXT ================= */
+
+.times-row {
+  display: flex;
+  width: max-content;
+}
+
+.time-slot {
+  width: var(--quarter-width);
+  min-width: var(--quarter-width);
+  padding: 10px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-align: center;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* ================= ROOMS ================= */
+
+.rooms-container {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.room-row {
+  display: flex;
+  min-height: 50px;
+  border-bottom: 1px solid #ddd;
+}
+
+.room-row:last-child {
+  border-bottom: none;
+}
+
+.room-label {
+  font-size: 13px;
+}
+
+/* ================= CLASSES ================= */
+
+.classes-container {
+  position: relative;
+  height: 70px;
+  display: flex;
+  width: max-content;
+  padding: 8px 0;
+  border-left: 1px solid #e0e0e0;
+}
+
+.class-block {
+  position: absolute;
+  height: 60px;
+  top: 8px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  justify-content: space-between;
+}
+
+.class-block.dragging {
+  cursor: grabbing;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  transition: none;
+}
+
+.class-block:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 5;
+}
+
+/* COLORS */
+
+.class-block.card-color {
+  background: #0c2855;
+  color: white;
+  box-shadow: 0 6px 18px #f96000;
+}
+
+.class-block.beige {
+  background: #e8dcc8;
+}
+
+.class-block.red {
+  background: #d9534f;
+  color: white;
+}
+
+/* TEXT */
+
+.block-info{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #f96000;
+
+
+  .class-time {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .class-name {
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
+.class-teacher {
+  font-size: 18px;
+  opacity: 0.8;
+}

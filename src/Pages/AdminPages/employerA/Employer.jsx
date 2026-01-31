@@ -63,19 +63,6 @@ function Employer() {
         }
     }
 
-    function filterEmployers(branchId, roleId) {
-        if (branchId === "all" && roleId === "all" ) {
-            setFilteredEmployers(employers)
-        }
-        if (branchId === "all" && roleId === selRoleId ) {
-
-        }
-        if(branchId === selBranchId && roleId === "all" ) {
-
-        }
-
-    }
-
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
@@ -132,9 +119,10 @@ function Employer() {
 
             try {
                 const res = await ApiCall(`/user/delete/${st.id}`, {method: "DELETE"});
-                console.log(res.data)
+                toast.success(res.data)
+                await getEmployers()
             } catch (err) {
-                console.log(err);
+                toast.error(err.response?.data || "Error delete user")
             }
 
         }
@@ -287,9 +275,11 @@ function Employer() {
                     <option value="all">Select Role</option>
                     {
                         roles?.map((r) => <option value={r.id} key={r.id}>{
-
-                            r.name==="ROLE_RECEPTION" ? "RECEPTION" :
-                                r.name==="ROLE_MAIN_RECEPTION" ? "MAIN RECEPTION" : "TEACHER"
+                            r.name === "ROLE_RECEPTION" ? "RECEPTION" :
+                                r.name === "ROLE_MAIN_RECEPTION" ? "MAIN RECEPTION" :
+                                    r.name === "ROLE_TEACHER" ? "TEACHER" :
+                                        r.name === "ROLE_ADMIN" ? "ADMIN" :
+                                            r.name
                         }</option>)
                     }
                 </select>
@@ -394,7 +384,13 @@ function Employer() {
                                                     checked={editedEmployer.roleIds.includes(r.id)}
                                                     onChange={(e) => handleCheckboxChange(e, true)}
                                                 />
-                                                {r.name}
+                                                {
+                                                    r.name === "ROLE_RECEPTION" ? "RECEPTION" :
+                                                        r.name === "ROLE_MAIN_RECEPTION" ? "MAIN RECEPTION" :
+                                                            r.name === "ROLE_TEACHER" ? "TEACHER" :
+                                                                r.name === "ROLE_ADMIN" ? "ADMIN" :
+                                                                    r.name
+                                                }
                                             </label>
                                         ))}
                                     </div>

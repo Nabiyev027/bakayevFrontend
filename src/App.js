@@ -14,9 +14,7 @@ import StudentPage from "./Pages/StudentPage/StudentPage";
 import LessonsS from "./Pages/StudentPage/lessonsS/LessonsS";
 import PaymentS from "./Pages/StudentPage/paymentS/PaymentS";
 import Admin from "./Pages/AdminPages/Admin";
-import GroupA from "./Pages/AdminPages/groupA/GroupA";
 import SettingA from "./Pages/AdminPages/settingsA/SettingA";
-import AddReception from "./Pages/AdminPages/addRECEPTION/AddReception";
 import SettingsS from "./Pages/StudentPage/settingsS/SettingsS";
 import InterfaceA from "./Pages/AdminPages/interfaceA/InterfaceA";
 import ExamS from "./Pages/StudentPage/examS/ExamS";
@@ -26,7 +24,6 @@ import Register from "./Pages/ReceptionPag-Main/RegisterUser/Register";
 import Student from "./Pages/ReceptionPag-Main/StudentPage/Student";
 import Group from "./Pages/ReceptionPag-Main/GroupPage/Group";
 import Payment from "./Pages/ReceptionPag-Main/PaymentPage/Payment";
-import Setting from "./Pages/ReceptionPag-Main/SettingPage/Setting";
 import NotFound from "./Pages/NotFound/NotFound";
 import Massage from "./Pages/ReceptionPag-Main/Massage/Massage";
 import SelectRoles from "./Pages/SelectRoles/SelectRoles";
@@ -41,6 +38,11 @@ import AttendanceGroupForReception from "./Pages/ReceptionPag-Main/Attendance/At
 import AttendanceGroup from "./Pages/TeacherPage/groupAttendance/AttendanceG";
 import SuperAdmin from "./Pages/SuperAdminPage/SuperAdmin";
 import AdminsControl from "./Pages/SuperAdminPage/AdminsControl/AdminsControl";
+import AllStudentsRating from "./Pages/RatingPage/AllStudentsRating";
+import InfoStudentsList from "./Pages/InfoStudentsList/InfoStudentsList";
+import Salary from "./Pages/AdminPages/salary/Salary";
+import RefundFee from "./Pages/AdminPages/refundFee/RefundFee";
+import RoomSchedule from "./Pages/RoomSchedule/RoomSchedule";
 
 
 function App() {
@@ -75,35 +77,47 @@ function App() {
                     <Route path={"/reception/student"} element={<Student/>}/>
                     <Route path={"/reception/teacher"} element={<TeacherMain/>}/>
                     <Route path={"/reception/group"} element={<Group/>}/>
+                    <Route path={"/reception/roomSchedule"} element={<RoomSchedule/>}/>
                     <Route path={"/reception/payment"} element={<Payment/>}/>
-                    <Route path={"/reception/setting"} element={<Setting/>}/>
+                    <Route path={"/reception/setting"} element={<SettingsS/>}/>
                     <Route path={"/reception/present"} element={<AttendanceGroupForReception />}/>
                     <Route path={"/reception/massage"} element={<Massage/>}/>
                     <Route path={"/reception/appeal"} element={<Appeal/>}/>
+                    <Route path={"/reception/infoStudent"} element={<InfoStudentsList/>}/>
+                    <Route path="/reception/studentRatings" element={<AllStudentsRating/>} />
                 </Route>
                 <Route path="/teacher" element={<Teacher/>}>
                     <Route path="/teacher/group" element={<AttendanceGroup/>}/>
                     <Route path="/teacher/lessons" element={<LessonsT/>}/>
                     <Route path="/teacher/exam" element={<ExamT/>}/>
                     <Route path="/teacher/rating" element={<Rating/>} />
+                    <Route path={"/teacher/infoStudent"} element={<InfoStudentsList/>}/>
+                    <Route path="/teacher/studentRatings" element={<AllStudentsRating/>} />
                 </Route>
                 <Route path="/student" element={<StudentPage/>}>
                     <Route path="/student/lessons" element={<LessonsS/>}/>
                     <Route path="/student/payment" element={<PaymentS/>}/>
-                    <Route path="/student/setting" element={<SettingsS/>}/>
                     <Route path="/student/exam" element={<ExamS/>}/>
                 </Route>
                 <Route path="/admin" element={<Admin/>}>
-                    <Route path="/admin/group" element={<GroupA/>}/>
+                    <Route path={"/admin/group"} element={<Group/>}/>
                     <Route path="/admin/setting" element={<SettingA/>}/>
                     <Route path="/admin/comments" element={<CommentsA/>}/>
-                    <Route path="/admin/addREC" element={<AddReception/>}/>
+                    <Route path="/admin/addREC" element={<Register/>}/>
                     <Route path="/admin/interface" element={<InterfaceA/>}/>
                     <Route path={"/admin/employer"} element={<Employer/>}/>
+                    <Route path={"/admin/student"} element={<Student/>}/>
                     <Route path={"/admin/branch"} element={<Branch/>}/>
+                    <Route path={"/admin/payment"} element={<Payment/>}/>
+                    <Route path={"/admin/refundFee"} element={<RefundFee/>}/>
+                    <Route path={"/admin/infoStudent"} element={<InfoStudentsList/>}/>
+                    <Route path="/admin/studentRatings" element={<AllStudentsRating/>} />
+                    <Route path="/admin/salary" element={<Salary/>} />
+                    <Route path={"/admin/roomSchedule"} element={<RoomSchedule/>}/>
                 </Route>
                 <Route path={"/superAdmin"} element={<SuperAdmin/>} >
                     <Route path={"/superAdmin/adminsControl"} element={<AdminsControl/>} />
+                    <Route path={"/superAdmin/setting"} element={<SettingsS/>} />
                 </Route>
                 <Route path="*" element={<NotFound/>}/>
             </Routes>

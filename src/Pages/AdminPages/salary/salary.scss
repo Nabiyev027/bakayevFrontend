@@ -1,0 +1,487 @@
+.salary-page{
+  font-family: "NotoSerif", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: #333;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0px 0px 12px 3px gray;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  padding: 2rem;
+  overflow-y: scroll;
+
+  .salary-header{
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 1rem;
+
+    .wrap-btn{
+      display: flex;
+      gap: 1rem;
+    }
+
+    .filial-select,
+    .role-select {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+      width: 150px;
+      transition: 0.3s ease;
+      cursor: pointer;
+
+      &:focus {
+        border-color: #f96000;
+        outline: none;
+        box-shadow: 0 0 5px #f9600073;
+        color: #f96000;
+        font-weight: 700;
+      }
+
+      &.active {
+        background: #f96000;
+        color: #fff;
+        border-color: red;
+      }
+    }
+
+    .monthYearSelector {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--spacing-sm);
+    }
+
+    .select {
+      width: 100%;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--gray-300);
+      border-radius: var(--border-radius);
+      background: white;
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+    }
+
+    .select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+  }
+
+  .salary-table-wrap {
+    //overflow-y: auto;
+    width: 100%;
+    max-width: 1400px;
+    height: 100%;
+    margin-top: 1rem;
+    border-radius: 12px;
+    overflow-y: auto;
+
+    .salary-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      table-layout: fixed;
+
+      th{
+        background-color: #1e293b;
+        color: #ffaa22;
+        border: 1px solid white;
+        padding: 1rem 0 !important;
+      }
+
+      th:first-child{
+        width: 5%;
+
+      }
+
+      th:nth-child(2){
+        width: 27%;
+      }
+
+
+      th,
+      td {
+        text-align: center;
+        padding: 14px;
+        border-bottom: 1px solid #eee;
+        font-size: 16px;
+
+      }
+
+      td img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #f96000;
+      }
+
+      td{
+        font-size: 18px;
+
+        .inp-check{
+          width: 32px;
+          height: 32px;
+          cursor: pointer;
+        }
+
+        .inp-amount {
+          width: 100%;
+          font-size: 20px;
+          padding: 0.4rem 0.5rem;
+          color: #f96000;
+          font-weight: bold;
+          border-radius: 8px;
+
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+
+          -moz-appearance: textfield;
+
+
+        }
+
+        .btn{
+          align-items: center;
+          border: none;
+          border-radius: 8px;
+          font-size: 20px;
+          color: #fff;
+          cursor: pointer;
+          font-weight: 700;
+          padding: 0.5rem;
+        }
+
+        .btn-s{
+          background-color: #2aff2a;
+        }
+
+        .btn-cancel{
+          background-color: red;
+        }
+
+        .btn-g{
+          background-color: #1d4ed8;
+          margin-right: 5px;
+        }
+
+        .btn-i{
+          background-color: cyan;
+          margin-left: 5px;
+        }
+
+      }
+    }
+
+  }
+
+  .modal-backdrop {
+    z-index: 1000;
+    padding: 2rem;
+
+    .modal {
+      max-width: 1400px;
+      width: 100%;
+
+
+      h2 {
+        width: max-content;
+        margin: 0 auto;
+        font-size: 30px;
+      }
+
+      .discounts-wrap {
+        border-radius: 10px;
+        height: 450px;
+        padding: 0.5rem;
+
+        h2{
+          color: #a8a8a8;
+        }
+
+        .dis-card{
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0.5rem 0.8rem;
+          border-radius: 10px;
+          border: 1px solid #ccc;
+
+          .actions-d{
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .btn{
+              font-size: 18px;
+              border: none;
+              border-radius: 8px;
+              padding: 0.5rem;
+              color: white;
+            }
+
+            .btn-e{
+              background-color: #ffaa22;
+            }
+
+            .btn-d{
+              background-color: red;
+            }
+
+
+          }
+
+        }
+
+      }
+
+      .btn-close{
+        margin: 0 auto;
+        width: max-content;
+        padding: 0.5rem;
+        font-size: 18px;
+        background-color: black;
+        color: white;
+        border: none;
+        border-radius: 8px;
+      }
+
+      label {
+        display: block;
+        margin: 0 auto;
+
+        h4 {
+          color: #f96000;
+          font-size: 22px;
+        }
+      }
+
+      .nav-salary-modal{
+        display: flex;
+        gap: 1rem;
+        width: max-content;
+
+
+        .sel-g{
+          width: 270px;
+          font-size: 18px;
+          padding: 0.4rem 0.5rem;
+          color: #f96000;
+          font-weight: bold;
+          border-radius: 10px;
+          border: 1px solid #ccc;
+
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+
+          -moz-appearance: textfield;
+
+          &:focus{
+            outline: none;
+          }
+
+        }
+
+        .inp-amount {
+          width: 270px;
+          font-size: 18px;
+          padding: 0.4rem 0.5rem;
+          color: #f96000;
+          font-weight: bold;
+
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+
+          -moz-appearance: textfield;
+
+
+        }
+
+        .btn-add{
+          background-color: #f96000;
+          color: white;
+
+          &:active{
+            background-color: #ccc;
+          }
+        }
+
+      }
+
+      .modal-table{
+
+        .table-nav{
+          background-color: #000;
+          color: #f96000;
+          padding: 0.5rem 1rem;
+          display: flex;
+          justify-content: space-between;
+          border-radius: 8px;
+
+          .nav-col{
+            width: 20%;
+            text-align: start;
+          }
+
+          .nav-col:first-child{
+            width: 5%;
+          }
+
+          .nav-col-2{
+            width: 20%;
+          }
+
+          .nav-col-2:first-child{
+            width: 5%;
+          }
+
+        }
+
+        .table-body{
+          background-color: #ccc;
+          height: 320px;
+          margin-top: 0.5rem;
+          overflow-y: scroll;
+          border-radius: 8px;
+          padding: 0.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 8px !important;
+
+          .table-row{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            border-radius: 8px;
+            padding: 0.5rem;
+
+            .col{
+              width: 20%;
+              text-align: start;
+            }
+
+            .col:first-child{
+              width: 5%;
+            }
+
+            .col-2{
+              width: 20%;
+              text-align: start;
+
+              .inp-percentage {
+                width: 70px;
+                font-size: 18px;
+                padding: 4px;
+                text-align: center;
+              }
+
+              .btn{
+                border:none;
+                padding: 0.5rem;
+                margin: 0 5px;
+                font-size: 18px;
+                border-radius: 8px;
+                cursor: pointer;
+              }
+
+              .btn-cancel{
+                background-color: red;
+                color: white;
+              }
+
+              .btn-s{
+                background-color: lawngreen;
+                color: white;
+              }
+
+
+            }
+
+            .col-2:first-child{
+              width: 5%;
+            }
+
+            .btn-del,.btn-edit{
+              background-color: red;
+              color: white;
+              padding: 0.5rem 0.7rem;
+              font-size: 18px;
+              cursor: pointer;
+              border-radius: 8px;
+              border: none;
+
+              &:active{
+                scale: 0.95;
+              }
+
+            }
+
+            .btn-edit{
+              background-color: #f9b03a !important;
+              margin-right: 5px;
+            }
+
+
+          }
+
+        }
+
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: center !important;
+        align-items: center !important;
+        margin-top: 1rem;
+        gap: 20px;
+
+        .btn {
+          width: 100% !important;
+          font-size: 18px;
+          border-radius: 10px;
+
+          &:hover{
+            background-color: #ccc;
+          }
+
+        }
+
+        .btn-save{
+          background-color: #4ade80;
+
+        }
+
+        .btn-close{
+          background-color: red;
+
+
+        }
+
+      }
+    }
+  }
+
+}
