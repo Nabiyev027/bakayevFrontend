@@ -17,27 +17,32 @@ export default function Teachers() {
 
     const [user, setUser] = useState({});
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [userId, setUserId] = useState(null);
-
     const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
 
     useEffect(() => {
         if (userToken) getUserInfo();
     }, [userToken]);
 
     function getUserInfo() {
-        const decoded = jwtDecode(userToken);
-        const userId = decoded.sub;
-        setUserId(userId);
-        localStorage.setItem("userId", userId);
+        try {
+            if (!userId) {
+                console.error("Token ichida userId topilmadi!");
+                return;
+            }
 
-        ApiCall(`/user/${userId}`, { method: "GET" })
-            .then((res) => setUser(res.data))
-            .catch((err) => {
-                if (err.response?.status === 401) {
-                    RefreshTokenCall();
-                }
-            });
+            // ApiCall o'zi 401 ni handle qiladi, shuning uchun .then/.catch yetarli
+            ApiCall(`/user/${userId}`, { method: "GET" })
+                .then((res) => {
+                    setUser(res.data);
+                })
+                .catch((err) => {
+                    console.error("User ma'lumotlarini olishda xato:", err);
+                    // Agar ApiCall refresh qila olmasa, bu yerga tushadi
+                });
+        } catch (error) {
+            console.error("Tokenni dekodlashda xato:", error);
+        }
     }
 
     const toggleSidebar = () => setSidebarOpen(prev => !prev);

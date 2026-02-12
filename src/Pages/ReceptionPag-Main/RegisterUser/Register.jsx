@@ -170,7 +170,7 @@ function Register() {
       const res = await ApiCall("/filial/getAll", { method: "GET" });
       setBranches(res.data || []);
     }catch(err) {
-      toast.error(err.response.data);
+      toast.error(err.response.data || "Error to get Branches");
     }
   };
 

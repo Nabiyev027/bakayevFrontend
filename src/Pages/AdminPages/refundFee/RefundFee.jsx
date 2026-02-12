@@ -3,6 +3,7 @@ import "./refundFee.scss"
 import ApiCall from "../../../Utils/ApiCall";
 import {toast, ToastContainer} from "react-toastify";
 import {AnimatePresence, motion} from "framer-motion";
+import {jwtDecode} from "jwt-decode";
 
 function RefundFee() {
     const [filials,setFilials] = useState([]);
@@ -19,7 +20,9 @@ function RefundFee() {
 
     const [refunds, setRefunds] = useState([]);
 
-    const userId = localStorage.getItem("userId");
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
+
     const userRole = localStorage.getItem("selectedRole");
 
     useEffect(() => {
@@ -133,6 +136,13 @@ function RefundFee() {
     }
 
     async function deleteRefund(id) {
+
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this refund?"
+        );
+
+        if (!confirmed) return;
+
         try {
             const res = await ApiCall(`/refund/delete/${id}`, {method: "DELETE"});
             toast.success(res.data);
@@ -227,7 +237,6 @@ function RefundFee() {
                                     <button className={"btn-del"} onClick={()=>deleteRefund(refund.id)}>Delete</button>
                                 </td>
                             }
-
                         </tr>)
                     }
                     </tbody>

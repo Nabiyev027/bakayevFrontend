@@ -5,49 +5,48 @@ import { ImExit } from "react-icons/im";
 import logo from "../../Images/Logos/logoO.png";
 import { BsCashCoin } from "react-icons/bs";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import ApiCall from "../../Utils/ApiCall";
 import { useEffect, useState } from "react";
 import { GiWhiteBook } from "react-icons/gi";
 import { IoCloseSharp } from "react-icons/io5";
+import {jwtDecode} from "jwt-decode";
+import ApiCall from "../../Utils/ApiCall";
 
-function parseJwt(token) {
-    try {
-        const base64Url = token.split(".")[1];
-        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        const jsonPayload = decodeURIComponent(
-            atob(base64)
-                .split("")
-                .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-                .join("")
-        );
-        return JSON.parse(jsonPayload);
-    } catch (e) {
-        console.error("Invalid token", e);
-        return null;
-    }
-}
+
 
 function StudentPage() {
     const [user, setUser] = useState({});
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const navigate = useNavigate();
-    const location = useLocation();
     const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
+
 
     useEffect(() => {
-        if (!userToken) return;
-
-        const decoded = parseJwt(userToken);
-        if (!decoded?.sub) return;
-
-        const id = decoded.sub;
-        localStorage.setItem("userId", id);
-
-        ApiCall(`/user/${id}`, { method: "GET" })
-            .then((res) => setUser(res.data))
-            .catch((err) => console.error(err));
+        if (userToken) getUserInfo();
     }, [userToken]);
+
+    function getUserInfo() {
+        try {
+            if (!userId) {
+                console.error("Token ichida userId topilmadi!");
+                return;
+            }
+
+            ApiCall(`/user/${userId}`, { method: "GET" })
+                .then((res) => {
+                    setUser(res.data);
+                })
+                .catch((err) => {
+                    console.error("User ma'lumotlarini olishda xato:", err);
+                });
+        } catch (error) {
+            console.error("Tokenni dekodlashda xato:", error);
+        }
+    }
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
 
     const toggleSidebar = () => setSidebarOpen(prev => !prev);
     const closeSidebar = () => setSidebarOpen(false);

@@ -19,7 +19,7 @@
     "react-modal": "^3.16.3",
     "react-multi-carousel": "^2.8.5",
     "react-responsive-carousel": "^3.2.23",
-    "react-router-dom": "^7.2.0",
+    "react-router-dom": "^7.13.0",
     "react-scripts": "5.0.1",
     "react-slick": "^0.31.0",
     "react-toastify": "^11.0.5",

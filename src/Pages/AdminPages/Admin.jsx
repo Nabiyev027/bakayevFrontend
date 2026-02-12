@@ -15,13 +15,13 @@ import { jwtDecode } from "jwt-decode";
 import ApiCall from "../../Utils/ApiCall";
 import { useEffect, useState } from "react";
 import { SlPeople } from "react-icons/sl";
-import RefreshTokenCall from "../../Utils/RefreshTokenCall";
 import { GiStarsStack } from "react-icons/gi";
 import { LuClipboardList } from "react-icons/lu";
 import { IoCloseSharp } from "react-icons/io5";
 import { PiStudentBold } from "react-icons/pi";
 import {FaHandHoldingDollar} from "react-icons/fa6";
 import {RiRefund2Line} from "react-icons/ri";
+import {toast} from "react-toastify";
 
 function Admin() {
     const [user, setUser] = useState({});
@@ -30,23 +30,30 @@ function Admin() {
     const navigate = useNavigate();
     const location = useLocation(); // ⭐ MUHIM
     const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
+
 
     useEffect(() => {
         if (userToken) getUserInfo();
     }, [userToken]);
 
     function getUserInfo() {
-        const decoded = jwtDecode(userToken);
-        const userId = decoded.sub;
-        localStorage.setItem("userId", userId);
+        try {
+            if (!userId) {
+                console.error("Token ichida userId topilmadi!");
+                return;
+            }
 
-        ApiCall(`/user/${userId}`, { method: "GET" })
-            .then((res) => setUser(res.data))
-            .catch((err) => {
-                if (err.response?.status === 401) {
-                    RefreshTokenCall();
-                }
-            });
+            ApiCall(`/user/${userId}`, { method: "GET" })
+                .then((res) => {
+                    setUser(res.data);
+                })
+                .catch((err) => {
+                    toast.error(err.response?.data);
+                });
+        } catch (error) {
+            console.error("Tokenni dekodlashda xato:", error);
+        }
     }
 
     const toggleSidebar = () => setSidebarOpen(prev => !prev);

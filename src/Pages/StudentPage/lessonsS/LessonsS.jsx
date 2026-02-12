@@ -2,6 +2,7 @@ import React, {useState, useMemo, useEffect} from "react";
 import "./lessonsS.scss";
 import ApiCall from "../../../Utils/ApiCall";
 import {toast, ToastContainer} from "react-toastify";
+import {jwtDecode} from "jwt-decode";
 
 export default function LessonsS() {
   const months = [
@@ -29,7 +30,8 @@ export default function LessonsS() {
     "rgb(255, 0, 0)"
   ];
 
-  const studentId = localStorage.getItem("userId");
+  const userToken = localStorage.getItem("token");
+  const studentId = jwtDecode(userToken).userId;
 
   useEffect(() => {
     getStudentGroups()

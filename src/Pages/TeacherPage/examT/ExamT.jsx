@@ -7,9 +7,11 @@ import {toast, ToastContainer} from "react-toastify";
 import {MdClose} from "react-icons/md";
 import {IoClose} from "react-icons/io5";
 import {useNavigate} from "react-router-dom";
+import {jwtDecode} from "jwt-decode";
 
 export default function ExamT() {
-    const teacherId = localStorage.getItem("userId");
+    const userToken = localStorage.getItem("token");
+    const teacherId = jwtDecode(userToken).userId;
 
     const [exams, setExams] = useState([]);
     const [groups, setGroups] = useState([]);

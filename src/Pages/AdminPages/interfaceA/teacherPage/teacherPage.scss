@@ -75,6 +75,19 @@
         text-align: start;
         color: #ffaa22;
       }
+
+      .error {
+        color: red;
+        font-size: 16px;
+        margin-top: 4px;
+        display: block;
+      }
+
+      input.error, textarea.error {
+        border: 1px solid red;
+      }
+
+
     }
 
     .wrap-info{
@@ -85,7 +98,6 @@
       .l-wrap{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
         text-align: center;
 
         .title-i{

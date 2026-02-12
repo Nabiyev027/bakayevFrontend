@@ -2,10 +2,12 @@ import React, {useEffect, useState} from "react";
 import "./Exams.scss";
 import ApiCall from "../../../Utils/ApiCall";
 import {toast} from "react-toastify";
+import {jwtDecode} from "jwt-decode";
 
 export default function ExamS() {
   const [exams,setExams] = useState([]);
-  const userId = localStorage.getItem("userId");
+  const userToken = localStorage.getItem("token");
+  const userId = jwtDecode(userToken).userId;
 
   useEffect(() => {
     getExams();

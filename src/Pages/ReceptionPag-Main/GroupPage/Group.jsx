@@ -12,8 +12,8 @@ function Group() {
     const [rooms, setRooms] = useState([]);
     const [branches, setBranches] = useState([]);
     const [branchRooms, setBranchRooms] = useState([]);
+    const [selectedBranchId, setSelectedBranchId] = useState("all");
     const [groups, setGroups] = useState([]);
-    const [filteredGroups, setFilteredGroups] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editedGroup, setEditedGroup] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,8 +32,12 @@ function Group() {
     useEffect(() => {
         getRooms()
         getBranches()
-        getGroups()
     }, [])
+
+    useEffect(() => {
+        getGroups(selectedBranchId);
+    }, [selectedBranchId]);
+
 
 
     async function getRooms() {
@@ -45,15 +49,15 @@ function Group() {
         }
     }
 
-    async function getGroups() {
+    async function getGroups(selectedBranchId) {
         try {
-            const res = await ApiCall("/group/getAll", {method: "GET"})
-            setGroups(res.data)
-            setFilteredGroups(res.data)
+            const res = await ApiCall(`/group/getAll?filialId=${selectedBranchId}`, {method: "GET"});
+            setGroups(res.data);
         } catch (err) {
-            console.log(err.message);
+            console.log(err.response?.data || err.message);
         }
     }
+
 
 
     async function getBranches() {
@@ -67,7 +71,7 @@ function Group() {
 
     function validateGroupForm(group) {
         const newErrors = {};
-        const {name, degree, roomId, teacherIds, startTime, endTime, branchId} = group;
+        const {name, degree, roomId, startTime, endTime, branchId} = group;
 
         if (!name.trim()) newErrors.name = "Guruh nomi majburiy.";
         if (!degree.trim()) newErrors.degree = "Daraja majburiy.";
@@ -107,12 +111,43 @@ function Group() {
 
     const handleInputChange = (e) => {
         const {name, value} = e.target;
-        setEditedGroup({...editedGroup, [name]: value});
+
+        // If user changes branch in edit mode, update branchRooms and teachers accordingly
+        if (name === 'branchId') {
+            const selectedBranch = branches.find(b => String(b.id) === String(value));
+            if (selectedBranch) {
+                const roomsList = selectedBranch.rooms || selectedBranch.roomDtos || selectedBranch.roomDtoList || [];
+                if (Array.isArray(roomsList)) setBranchRooms(roomsList);
+                else setBranchRooms([]);
+            } else {
+                setBranchRooms([]);
+            }
+
+            // reset room selection when branch changes and auto-select first room if available
+            const selectedBranchObj = branches.find(b => String(b.id) === String(value));
+            const roomsList = selectedBranchObj ? (selectedBranchObj.rooms || selectedBranchObj.roomDtos || selectedBranchObj.roomDtoList || []) : [];
+            const firstRoomId = Array.isArray(roomsList) && roomsList.length > 0 ? String(roomsList[0].id) : '';
+            setEditedGroup(prev => ({...prev, branchId: String(value), roomId: firstRoomId}));
+
+            // clear room-related errors
+            setErrors(prev => ({...prev, roomId: undefined, branchId: undefined, general: undefined}));
+
+            // fetch teachers for the selected branch
+            if (value) getTeachersByFilial(value);
+            return;
+        }
+
+        setEditedGroup(prev => ({...prev, [name]: value}));
     };
 
     const handleSave = async () => {
-        if (editedGroup.name === "" || editedGroup.degree === "" || editedGroup.roomId === "" || editedGroup.branchId === "") {
-            alert("Please fill all blanks")
+        // Validate edited group with existing validator to get specific errors
+        const formErrors = validateGroupForm(editedGroup || {});
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            // show first error to user as a toast
+            const firstKey = Object.keys(formErrors)[0];
+            toast.error(formErrors[firstKey]);
             return;
         }
 
@@ -127,14 +162,14 @@ function Group() {
                 teacherIds: editedGroup.teacherIds,
                 dayType: editedGroup.dayType,
             });
-
-            console.log(res.data)
-            await getGroups();          // yangilangan ro‘yxatni olib kelamiz
+            toast.success(res.data);
+            await getGroups(selectedBranchId);
             setEditedGroup({});
             setEditingIndex(null);
+            setErrors({});
 
         } catch (err) {
-            toast.error(err.response.data);
+            toast.error(err.response?.data || err.message || 'Save error');
         }
     };
 
@@ -158,7 +193,7 @@ function Group() {
 
         getTeachersByFilial(group.filialNameDto.id)
 
-        // Guruhga biriktirilgan o‘qituvchilar ID‑lar ro‘yxati
+        // Guruhga biriktirilgan o‘qituvchi ID‑lar ro‘yxati
         const teacherIds = (group.teacherNameDtos || []).map(t => t.id);
 
         setEditingIndex(idx);
@@ -170,6 +205,25 @@ function Group() {
             branchId: group.filialNameDto?.id || "",
             roomId:   group.roomDto?.id        || "",
         });
+
+        // --- NEW: set branchRooms so the room select shows only rooms for this group's branch ---
+        try {
+            const branchId = group.filialNameDto?.id;
+            if (branchId && Array.isArray(branches)) {
+                const selectedBranch = branches.find(b => String(b.id) === String(branchId));
+                if (selectedBranch) {
+                    const roomsList = selectedBranch.rooms || selectedBranch.roomDtos || selectedBranch.roomDtoList || [];
+                    if (Array.isArray(roomsList)) setBranchRooms(roomsList);
+                    else setBranchRooms([]);
+                } else {
+                    setBranchRooms([]);
+                }
+            } else {
+                setBranchRooms([]);
+            }
+        } catch (err) {
+            setBranchRooms([]);
+        }
     };
 
     const handleDelete = async (g) => {
@@ -178,10 +232,10 @@ function Group() {
 
             try {
                 const res = await ApiCall(`/group/${g.id}`, {method: "DELETE"});
-                console.log(res.data)
-                getGroups()
+                await getGroups(selectedBranchId);
+                toast.success(res.data)
             } catch (err) {
-                console.log(err);
+                toast.error(err.response.data || "Something error!");
             }
 
         }
@@ -207,7 +261,8 @@ function Group() {
                 teacherIds: newGroup.teacherIds,
                 dayType: newGroup.dayType,
             })
-            await getGroups()
+            await getGroups(selectedBranchId);
+
             setNewGroup({
                 name: "",
                 degree: "",
@@ -219,8 +274,9 @@ function Group() {
                 dayType:""
             })
             setErrors({});
+            toast.success(res.data);
         } catch (err) {
-            console.log(err.message);
+            toast.error(err.response.data || "Something error!");
         }
 
         setIsModalOpen(false);
@@ -232,7 +288,7 @@ function Group() {
 
     async function selectBranch(e) {
         const selectedBranchId = e.target.value;
-        const selectedBranch = branches.find(branch => branch.id === selectedBranchId);
+        const selectedBranch = branches.find(branch => String(branch.id) === String(selectedBranchId));
 
         if (selectedBranch && Array.isArray(selectedBranch.rooms)) {
             setBranchRooms(selectedBranch.rooms);
@@ -266,14 +322,9 @@ function Group() {
     };
 
     function selectBranchGroups(e) {
-        const branchId = e.target.value;
+        setSelectedBranchId(e.target.value);
 
-        if (branchId === "all") {
-            setFilteredGroups(groups); // hamma guruhlarni ko‘rsat
-        } else {
-            const filtered = groups.filter(group => group.filialNameDto.id === branchId);
-            setFilteredGroups(filtered); // faqat tanlangan filialdagi guruhlar
-        }
+
     }
 
     function selectDayType(e) {
@@ -285,7 +336,7 @@ function Group() {
             <ToastContainer />
             {/* Branch Selector for Main User */}
             <div className="branch-selectG">
-                <select id="branch" className="select-box" onChange={selectBranchGroups}>
+                <select id="branch" className="select-box" onChange={selectBranchGroups} value={selectedBranchId}>
                     <option value="all">All Groups</option>
                     {
                         branches?.map((branch) => (<option value={branch.id} key={branch.id}>{branch.name}</option>))
@@ -429,7 +480,7 @@ function Group() {
                     </tr>
                     </thead>
                     <tbody>
-                    {filteredGroups.map((g, i) => (
+                    {groups.map((g, i) => (
                         <tr key={g.id}>
                             <td>{i + 1}</td>
                             <td>
@@ -499,7 +550,8 @@ function Group() {
                                         onChange={handleInputChange}
                                     >
                                         {
-                                            rooms&&rooms.map((r) => <option key={r.id} value={r.id}>
+                                            // show rooms limited to branchRooms when editing; fallback to all rooms if branchRooms empty
+                                            (branchRooms && branchRooms.length > 0 ? branchRooms : rooms).map((r) => <option key={r.id} value={r.id}>
                                                 {`No${r.number}`} {r.name}
                                             </option>)
                                         }
@@ -517,8 +569,8 @@ function Group() {
                                                 <input
                                                     className="inp-check"
                                                     type="checkbox"
-                                                    value={t.id}
-                                                    checked={editedGroup.teacherIds.includes(t.id)}
+                                                    value={String(t.id)}
+                                                    checked={Array.isArray(editedGroup.teacherIds) && editedGroup.teacherIds.includes(String(t.id))}
                                                     onChange={(e) => handleCheckboxChange(e, true)}
                                                 />
                                                 {t.name}

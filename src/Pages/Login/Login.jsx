@@ -12,23 +12,41 @@ const LoginCard = () => {
     const navigate = useNavigate();
 
     function handleLogin() {
-            axios.post("http://localhost:8080/auth/login", user).then(res => {
+
+        const trimmedUser = {
+            username: user.username.trim(),
+            password: user.password.trim()
+        };
+
+        if (!trimmedUser.username || !trimmedUser.password) {
+            toast.error("Login va parolni to‘ldiring!");
+            return;
+        }
+
+        axios.post("http://localhost:8080/auth/login", trimmedUser)
+            .then(res => {
+
                 localStorage.setItem("token", res.data.access_token);
-                localStorage.setItem("refresh_token", res.data.refresh_token)
+                localStorage.setItem("refresh_token", res.data.refresh_token);
 
-                const rolesString = res.data.roles; // bu string holatda kelgan
-                const roleNames = [...rolesString.matchAll(/name=(ROLE_[A-Z_]+)/g)].map(match => match[1]);
-
-                // Array holida saqlash
+                const roleNames = res.data.roles;
                 localStorage.setItem("roles", JSON.stringify(roleNames));
 
-                navigate("/selectRoles");
+                toast.success("Welcome!");
 
-            }).catch(err => {
-                toast.error(err.response?.data)
+                setTimeout(() => {
+                    navigate("/selectRoles");
+                }, 500);
+
             })
-
+            .catch(err => {
+                const errorMsg = typeof err.response?.data === 'string'
+                    ? err.response.data
+                    : "Login or password error!";
+                toast.error(errorMsg);
+            });
     }
+
 
 
 

@@ -3,7 +3,7 @@ import "./footerSect.scss"
 import {toast, ToastContainer} from "react-toastify";
 import ApiCall from "../../../../../Utils/ApiCall";
 
-function FooterSect(props) {
+function FooterSect() {
     const [footerInfo, setFooterInfo] = useState({
         phone1:"",
         phone2:"",
@@ -27,13 +27,24 @@ function FooterSect(props) {
     }
 
     async function saveFooterInfo() {
+        const payload = {
+            ...footerInfo,
+            phone1: footerInfo.phone1 || null,
+            phone2: footerInfo.phone2 || null,
+            email: footerInfo.email || null,
+            instagramUrl: footerInfo.instagramUrl || null,
+            telegramUrl: footerInfo.telegramUrl || null,
+            facebookUrl: footerInfo.facebookUrl || null,
+        };
+
         try {
-            const res = await ApiCall("/footerSection", {method: "POST"}, footerInfo)
+            const res = await ApiCall("/footerSection", {method: "POST"}, payload)
             toast.success(res.data)
         } catch (err) {
             toast.error(err);
         }
     }
+
 
     return (
         <div className={"footer-sect"}>

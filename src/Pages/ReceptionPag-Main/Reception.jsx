@@ -28,13 +28,30 @@ function Reception() {
     }, [userToken]);
 
     function getUserInfo() {
-        const decodedToken = jwtDecode(userToken);
-        const userId = decodedToken.sub;
-        localStorage.setItem("userId", userId);
+        try {
+            const decoded = jwtDecode(userToken);
 
-        ApiCall(`/user/${userId}`, {method: "GET"})
-            .then((res) => setUser(res.data))
-            .catch((err) => console.error(err));
+            // DIQQAT: .sub emas, backendda o'zingiz qo'shgan "userId"ni oling
+            // Chunki biz JwtService'da .claim("userId", id) deb yozganmiz
+            const userId = decoded.userId;
+
+            if (!userId) {
+                console.error("Token ichida userId topilmadi! Backendni tekshiring.");
+                return;
+            }
+
+            // Endi userId UUID formatida (string) bo'ladi va Backend buni qabul qiladi
+            ApiCall(`/user/${userId}`, { method: "GET" })
+                .then((res) => {
+                    setUser(res.data);
+                    console.log("User ma'lumotlari keldi:", res.data);
+                })
+                .catch((err) => {
+                    console.error("User ma'lumotlarini olishda xato:", err);
+                });
+        } catch (error) {
+            console.error("Tokenni dekodlashda xato:", error);
+        }
     }
 
     const toggleSidebar = () => setSidebarOpen(prev => !prev);

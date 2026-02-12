@@ -55,7 +55,7 @@
     right: 16px;
     background: transparent;
     border: none;
-    font-size: 1.5rem;
+    font-size: 40px;
     color: #aaa;
     cursor: pointer;
     transition: color 0.2s ease;
@@ -99,7 +99,7 @@
       }
 
       .text-area{
-        min-width: 300px;
+        min-width: 500px;
         width: 100%;
         height: 220px;
         border-radius: 15px;
@@ -108,6 +108,20 @@
         padding: 0.5rem;
         font-size: 18px;
       }
+
+      @media (max-width: 768px) {
+        .text-area{
+          min-width: 350px;
+          width: 100%;
+          height: 220px;
+          border-radius: 15px;
+          resize: unset;
+          border: 2px solid #ffaa22;
+          padding: 0.5rem;
+          font-size: 18px;
+        }
+      }
+
 
       input{
         width: 100px;

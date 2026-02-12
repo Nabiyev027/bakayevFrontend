@@ -34,7 +34,7 @@ function Branch() {
       setBranches(res.data);
 
     } catch (err) {
-      console.log("Malumotlar yoq");
+      toast.error(err.response.data || "Failed to get branches");
     }
   }
 
@@ -83,15 +83,12 @@ function Branch() {
       toast.success(`Branch ${editBranch ? 'updated' : 'added'} successfully!`);
 
     } catch (err) {
-      // ❌ Eng muhim qismi: Server xatolarini foydalanuvchiga ko'rsatish
-      console.error("Filial saqlanmadi (API xatosi):", err);
       // Serverdan kelgan xato xabarini ko'rsatishga harakat qiling
-      const errorMessage = err.response?.data?.message || "An error occurred while saving the branch.";
+      const errorMessage = err.response?.data?.message || "Error to save new branch.";
       toast.error(errorMessage);
       return; // Muvaffaqiyatsiz bo'lsa, formani yopmaslik kerak
     }
 
-    // Muvaffaqiyatli yakunlanganda
     resetForm();
     await getBranches();
     setShowBranchModal(false);
@@ -141,11 +138,12 @@ function Branch() {
           name: roomData.name,
           number: roomData.number,
         })
+        toast.success(res.data)
         setEditRoom(false);
         resetRoom()
         await getBranches()
       }catch (err) {
-        console.log("Room not updated");
+        toast.error(err.response?.data || "Room not updated");
       }
     } else {
       try {
@@ -156,7 +154,7 @@ function Branch() {
         resetRoom()
         await getBranches()
       } catch (err) {
-        console.log("Room not saved")
+        toast.error(err.response?.data || "Error to add new room.");
       }
     }
 
@@ -238,20 +236,7 @@ function Branch() {
             <div className="card-header">
               <div>
                 <h2>{branch.name}</h2>
-                <a className={"location"}
-                   onClick={(e) => {
-                     e.preventDefault();
-                     navigator.clipboard.writeText(branch.location)
-                         .then(() => {
-                           toast.success("Location copied!");
-                         })
-                         .catch(err => {
-                           console.error("Copy failed:", err);
-                         });
-                   }}
-                >
-                  <IoLocation /> Location
-                </a>
+
               </div>
               <div className="actions">
                 <button onClick={() => updateBranch(branch)}>Edit</button>

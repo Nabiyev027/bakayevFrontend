@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./Massage.scss";
 import { toast, ToastContainer } from "react-toastify";
 import ApiCall from "../../../Utils/ApiCall";
+import CustomMsgSelect from "./CustomMsgSelect";
 
 export default function Massage() {
   const [groups, setGroups] = useState([]);
@@ -11,11 +12,15 @@ export default function Massage() {
   const [selGroupId, setSelGroupId] = useState("");
   const [selBranchId, setSelBranchId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [data, setData] = useState({ mToStudent: "", mToParent: "" });
+  const [data, setData] = useState({ msgToStudent: false, msgToParent: false });
+  const [msgTexts, setMsgTexts] = useState([]);
+  const [selectedMsg, setSelectedMsg] = useState(null);
+
 
   // Filiallarni olish
   useEffect(() => {
     getFilials();
+    getMessageTexts();
   }, []);
 
   // Guruhlarni filial bo‘yicha olish
@@ -26,6 +31,40 @@ export default function Massage() {
       setGroups([]);
     }
   }, [selBranchId]);
+
+  async function getMessageTexts() {
+    try {
+      const res = await ApiCall("/message", { method: "GET" });
+      setMsgTexts(res.data || []);
+    } catch (err) {
+      console.error(err.response.data ||"Error to get Message texts");
+    }
+  }
+
+
+  async function handleAddMsg(newText) {
+    try {
+      // Backend @RequestBody String description kutayotgani uchun
+      // oddiy string formatida yuboramiz
+      const res = await ApiCall("/message", { method: "POST" }, newText, {
+        "Content-Type": "application/json"
+      });
+      toast.success(res.data);
+      getMessageTexts();
+    } catch (err) {
+      toast.error("Qo'shishda xatolik");
+    }
+  }
+
+  async function handleDeleteMsg(id) {
+    try {
+      await ApiCall(`/message/${id}`, { method: "DELETE" });
+      toast.success("Matn o'chirildi");
+      getMessageTexts(); // Ro'yxatni yangilash
+    } catch (err) {
+      toast.error("O'chirishda xatolik");
+    }
+  }
 
   // Talabalarni filial va guruh bo‘yicha olish
   useEffect(() => {
@@ -76,15 +115,28 @@ export default function Massage() {
   // Xabar yuborish
   async function sendMessage() {
     const selectedStudents = students.filter(s => s.selected);
+
     if (selectedStudents.length === 0) {
-      toast.error("Please select at least one student!");
+      toast.error("Iltimos, kamida bitta talabani tanlang!");
       return;
     }
 
+    if (!data.msgToStudent && !data.msgToParent) {
+      toast.error("Kamida bitta yo'nalishni tanlang (Talaba yoki Ota-ona)!");
+      return;
+    }
+
+    if (!selectedMsg) {
+      toast.error("Xabar matnini tanlang!");
+      return;
+    }
+
+    // Backend kutayotgan NotificationDto formatiga mos payload
     const payload = {
-      studentsId: selectedStudents.map(s => s.id),
-      reportStudent: data.mToStudent,
-      reportParent: data.mToParent,
+      studentsId: selectedStudents.map(s => s.id), // List<String>
+      msgToStudent: data.msgToStudent,             // boolean
+      msgToParent: data.msgToParent,               // boolean
+      messageTextId: selectedMsg.id                // UUID
     };
 
     try {
@@ -93,13 +145,14 @@ export default function Massage() {
           payload,
           {
             "Content-Type": "application/json",
+            // Tokenni headerda yuborish (agar ApiCall o'zi qo'shmasa)
             key: localStorage.getItem("token")?.trim(),
-            lang: localStorage.getItem("lang"),
           }
       );
 
       toast.success("Xabar muvaffaqiyatli yuborildi!");
       toggleModal();
+      // Tanlangan talabalarni tozalash
       setStudents(prev => prev.map(s => ({ ...s, selected: false })));
     } catch (err) {
       toast.error(err.response?.data || "Xabar yuborishda xatolik yuz berdi");
@@ -146,6 +199,9 @@ export default function Massage() {
               ))}
             </select>
           </label>
+          <button className="send-msg-btn" onClick={toggleModal}>
+            Xabar yuborish
+          </button>
         </div>
 
         {/* Talabalar jadvali */}
@@ -193,30 +249,49 @@ export default function Massage() {
             </table>
         )}
 
-        <button className="send-btn" onClick={toggleModal}>
-          Xabar yuborish
-        </button>
+
 
         {/* Modal */}
         {isModalOpen && (
             <div className="modal-overlay">
               <div className="modal-body">
                 <h2>Send SMS</h2>
-                <textarea
-                    className="area-message"
-                    placeholder="Message To Student"
-                    value={data.mToStudent}
-                    onChange={(e) => setData({ ...data, mToStudent: e.target.value })}
+
+                <CustomMsgSelect
+                    msgTexts={msgTexts}
+                    onSelect={setSelectedMsg}
+                    onAdd={handleAddMsg}      // Yangi xabar qo'shish funksiyasi
+                    onDelete={handleDeleteMsg} // O'chirish funksiyasi
                 />
-                <textarea
-                    className="area-message"
-                    placeholder="Message To Parent"
-                    value={data.mToParent}
-                    onChange={(e) => setData({ ...data, mToParent: e.target.value })}
+
+                <label>
+                <h3>To Students</h3>
+                <input
+                    className="inp-check"
+                    type="checkbox"
+                    checked={data.msgToStudent}
+                    onChange={(e) =>
+                        setData(prev => ({ ...prev, msgToStudent: e.target.checked }))
+                    }
                 />
+              </label>
+
+              <label>
+                <h3>To Parents</h3>
+                <input
+                    className="inp-check"
+                    type="checkbox"
+                    checked={data.msgToParent}
+                    onChange={(e) =>
+                        setData(prev => ({ ...prev, msgToParent: e.target.checked }))
+                    }
+                />
+              </label>
+
+
                 <div className="modal-buttons">
-                  <button onClick={toggleModal}>Cancel</button>
-                  <button onClick={sendMessage}>Send message</button>
+                  <button className={"btn"} onClick={toggleModal}>Cancel</button>
+                  <button className={"btn"} onClick={sendMessage}>Send message</button>
                 </div>
               </div>
             </div>

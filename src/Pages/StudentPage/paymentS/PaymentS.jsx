@@ -2,13 +2,15 @@ import React, {useEffect, useState} from "react";
 import "./PaymentS.scss";
 import ApiCall from "../../../Utils/ApiCall";
 import {toast} from "react-toastify";
+import {jwtDecode} from "jwt-decode";
 
 export default function PaymentS() {
 
     const [coursePrice, setCoursePrice] = useState(0);
 
     const [payments, setPayments] = useState([]);
-    const userId = localStorage.getItem("userId");
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
 
     useEffect(() => {
         getCoursePrice()

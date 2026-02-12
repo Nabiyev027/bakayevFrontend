@@ -1,66 +1,93 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import "./SettingsS.scss";
-import {toast, ToastContainer} from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ApiCall from "../../../Utils/ApiCall";
-import {FaRegUserCircle} from "react-icons/fa";
+import { FaRegUserCircle } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
 
 function SettingsS() {
 
-    const userId = localStorage.getItem("userId");
-    const BaseURL = "http://localhost:8080"
+    const BaseURL = "http://localhost:8080";
+    const userToken = localStorage.getItem("token");
 
-    const [userInitialData, setUserInitialData] = useState({});
-    const [profileData, setProfileData] = useState({
-        firstname: userInitialData.firstname || '',
-        lastname: userInitialData.lastname || '',
-        username: userInitialData.username || '',
-        imgUrl: userInitialData.imgUrl || '',
-    });
-
-    useEffect(() => {
-        getUserInfo()
-    }, [userId])
-
-    useEffect(() => {
-        setProfileData({
-            firstname: userInitialData.firstName || '',
-            lastname: userInitialData.lastName || '',
-            username: userInitialData.username || '',
-            imgUrl: userInitialData.imgUrl || '',
-        });
-    }, [userInitialData]);
-
-
-    async function getUserInfo() {
-        try {
-            const res = await ApiCall(`/user/getInfo/${userId}`, {method: "GET"})
-            setUserInitialData(res.data);
-        } catch (err) {
-            toast.error(err.response.data);
+    // userId ni xavfsiz olish
+    let userId = null;
+    try {
+        if (userToken) {
+            const decoded = jwtDecode(userToken);
+            userId = decoded.userId;
         }
+    } catch (err) {
+        console.error("Token decode xato:", err);
     }
 
+    // Backenddan kelgan user
+    const [userInitialData, setUserInitialData] = useState({});
 
-
-    // Rasm fayli uchun yangi holat
-    const [avatarFile, setAvatarFile] = useState(null);
-
-    // Parol o'zgartirish uchun holat (avvalgidek qoladi)
-    const [passwordData, setPasswordData] = useState({
-        oldPassword: '',
-        newPassword: '',
+    // Form state
+    const [profileData, setProfileData] = useState({
+        firstname: "",
+        lastname: "",
+        username: "",
+        imgUrl: "",
+        avatarPreview: ""
     });
 
-    // --- Input o'zgarishini boshqarish funksiyalari ---
+    const [avatarFile, setAvatarFile] = useState(null);
+
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: "",
+        newPassword: "",
+    });
+
+    // ===================== USER INFO =====================
+    useEffect(() => {
+        if (userId) {
+            getUserInfo();
+        }
+    }, [userId]);
+
+    const getUserInfo = async () => {
+        try {
+            const res = await ApiCall(`/user/${userId}`, { method: "GET" });
+            setUserInitialData(res.data);
+        } catch (err) {
+            toast.error(err.response?.data || "User ma'lumotini olishda xatolik");
+        }
+    };
+
+    // Backenddan kelgan fullName ni split qilish
+    useEffect(() => {
+        if (userInitialData) {
+            let first = "";
+            let last = "";
+
+            if (userInitialData.fullName) {
+                const parts = userInitialData.fullName.split(" ");
+                first = parts[0] || "";
+                last = parts[1] || "";
+            }
+
+            setProfileData({
+                firstname: first,
+                lastname: last,
+                username: userInitialData.username || "",
+                imgUrl: userInitialData.imgUrl || "",
+                avatarPreview: ""
+            });
+        }
+    }, [userInitialData]);
+
+    // ===================== INPUT HANDLERS =====================
 
     const handleProfileChange = (e) => {
-        const {name, value} = e.target;
-        setProfileData(prevData => ({...prevData, [name]: value}));
+        const { name, value } = e.target;
+        setProfileData(prev => ({ ...prev, [name]: value }));
     };
 
     const handlePasswordChange = (e) => {
-        const {name, value} = e.target;
-        setPasswordData(prevData => ({...prevData, [name]: value}));
+        const { name, value } = e.target;
+        setPasswordData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleFileChange = (e) => {
@@ -69,14 +96,14 @@ function SettingsS() {
 
         setAvatarFile(file);
 
-        // Preview
         const previewUrl = URL.createObjectURL(file);
         setProfileData(prev => ({
             ...prev,
-            avatarUrl: previewUrl
+            avatarPreview: previewUrl
         }));
     };
 
+    // ===================== SAVE PROFILE =====================
 
     const saveProfileSettings = async () => {
         try {
@@ -89,20 +116,26 @@ function SettingsS() {
                 formData.append("img", avatarFile);
             }
 
-            const res = await ApiCall(`/user/updateInfo/${userId}`, {method: "PUT"}, formData);
+            const res = await ApiCall(
+                `/user/updateInfo/${userId}`,
+                { method: "PUT" },
+                formData
+            );
 
             toast.success(res.data);
-            await getUserInfo(); // yangi rasmni backenddan qayta olish
+            setAvatarFile(null);
+            await getUserInfo();
 
         } catch (err) {
-            toast.error("Xatolik: " + err.response?.data);
+            toast.error("Xatolik: " + (err.response?.data || "Server error"));
         }
     };
 
+    // ===================== CHANGE PASSWORD =====================
 
     const changePassword = async () => {
         if (!passwordData.oldPassword || !passwordData.newPassword) {
-            toast.error("Iltimos, barcha maydonlarni to‘ldiring!");
+            toast.error("Iltimos barcha maydonlarni to‘ldiring!");
             return;
         }
 
@@ -111,129 +144,140 @@ function SettingsS() {
             params.append("oldPassword", passwordData.oldPassword);
             params.append("newPassword", passwordData.newPassword);
 
-            const res = await ApiCall(`/user/settings/${userId}?${params.toString()}`, { method: "PUT" });
+            const res = await ApiCall(
+                `/user/settings/${userId}?${params.toString()}`,
+                { method: "PUT" }
+            );
 
             toast.success(res.data);
-            // Clear password fields after success
             setPasswordData({ oldPassword: "", newPassword: "" });
+
         } catch (err) {
-            toast.error(err.response?.data || "Xatolik yuz berdi");
+            toast.error(err.response?.data || "Parolni o‘zgartirishda xatolik");
         }
     };
 
-
+    // ===================== JSX =====================
 
     return (
         <div className="setting-page-s">
             <h1 className="setting-title">Settings</h1>
-
-            <ToastContainer/>
+            <ToastContainer />
 
             <div className="user-settings-card">
 
-                {/* --- Profil Ma'lumotlari Qismi (Rasm qo'shildi) --- */}
                 <div className="profile-section">
                     <h2>Profile settings</h2>
 
                     <div className="profile-header">
-                                    <div className="user-avatar-wrapper">
-                                        {
-                                            profileData.avatarUrl ? (
-                                                // Preview rasm (yangi yuklangan)
-                                                <img
-                                                    src={profileData.avatarUrl}
-                                                    alt="Preview"
-                                                    className="user-avatar"
-                                                />
-                                            ) : profileData.imgUrl ? (
-                                                // Backenddan kelgan eski rasm
-                                                <img
-                                                    src={`${BaseURL}${profileData.imgUrl}`}
-                                                    alt="User Image"
-                                                    className="user-avatar"
-                                                />
-                                            ) : (
-                                                <FaRegUserCircle className="icon"/>
-                                            )
-                                        }
+                        <div className="user-avatar-wrapper">
+                            {
+                                profileData.avatarPreview ? (
+                                    <img
+                                        src={profileData.avatarPreview}
+                                        alt="Preview"
+                                        className="user-avatar"
+                                    />
+                                ) : profileData.imgUrl ? (
+                                    <img
+                                        src={`${BaseURL}${profileData.imgUrl}`}
+                                        alt="User"
+                                        className="user-avatar"
+                                    />
+                                ) : (
+                                    <FaRegUserCircle className="icon" />
+                                )
+                            }
+                        </div>
 
-                                    </div>
-
-
-
-
-                        {/* Rasm tanlash inputi */}
                         <div className="avatar-upload-group">
                             <label htmlFor="avatar-upload" className="upload-label">
-                                {avatarFile ? 'Boshqa rasmni tanlash' : 'Rasmni yuklash'}
+                                {avatarFile ? "Boshqa rasm tanlash" : "Rasm yuklash"}
                             </label>
                             <input
                                 id="avatar-upload"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleFileChange}
-                                style={{display: 'none'}} // Inputni yashirish
+                                style={{ display: "none" }}
                             />
-                            {avatarFile && <span className="file-name">{avatarFile.name}</span>}
+                            {avatarFile && (
+                                <span className="file-name">{avatarFile.name}</span>
+                            )}
                         </div>
                     </div>
 
-                    <div className={"form-groups"}>
+                    <div className="form-groups">
                         <div className="form-group">
-                            <label htmlFor="firstname">Ism (Firstname)</label>
+                            <label>Ism</label>
                             <input
-                                id="firstname" type="text" name="firstname"
-                                value={profileData.firstname} onChange={handleProfileChange}
+                                type="text"
+                                name="firstname"
+                                value={profileData.firstname}
+                                onChange={handleProfileChange}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="lastname">Familiya (Lastname)</label>
+                            <label>Familiya</label>
                             <input
-                                id="lastname" type="text" name="lastname"
-                                value={profileData.lastname} onChange={handleProfileChange}
+                                type="text"
+                                name="lastname"
+                                value={profileData.lastname}
+                                onChange={handleProfileChange}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="username">Username</label>
+                            <label>Username</label>
                             <input
-                                id="username" type="text" name="username"
-                                value={profileData.username} onChange={handleProfileChange}
+                                type="text"
+                                name="username"
+                                value={profileData.username}
+                                onChange={handleProfileChange}
                             />
                         </div>
 
-                        <button className="save-button profile-save" onClick={saveProfileSettings}>
-                            Profilni Saqlash
+                        <button
+                            className="save-button profile-save"
+                            onClick={saveProfileSettings}
+                        >
+                            Profilni saqlash
                         </button>
                     </div>
-
                 </div>
 
-                {/* --- Parolni O'zgartirish Qismi (O'zgarmadi) --- */}
                 <div className="password-section">
                     <h2>Change password</h2>
 
                     <div className="form-group">
-                        <label htmlFor="oldPassword">Joriy Parol (Old Password)</label>
+                        <label>Old Password</label>
                         <input
-                            id="oldPassword" type="text" name="oldPassword"
-                            value={passwordData.oldPassword} onChange={handlePasswordChange}
+                            type="password"
+                            name="oldPassword"
+                            value={passwordData.oldPassword}
+                            onChange={handlePasswordChange}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="newPassword">Yangi Parol (New Password)</label>
+                        <label>New Password</label>
                         <input
-                            id="newPassword" type={"text"} name="newPassword"
-                            value={passwordData.newPassword} onChange={handlePasswordChange}
+                            type="password"
+                            name="newPassword"
+                            value={passwordData.newPassword}
+                            onChange={handlePasswordChange}
                         />
                     </div>
 
-                    <button className="save-button password-save" onClick={changePassword}>
-                        Parolni Saqlash
+                    <button
+                        className="save-button password-save"
+                        onClick={changePassword}
+                    >
+                        Parolni saqlash
                     </button>
                 </div>
+
             </div>
         </div>
     );

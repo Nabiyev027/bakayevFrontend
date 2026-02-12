@@ -5,9 +5,11 @@ import ApiCall from "../../../Utils/ApiCall";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaCheck } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
+import {jwtDecode} from "jwt-decode";
 
 export default function LessonsT() {
-  const teacherId = localStorage.getItem("userId");
+  const userToken = localStorage.getItem("token");
+  const teacherId = jwtDecode(userToken).userId;
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [groups, setGroups] = useState([]);
   const [groupLessonTime, setGroupLessonTime] = useState({

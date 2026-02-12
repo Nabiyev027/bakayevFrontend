@@ -8,8 +8,6 @@ import {FaStar} from "react-icons/fa";
 
 const ImageCarousel = ({comments}) => {
 
-
-    const [currentSlide, setCurrentSlide] = useState(0)
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     // Effect to handle the resize event
     useEffect(() => {

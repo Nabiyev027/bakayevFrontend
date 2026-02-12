@@ -2,11 +2,13 @@ import "./appeal.scss"
 import {useEffect, useState} from "react";
 import ApiCall from "../../../Utils/ApiCall";
 import {FaTelegramPlane} from "react-icons/fa";
+import {jwtDecode} from "jwt-decode";
 
 function Appeal() {
     const [called, setCalled] = useState([]);
     const [unCalled, setUnCalled] = useState([]);
-    const userId = localStorage.getItem("userId");
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
 
     useEffect(() => {
         getAppeals()

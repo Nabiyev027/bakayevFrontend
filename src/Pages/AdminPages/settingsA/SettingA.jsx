@@ -4,11 +4,13 @@ import PaymentDaySelector from "./component/payment-day-selector";
 import {toast, ToastContainer} from "react-toastify";
 import ApiCall from "../../../Utils/ApiCall";
 import {FaRegUserCircle} from "react-icons/fa";
+import {jwtDecode} from "jwt-decode";
 
 
 export default function SettingA() {
-    const userId = localStorage.getItem("userId");
     const BaseURL = "http://localhost:8080"
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
 
     const [userInitialData, setUserInitialData] = useState({});
     const [profileData, setProfileData] = useState({
@@ -25,9 +27,10 @@ export default function SettingA() {
     }, []);
 
 
-
     useEffect(() => {
-        getUserInfo()
+        if (userId && userId !== "null" && userId !== "undefined") {
+            getUserInfo();
+        }
     }, [userId])
 
     useEffect(() => {
@@ -143,17 +146,19 @@ export default function SettingA() {
     }
 
     async function handleSaveCourseInfo() {
-        const formData = new FormData();
-        formData.append("day", parseInt(paymentInfo.day));
-        formData.append("amount", paymentInfo.amount);
-
         try {
-            const res = await ApiCall("/payment/courseInfo", {method: "POST"}, formData);
+            // Parametrlarni URL ga qo'shib yuboramiz
+            const day = paymentInfo.day || 0;
+            const amount = paymentInfo.amount || 0;
+
+            // URL ko'rinishi: /payment/courseInfo?day=15&amount=500000
+            const res = await ApiCall(`/payment/courseInfo?day=${day}&amount=${amount}`, {
+                method: "POST"
+            });
+
             toast.success(res.data);
         } catch (err) {
-            const message =
-                err.response?.data
-            toast.warn(message);
+            toast.warn(err.response?.data || "Xatolik yuz berdi");
         }
     }
 

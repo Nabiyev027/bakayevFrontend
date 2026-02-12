@@ -6,59 +6,85 @@ import {IoIosUndo} from "react-icons/io";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
 import {toast, ToastContainer} from "react-toastify";
+import {jwtDecode} from "jwt-decode";
 
 function Student() {
     const [students, setStudents] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editedStudent, setEditedStudent] = useState({});
     const [infoStudent, setInfoStudent] = useState(null);
-    const [filialGroups, setFilialGroups] = useState([]);
+    const [groups, setGroups] = useState([]);
     const [studentFilialGroups, setStudentFilialGroups] = useState([]);
-    const [selGroupId, setSelGroupId] = useState("all");
+    const [selGroupId, setSelGroupId] = useState();
     const [branches, setBranches] = useState([]);
-    const [selBranchId, setSelBranchId] = useState("all");
+    const [selBranchId, setSelBranchId] = useState();
     const [newPassword, setNewPassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selId, setSelId] = useState("");
     const [selectedEmployerlogin, setSelectedEmployerlogin] = useState("");
     const BaseUrl = "http://localhost:8080";
 
+    const selectedRole = localStorage.getItem("selectedRole");
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
+
     useEffect(() => {
         getStudents()
     }, [selBranchId, selGroupId]);
 
     useEffect(() => {
-        getFilials()
-    }, []);
+        if (!selectedRole) {
+            getFilials();
+            return;
+        }
+
+        if (selectedRole === "ROLE_RECEPTION") {
+            getFilialByReceptionId();
+        } else {
+            getFilials();
+        }
+    }, [selectedRole, userId]);
 
     useEffect(() => {
-        setSelGroupId("all")
-        getFilialGroups()
+        if (!selBranchId) return;
+        getGroupsByFilial();
     }, [selBranchId]);
+
+
+    async function getFilialByReceptionId() {
+        try {
+            const res = await ApiCall(`/filial/getOne/${userId}`, { method: "GET" });
+            setBranches([res.data]);
+            setSelBranchId(res.data.id);
+        } catch (err) {
+            toast.error("Filial not found");
+        }
+    }
 
     async function getFilials() {
         try {
-            const res = await ApiCall("/filial/getAll", {method: "GET"})
-            setBranches(res.data);
-        } catch (error) {
-            console.log(error);
-        }
-    }
+            const res = await ApiCall("/filial/getAll", { method: "GET" });
+            setBranches(res.data || []);
 
-    async function getFilialGroups() {
-        try {
-            if(!selBranchId || selBranchId === "all") {
-                const res = await ApiCall("/group/getNames", {method: "GET"})
-                setFilialGroups(res.data);
-            }else {
-                const res = await ApiCall(`/group?filialId=${selBranchId}`, {method: "GET"})
-                setFilialGroups(res.data);
+            if (res.data?.length) {
+                setSelBranchId(res.data[0].id); // 🔥 birinchi filial
             }
-
-        } catch (error) {
-            toast.error(error.response.data)
+        } catch {
+            toast.error("Error loading filials");
         }
     }
+
+
+    async function getGroupsByFilial() {
+        try {
+            const res = await ApiCall(`/group?filialId=${selBranchId}`, { method: "GET" });
+            setGroups(res.data || []);
+            if (res.data?.length) setSelGroupId(res.data[0].id);
+        } catch {
+            toast.error("Groups not found");
+        }
+    }
+
 
     async function getStudentFilialGroups(filialId) {
 
@@ -272,7 +298,6 @@ function Student() {
                 <select className="filial-select"
                     onChange={(e)=> setSelBranchId(e.target.value)}
                 >
-                    <option value="all">All filials</option>
                     {
                         branches?.map((b) => <option value={b.id} key={b.id}>{b.name}</option>)
                     }
@@ -281,9 +306,8 @@ function Student() {
                         className="group-select"
                         onChange={(e)=>setSelGroupId(e.target.value)}
                 >
-                    <option value="all">All Groups</option>
                     {
-                        filialGroups?.map((g) => <option value={g.id} key={g.id}>{g.name}</option>)
+                        groups?.map((g) => <option value={g.id} key={g.id}>{g.name}</option>)
                     }
                 </select>
             </div>

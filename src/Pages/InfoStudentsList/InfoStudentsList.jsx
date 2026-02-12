@@ -6,6 +6,7 @@ import { FaCheck } from "react-icons/fa";
 import { IoIosUndo } from "react-icons/io";
 import { MdEdit } from "react-icons/md";
 import { AnimatePresence, motion } from "framer-motion";
+import {jwtDecode} from "jwt-decode";
 
 function InfoStudentsList() {
     const [showDiscountModal, setShowDiscountModal] = useState(false);
@@ -29,11 +30,8 @@ function InfoStudentsList() {
 
 
     const selectedRole = localStorage.getItem("selectedRole");
-    const userId = localStorage.getItem("userId");
-
-    useEffect(() => {
-        console.log("Mounted:", selectedRole, userId);
-    }, []);
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
 
     useEffect(() => {
         if (!selectedRole) {

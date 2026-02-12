@@ -1,3 +1,4 @@
+// javascript
 import {useEffect, useRef, useState} from "react"
 import "./roomSchedule.scss"
 import ApiCall from "../../Utils/ApiCall"
@@ -9,8 +10,11 @@ const RoomSchedule = () => {
     const [timeInterval, setTimeInterval] = useState(30)
 
     const [branches, setBranches] = useState([])
-    const [selBranchId, setSelBranchId] = useState("all")
+    const [selBranchId, setSelBranchId] = useState(null)
     const [roomsWithData, setRoomsWithData] = useState([])
+
+    // snapshot to restore if overlap
+    const [originalRooms, setOriginalRooms] = useState(null);
 
     const START_HOUR = 6
     const START_MINUTE = 0
@@ -37,47 +41,55 @@ const RoomSchedule = () => {
         try {
             const res = await ApiCall("/filial/getAll", { method: "GET" })
             setBranches(res.data || [])
+            setSelBranchId(res.data[0]?.id)
         } catch (err) {
             toast.error(err?.response?.data || "Error")
         }
     }
 
     useEffect(() => {
-        getRoomsData()
-    }, [selBranchId, activeTab])
+        if (!selBranchId) return; // 🔒 UUID bo‘lmaguncha so‘rov ketmaydi
+        getRoomsData();
+    }, [selBranchId, activeTab]);
+
 
     const getRoomsData = async () => {
+        if (!selBranchId) return;
+
         try {
             const res = await ApiCall(
                 `/room/info?filialId=${selBranchId}&dayType=${activeTab}`,
                 { method: "GET" }
-            )
-            // ensure groupRoomInfoResDtos exists
-            setRoomsWithData((res.data || []).map(r => ({ ...r, groupRoomInfoResDtos: r.groupRoomInfoResDtos || [] })))
-        } catch (err) {
-            toast.error(err?.response?.data || "Error")
-        }
-    }
-
-    const saveClassChanges = async (clsId, newRoomId, newStartTime, newEndTime) => {
-        try {
-            const res = await ApiCall(`/room/updateInfo`, {
-                method: "PUT"
-            },
-            {
-                groupId: clsId,
-                roomId: newRoomId,
-                startTime: newStartTime,
-                endTime: newEndTime
-            }
             );
-            toast.success(res.data);
+
+            setRoomsWithData(
+                (res.data || []).map(r => ({
+                    ...r,
+                    groupRoomInfoResDtos: r.groupRoomInfoResDtos || []
+                }))
+            );
         } catch (err) {
-            toast.error(err?.response?.data || "Error saving changes");
+            toast.error(err?.response?.data || "Error");
         }
     };
 
 
+    const saveClassChanges = async (clsId, newRoomId, newStartTime, newEndTime) => {
+        try {
+            const res = await ApiCall(`/room/updateInfo`, {
+                    method: "PUT"
+                },
+                {
+                    groupId: clsId,
+                    roomId: newRoomId,
+                    startTime: newStartTime,
+                    endTime: newEndTime
+                }
+            );
+        } catch (err) {
+            toast.error(err?.response?.data || "Error saving changes");
+        }
+    };
 
     const getStartMinutes = () => START_HOUR * 60 + START_MINUTE
 
@@ -138,8 +150,6 @@ const RoomSchedule = () => {
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
     };
 
-
-
     const topToRoomId = (clientY) => {
         for (const roomId in roomRefs.current) {
             const el = roomRefs.current[roomId];
@@ -167,6 +177,8 @@ const RoomSchedule = () => {
         setDraggingClass({ ...cls, origRoomId: roomId });
         setDragStart({ x: e.clientX, y: e.clientY });
         setClassStartPos({ left: el.offsetLeft, top: el.offsetTop });
+        // snapshot current rooms to restore on invalid drop
+        setOriginalRooms(JSON.parse(JSON.stringify(roomsWithData)));
         // set grabbing style via state (we use draggingClass to mark)
     };
 
@@ -211,6 +223,10 @@ const RoomSchedule = () => {
         return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
     };
 
+    const rangesOverlap = (aStart, aEnd, bStart, bEnd) => {
+        return aStart < bEnd && bStart < aEnd;
+    };
+
     const handleMouseUp = (e) => {
         if (!draggingClass) return;
 
@@ -240,17 +256,37 @@ const RoomSchedule = () => {
         const finalStartTime = minutesToTime(startMinutes);
         const finalEndTime = minutesToTime(startMinutes + durationMinutes);
 
-        // // 🔹 qaysi roomga tushdi
-        // const newRoomId = topToRoomId(e.clientY) || draggingClass.origRoomId;
-
         const droppedRoomId = topToRoomId(e.clientY);
 
         if (!droppedRoomId) {
+            // отмена если не в комнате
+            setRoomsWithData(originalRooms || roomsWithData);
             setDraggingClass(null);
+            setOriginalRooms(null);
             return;
         }
 
         const newRoomId = droppedRoomId;
+
+        // проверка пересечения в целевой комнате
+        const targetRoom = roomsWithData.find(r => r.id === newRoomId);
+        if (targetRoom) {
+            const hasOverlap = targetRoom.groupRoomInfoResDtos.some(c => {
+                if (c.id === draggingClass.id) return false; // игнорируем саму группу
+                const cStart = timeToMinutes(c.startTime);
+                const cEnd = timeToMinutes(c.endTime);
+                return rangesOverlap(startMinutes, startMinutes + durationMinutes, cStart, cEnd);
+            });
+
+            if (hasOverlap) {
+                toast.warn("There is already a group in this room for overlapping time.");
+                // откатить вид и выйти
+                setRoomsWithData(originalRooms || roomsWithData);
+                setDraggingClass(null);
+                setOriginalRooms(null);
+                return;
+            }
+        }
 
         setRoomsWithData(prev => {
             // eski roomdan o‘chirish
@@ -301,6 +337,7 @@ const RoomSchedule = () => {
         );
 
         setDraggingClass(null);
+        setOriginalRooms(null);
     };
 
     useEffect(() => {
@@ -310,7 +347,7 @@ const RoomSchedule = () => {
             window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mouseup", handleMouseUp);
         };
-    }, [draggingClass, dragStart, classStartPos]);
+    }, [draggingClass, dragStart, classStartPos, roomsWithData, originalRooms]);
 
     return (
         <div className="schedule-page">
@@ -324,7 +361,6 @@ const RoomSchedule = () => {
                         value={selBranchId}
                         onChange={(e) => setSelBranchId(e.target.value)}
                     >
-                        <option value="all">Select branch</option>
                         {branches.map((b) => (
                             <option key={b.id} value={b.id}>
                                 {b.name}

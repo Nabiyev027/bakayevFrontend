@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import "./allStudentsRating.scss"
 import ApiCall from "../../Utils/ApiCall";
 import {toast} from "react-toastify";
+import {jwtDecode} from "jwt-decode";
 
 function AllStudentsRating() {
 
@@ -12,12 +13,12 @@ function AllStudentsRating() {
     const [selGroupId, setSelGroupId] = useState("");
 
     const selectedRole = localStorage.getItem("selectedRole");
-    const userId = localStorage.getItem("userId");
+
+    const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
 
     const [lessons, setLessons] = useState([]);
     const [filter, setFilter] = useState("today");
-
-
 
 
     // ============================

@@ -7,24 +7,8 @@ import ApiCall from "../../Utils/ApiCall";
 import { useEffect, useState } from "react";
 import { GrUserAdmin } from "react-icons/gr";
 import { MdOutlineSettings } from "react-icons/md";
-
-// JWT decode helper
-function parseJwt(token) {
-    try {
-        const base64Url = token.split(".")[1];
-        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-        const jsonPayload = decodeURIComponent(
-            atob(base64)
-                .split("")
-                .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-                .join("")
-        );
-        return JSON.parse(jsonPayload);
-    } catch (e) {
-        console.error("Invalid token", e);
-        return null;
-    }
-}
+import {jwtDecode} from "jwt-decode";
+import {toast} from "react-toastify";
 
 function SuperAdmin() {
     const [user, setUser] = useState({});
@@ -33,19 +17,31 @@ function SuperAdmin() {
     const navigate = useNavigate();
     const location = useLocation(); // current path
     const userToken = localStorage.getItem("token");
+    const userId = jwtDecode(userToken).userId;
+
 
     useEffect(() => {
-        if (userToken) {
-            const decoded = parseJwt(userToken);
-            if (decoded && decoded.sub) {
-                const id = decoded.sub;
-                localStorage.setItem("userId", id);
-                ApiCall(`/user/${id}`, { method: "GET" })
-                    .then((res) => setUser(res.data))
-                    .catch((err) => console.error(err));
-            }
-        }
+        if (userToken) getUserInfo();
     }, [userToken]);
+
+    function getUserInfo() {
+        try {
+            if (!userId) {
+                console.error("Token ichida userId topilmadi!");
+                return;
+            }
+
+            ApiCall(`/user/${userId}`, { method: "GET" })
+                .then((res) => {
+                    setUser(res.data);
+                })
+                .catch((err) => {
+                    toast.error(err.response?.data);
+                });
+        } catch (error) {
+            console.error("Tokenni dekodlashda xato:", error);
+        }
+    }
 
     // Automatically highlight menu based on current path
     useEffect(() => {
