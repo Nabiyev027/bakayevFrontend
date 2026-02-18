@@ -7,6 +7,8 @@ import ApiCall from "../../../../Utils/ApiCall";
 import {toast, ToastContainer} from "react-toastify";
 import {FaCheckCircle} from "react-icons/fa";
 import {GiSandsOfTime} from "react-icons/gi";
+import {IoClose} from "react-icons/io5";
+import {MdEdit} from "react-icons/md";
 
 
 export function PaymentsList() {
@@ -261,6 +263,50 @@ export function PaymentsList() {
     };
 
 
+    async function deletePayment(id) {
+        const confirmed = window.confirm("Are you sure you want to delete this payment? This action will reset the debt!");
+
+        if (!confirmed) return;
+
+        try {
+            // API chaqiruvi (await qo'shishni unutmang, chunki bu async amal)
+            const res = await ApiCall(`/payment/delete/${id}`, { method: "DELETE" });
+            toast.success(res.data || "Payment deleted successfully");
+
+
+            if (selGroup && selGroup.id) {
+                await getPayments(selGroup);
+            }
+
+            // Sahifani yangilash yoki datani qayta render qilish mantiqi shu yerga
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error to delete payment");
+        }
+
+    }
+
+    async function delPaymentTransaction(id) {
+        const confirmed = window.confirm("Are you sure you want to delete this transaction? This action will reset the debt!");
+
+        if (!confirmed) return;
+
+        try {
+
+            const res = await ApiCall(`/payment/transaction/delete/${id}`, { method: "DELETE" });
+
+            toast.success(res.data || "Transaction deleted successfully");
+
+            if (selGroup && selGroup.id) {
+                await getPayments(selGroup);
+            }
+
+            setSelectedPayment(null); // modalni yopamiz
+
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error to delete transaction");
+        }
+    }
+
     return (
         <div className={styles.container}>
             <ToastContainer/>
@@ -491,10 +537,11 @@ export function PaymentsList() {
                                     <th className={styles.headerCell}>
                                         <div className={styles.headerContent}>
                                             <Calendar className={styles.headerIcon}/>
-                                            Sana
+                                            Date
                                         </div>
                                     </th>
                                     <th className={styles.headerCell}>Status</th>
+                                    <th className={styles.headerCell}>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -517,8 +564,13 @@ export function PaymentsList() {
                                                             <h3>
                                                                 {tr.paymentMethod === "CARD" ? <span>CARD</span> : <span>CASH</span>}
                                                             </h3>
-                                                                <h3>{tr.paymentDate}</h3>
-                                                                <h2>{tr.paidAmount}</h2>
+                                                            <h2>{tr.paidAmount}</h2>
+                                                            <h3>{tr.paymentDate}</h3>
+                                                            <button className={styles.btnTable+" "+styles.deleteBtn}
+                                                                onClick={()=>delPaymentTransaction(tr.id)}
+                                                            >
+                                                                <IoClose />
+                                                            </button>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -553,6 +605,19 @@ export function PaymentsList() {
                           {payment.paymentStatus === "PAID" ? <FaCheckCircle/> : <GiSandsOfTime/>}
                         </span>
                                         </td>
+                                        {
+                                            (selectedRole==="ROLE_ADMIN" || selectedRole==="ROLE_MAIN_RECEPTION")
+                                            && <td className={styles.paymentTableLastItem}>
+
+                                                <button className={styles.btnTable+" "+styles.deleteBtn}
+                                                        onClick={()=>deletePayment(payment.id)}
+                                                >
+                                                    <IoClose />
+                                                </button>
+
+                                            </td>
+                                        }
+
                                     </tr>
                                 ))}
                                 </tbody>

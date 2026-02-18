@@ -1,11 +1,11 @@
 import {useEffect, useState} from "react";
 import "./group.scss";
 import ApiCall from "../../../Utils/ApiCall";
-import {FaCheck} from "react-icons/fa";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
 import {IoIosUndo} from "react-icons/io";
 import {toast, ToastContainer} from "react-toastify";
+import { FaCheck, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 function Group() {
     const [teachers, setTeachers] = useState([]);
@@ -29,6 +29,10 @@ function Group() {
         dayType:""
     });
 
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(10); // Har sahifada 10 ta guruh
+
     useEffect(() => {
         getRooms()
         getBranches()
@@ -36,9 +40,11 @@ function Group() {
 
     useEffect(() => {
         getGroups(selectedBranchId);
+    }, [selectedBranchId, currentPage]);
+
+    useEffect(() => {
+        setCurrentPage(0);
     }, [selectedBranchId]);
-
-
 
     async function getRooms() {
         try {
@@ -49,16 +55,26 @@ function Group() {
         }
     }
 
-    async function getGroups(selectedBranchId) {
+    async function getGroups(branchId) {
         try {
-            const res = await ApiCall(`/group/getAll?filialId=${selectedBranchId}`, {method: "GET"});
-            setGroups(res.data);
+            // API-ga page va size parametrlarini yuboramiz
+            const res = await ApiCall(`/group/getAll?filialId=${branchId}&page=${currentPage}&size=${pageSize}`, {method: "GET"});
+
+            if (res.data) {
+                // Agar backend Page ob'ekti qaytarsa:
+                setGroups(res.data.content || []);
+                setTotalPages(res.data.totalPages || 0);
+            }
         } catch (err) {
             console.log(err.response?.data || err.message);
         }
     }
 
-
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
     async function getBranches() {
         try {
@@ -482,7 +498,7 @@ function Group() {
                     <tbody>
                     {groups.map((g, i) => (
                         <tr key={g.id}>
-                            <td>{i + 1}</td>
+                            <td>{(currentPage * pageSize) + i + 1}</td>
                             <td>
                                 {editingIndex === i ? (
                                     <input className={"inp-g"}
@@ -636,6 +652,37 @@ function Group() {
                     </tbody>
                 </table>
             </div>
+            {totalPages > 1 && (
+                <div className="pagination-container">
+                    <button
+                        className="pagi-btn"
+                        disabled={currentPage === 0}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                        <FaChevronLeft />
+                    </button>
+
+                    <div className="pagi-numbers">
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                                key={index}
+                                className={`pagi-number-btn ${currentPage === index ? "active" : ""}`}
+                                onClick={() => handlePageChange(index)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button
+                        className="pagi-btn"
+                        disabled={currentPage === totalPages - 1}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                        <FaChevronRight />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import "./student.scss";
 import ApiCall from "../../../Utils/ApiCall";
-import {FaCheck, FaImage} from "react-icons/fa";
+import {FaCheck, FaChevronLeft, FaChevronRight, FaImage} from "react-icons/fa";
 import {IoIosUndo} from "react-icons/io";
 import {MdEdit} from "react-icons/md";
 import {RiDeleteBin5Fill} from "react-icons/ri";
@@ -15,9 +15,9 @@ function Student() {
     const [infoStudent, setInfoStudent] = useState(null);
     const [groups, setGroups] = useState([]);
     const [studentFilialGroups, setStudentFilialGroups] = useState([]);
-    const [selGroupId, setSelGroupId] = useState();
+    const [selGroupId, setSelGroupId] = useState("");
     const [branches, setBranches] = useState([]);
-    const [selBranchId, setSelBranchId] = useState();
+    const [selBranchId, setSelBranchId] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selId, setSelId] = useState("");
@@ -28,9 +28,17 @@ function Student() {
     const userToken = localStorage.getItem("token");
     const userId = jwtDecode(userToken).userId;
 
+    const [currentPage, setCurrentPage] = useState(0); // Backend odatda 0 dan boshlaydi
+    const [totalPages, setTotalPages] = useState(0);
+    const [pageSize] = useState(10); // Har sahifada 10 ta talaba
+
     useEffect(() => {
-        getStudents()
+        setCurrentPage(0);
     }, [selBranchId, selGroupId]);
+
+    useEffect(() => {
+        getStudents();
+    }, [currentPage, selBranchId, selGroupId]);
 
     useEffect(() => {
         if (!selectedRole) {
@@ -46,7 +54,6 @@ function Student() {
     }, [selectedRole, userId]);
 
     useEffect(() => {
-        if (!selBranchId) return;
         getGroupsByFilial();
     }, [selBranchId]);
 
@@ -65,10 +72,6 @@ function Student() {
         try {
             const res = await ApiCall("/filial/getAll", { method: "GET" });
             setBranches(res.data || []);
-
-            if (res.data?.length) {
-                setSelBranchId(res.data[0].id); // 🔥 birinchi filial
-            }
         } catch {
             toast.error("Error loading filials");
         }
@@ -76,10 +79,13 @@ function Student() {
 
 
     async function getGroupsByFilial() {
+        if (!selBranchId) { // Agar filial tanlanmagan bo'lsa (All bo'lsa)
+            setGroups([]);
+            return;
+        }
         try {
             const res = await ApiCall(`/group?filialId=${selBranchId}`, { method: "GET" });
             setGroups(res.data || []);
-            if (res.data?.length) setSelGroupId(res.data[0].id);
         } catch {
             toast.error("Groups not found");
         }
@@ -103,12 +109,22 @@ function Student() {
 
     async function getStudents() {
         try {
-            const res = await ApiCall(`/user/students?filialId=${selBranchId}&groupId=${selGroupId}`, {method: "GET"});
-            setStudents(res.data);
+            const res = await ApiCall(`/user/students?filialId=${selBranchId}&groupId=${selGroupId}&page=${currentPage}&size=${pageSize}`, {method: "GET"});
+
+            if (res.data) {
+                setStudents(res.data.content || []); // Talabalar ro'yxati
+                setTotalPages(res.data.totalPages || 0); // Jami sahifalar soni
+            }
         } catch (error) {
             console.log(error);
         }
     }
+
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
     const handleInputChange = async (e) => {
         const { name, value } = e.target;
@@ -262,6 +278,16 @@ function Student() {
         setSelectedEmployerlogin("")
     }
 
+    const handleBranchChange = (e) => {
+        setSelBranchId(e.target.value);
+        setCurrentPage(0); // Filial o'zgarsa, 1-sahifaga qaytish kerak
+    };
+
+    const handleGroupChange = (e) => {
+        setSelGroupId(e.target.value);
+        setCurrentPage(0); // Guruh o'zgarsa, 1-sahifaga qaytish kerak
+    };
+
     return (
         <div className="student-page">
             <ToastContainer />
@@ -296,16 +322,18 @@ function Student() {
             <h2>Students</h2>
             <div className="student-header">
                 <select className="filial-select"
-                    onChange={(e)=> setSelBranchId(e.target.value)}
+                    onChange={(e)=> handleBranchChange(e)}
                 >
+                    <option value="">All</option>
                     {
                         branches?.map((b) => <option value={b.id} key={b.id}>{b.name}</option>)
                     }
                 </select>
                 <select
                         className="group-select"
-                        onChange={(e)=>setSelGroupId(e.target.value)}
+                        onChange={(e)=>handleGroupChange(e)}
                 >
+                    <option value="">All</option>
                     {
                         groups?.map((g) => <option value={g.id} key={g.id}>{g.name}</option>)
                     }
@@ -332,7 +360,7 @@ function Student() {
                     <tbody>
                     {students?.map((st, i) => (
                         <tr key={st.id}>
-                            <td>{i + 1}</td>
+                            <td>{(currentPage * pageSize) + i + 1}</td>
                             <td>
                                 {
                                     st.imgUrl ? <img src={`${BaseUrl + st.imgUrl}`} alt={"Img"}/> : <FaImage/>
@@ -472,33 +500,36 @@ function Student() {
                 </table>
             </div>
 
-            {infoStudent && (
-                <div className="modal-overlay" onClick={() => setInfoStudent(null)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h3>Student Info</h3>
-                        <img src={infoStudent.photo} alt={infoStudent.name}/>
-                        <p>
-                            <strong>ID:</strong> {infoStudent.id}
-                        </p>
-                        <p>
-                            <strong>Name:</strong> {infoStudent.name}
-                        </p>
-                        <p>
-                            <strong>Age:</strong> {infoStudent.age}
-                        </p>
-                        <p>
-                            <strong>Phone:</strong> {infoStudent.phone}
-                        </p>
-                        <p>
-                            <strong>Group:</strong> {infoStudent.group}
-                        </p>
-                        <p>
-                            <strong>Password:</strong> {infoStudent.password}
-                        </p>
-                        <button className="closeBtn" onClick={() => setInfoStudent(null)}>
-                            Close
-                        </button>
+            {/* PAGINATION QISMI */}
+            {totalPages > 1 && (
+                <div className="pagination-container">
+                    <button
+                        className="pagi-btn"
+                        disabled={currentPage === 0}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                        <FaChevronLeft />
+                    </button>
+
+                    <div className="pagi-numbers">
+                        {[...Array(totalPages)].map((_, index) => (
+                            <button
+                                key={index}
+                                className={`pagi-number-btn ${currentPage === index ? "active" : ""}`}
+                                onClick={() => handlePageChange(index)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
                     </div>
+
+                    <button
+                        className="pagi-btn"
+                        disabled={currentPage === totalPages - 1}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                        <FaChevronRight />
+                    </button>
                 </div>
             )}
         </div>
